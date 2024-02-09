@@ -73,21 +73,39 @@ function printGeneratedCode(){
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 function submit() {
   console.log(essenceGenerator.workspaceToCode(ws));
-  fetch("submit", {
+  fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
       method: 'POST', headers: {
           'Content-Type': 'application/json'
       }, body: JSON.stringify({
           appName: "conjure-blocks", // so we know who is calling
           solver: "kissat", // this is optional
           model: essenceGenerator.workspaceToCode(ws),
-          //data: document.getElementById('data').value,
+          // set up a space for this soon
+          data:"", //document.getElementById('data').value,
           conjureOptions: ["--number-of-solutions", "1"] // 1 is the default anyway
       })
   })
       .then(response => response.json())
       .then(json => {
-          document.getElementById("output").innerHTML = JSON.stringify(json, undefined, 2);
+          console.log(json);
+          getSolution(json);
+          //document.getElementById("output").innerHTML = JSON.stringify(json, undefined, 2);
           //document.getElementById("getDemoLink").href = 'getDemo.html#' + json['jobid'];
           //document.getElementById("getDemoLink").innerHTML = 'getDemo.html#' + json['jobid'];
       })
+}
+
+function getSolution(jobid) {
+    fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
+      method: 'POST', headers: {
+        'Content-Type': 'application/json'
+
+    }, body: JSON.stringify({
+        appName: "conjure-blocks", // so we know who is calling
+        jobid: jobid
+    })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json))
+    //.then(json => document.getElementById("response").innerHTML = JSON.stringify(json, undefined, 2));
 }
