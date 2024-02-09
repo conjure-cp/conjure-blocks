@@ -27,7 +27,7 @@ var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("hello");
 outputButton.appendChild(outputButtonText);
 outputDiv.append(outputButton);
-outputButton.addEventListener("click", printGeneratedCode);
+outputButton.addEventListener("click", submit);
 
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
@@ -70,3 +70,24 @@ function printGeneratedCode(){
   console.log(essenceGenerator.workspaceToCode(ws));
 }
 
+// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+function submit() {
+  console.log(essenceGenerator.workspaceToCode(ws));
+  fetch("submit", {
+      method: 'POST', headers: {
+          'Content-Type': 'application/json'
+      }, body: JSON.stringify({
+          appName: "conjure-blocks", // so we know who is calling
+          solver: "kissat", // this is optional
+          model: essenceGenerator.workspaceToCode(ws),
+          //data: document.getElementById('data').value,
+          conjureOptions: ["--number-of-solutions", "1"] // 1 is the default anyway
+      })
+  })
+      .then(response => response.json())
+      .then(json => {
+          document.getElementById("output").innerHTML = JSON.stringify(json, undefined, 2);
+          //document.getElementById("getDemoLink").href = 'getDemo.html#' + json['jobid'];
+          //document.getElementById("getDemoLink").innerHTML = 'getDemo.html#' + json['jobid'];
+      })
+}
