@@ -29,6 +29,10 @@ outputButton.appendChild(outputButtonText);
 outputDiv.append(outputButton);
 outputButton.addEventListener("click", getSolution);
 
+// add output text box 
+var solutionText = document.createElement("Solution");
+outputDiv.append(solutionText);
+
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
 // In a real application, you probably shouldn't use `eval`.
@@ -71,7 +75,7 @@ function printGeneratedCode(){
 }
 
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
-function submit() {
+async function submit() {
   console.log(essenceGenerator.workspaceToCode(ws));
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
@@ -98,23 +102,34 @@ function submit() {
           //document.getElementById("getDemoLink").innerHTML = 'getDemo.html#' + json['jobid'];
       //})
   })}
+ 
+async function get(currentJobid) {
+  console.log(currentJobid);
+  return new Promise((resolve, reject) => {
+    fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
+    method: 'POST', headers: {
+      'Content-Type': 'application/json'
+
+  }, body: JSON.stringify({
+      appName: "conjure-blocks", // so we know who is calling
+      jobid: currentJobid
+  })
+  })
+  .then(response => response.json())
+  .then(json => resolve(json))
+  .catch(err => reject(err))
+  })
   
+  
+}
 
 async function getSolution() {
-    console.log("here");
-    const currentJobid = await submit();
-    console.log("here2")
-    console.log(currentJobid);
-    fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
-      method: 'POST', headers: {
-        'Content-Type': 'application/json'
-
-    }, body: JSON.stringify({
-        appName: "conjure-blocks", // so we know who is calling
-        jobid: currentJobid
-    })
-    })
-    .then(response => response.json())
-    .then(json => console.log(json))
-    //.then(json => document.getElementById("response").innerHTML = JSON.stringify(json, undefined, 2));
+    const currentJobid = await submit(); 
+    //const solution = await get("add8a5e0-87cf-4e3e-baeb-f970aaeb5bd4");
+    var solution = await get(currentJobid);
+    while (solution.status == 'wait'){
+      solution = await get(currentJobid);
+    }
+    console.log(solution);  
+    solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
