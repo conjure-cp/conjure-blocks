@@ -75,7 +75,7 @@ function printGeneratedCode(){
 }
 
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
-async function submit() {
+async function submit(inputData) {
   console.log(essenceGenerator.workspaceToCode(ws));
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
@@ -86,7 +86,8 @@ async function submit() {
           solver: "kissat", // this is optional
           model: essenceGenerator.workspaceToCode(ws)+"\n",
           // set up a space for this soon
-          data:"{ \"n\": 2\n, \"m\": 7\n}\n",
+          //data:"{ \"n\": 2\n, \"m\": 7\n}\n",
+          data: inputData,
            //document.getElementById('data').value,
           conjureOptions: ["--number-of-solutions", "1"] // 1 is the default anyway
       })
@@ -123,8 +124,14 @@ async function get(currentJobid) {
   
 }
 
+// https://www.w3schools.com/js/js_popup.asp
+
 async function getSolution() {
-    const currentJobid = await submit(); 
+    let data = prompt("Please enter the data used in JSON format", "{\n\n}");
+    if (data == null || data == ""){
+      data = "{}";
+    }
+    const currentJobid = await submit(data); 
     //const solution = await get("add8a5e0-87cf-4e3e-baeb-f970aaeb5bd4");
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
