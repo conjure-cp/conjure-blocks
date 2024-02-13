@@ -82,26 +82,16 @@ async function submit(inputData) {
       method: 'POST', headers: {
           'Content-Type': 'application/json'
       }, body: JSON.stringify({
-          appName: "conjure-blocks", // so we know who is calling
-          solver: "kissat", // this is optional
+          appName: "conjure-blocks",
+          solver: "kissat",
           model: essenceGenerator.workspaceToCode(ws)+"\n",
-          // set up a space for this soon
-          //data:"{ \"n\": 2\n, \"m\": 7\n}\n",
           data: inputData,
-           //document.getElementById('data').value,
           conjureOptions: ["--number-of-solutions", "1"] // 1 is the default anyway
       })
     })
       .then(response => response.json())
       .then(json => resolve(json.jobid))
       .catch(err => reject(err))
-      //.then(json => {
-          //console.log(json);
-          //getSolution(json.jobid);
-          //document.getElementById("output").innerHTML = JSON.stringify(json, undefined, 2);
-          //document.getElementById("getDemoLink").href = 'getDemo.html#' + json['jobid'];
-          //document.getElementById("getDemoLink").innerHTML = 'getDemo.html#' + json['jobid'];
-      //})
   })}
  
 async function get(currentJobid) {
@@ -112,7 +102,7 @@ async function get(currentJobid) {
       'Content-Type': 'application/json'
 
   }, body: JSON.stringify({
-      appName: "conjure-blocks", // so we know who is calling
+      appName: "conjure-blocks", 
       jobid: currentJobid
   })
   })
@@ -124,15 +114,13 @@ async function get(currentJobid) {
   
 }
 
-// https://www.w3schools.com/js/js_popup.asp
-
+// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function getSolution() {
     let data = prompt("Please enter the data used in JSON format", "{\n\n}");
     if (data == null || data == ""){
       data = "{}";
     }
     const currentJobid = await submit(data); 
-    //const solution = await get("add8a5e0-87cf-4e3e-baeb-f970aaeb5bd4");
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
       solution = await get(currentJobid);
