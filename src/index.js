@@ -120,6 +120,7 @@ async function getSolution() {
     if (data == null || data == ""){
       data = "{}";
     }
+    solutionText.innerHTML = "Solving..."
     const currentJobid = await submit(data); 
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
