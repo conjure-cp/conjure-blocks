@@ -44,7 +44,12 @@ essenceGenerator.forBlock['range'] = function(block) {
 
 essenceGenerator.forBlock['int_expr'] = function(block, generator) {
     const val = generator.valueToCode(block, 'EXPR', Order.ATOMIC)
-    const code = `int (${val})`;
+    var code;
+    if (val != ''){
+        code = `int(${val})`;
+    } else {
+        code = `int`;
+    }
     return [code, Order.ATOMIC];
 }
 

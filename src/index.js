@@ -18,9 +18,20 @@ Blockly.common.defineBlocks(blocks);
 
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
-//const outputDiv = document.getElementById('output');
+const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
+
+//add output button
+var outputButton = document.createElement("BUTTON");
+var outputButtonText = document.createTextNode("hello");
+outputButton.appendChild(outputButtonText);
+outputDiv.append(outputButton);
+outputButton.addEventListener("click", getSolution);
+
+// add output text box 
+var solutionText = document.createElement("Solution");
+outputDiv.append(solutionText);
 
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
@@ -58,3 +69,63 @@ ws.addChangeListener((e) => {
   }
   runCode();
 });
+
+function printGeneratedCode(){
+  console.log(essenceGenerator.workspaceToCode(ws));
+}
+
+// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+async function submit(inputData) {
+  console.log(essenceGenerator.workspaceToCode(ws));
+  return new Promise((resolve, reject) => {
+    fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
+      method: 'POST', headers: {
+          'Content-Type': 'application/json'
+      }, body: JSON.stringify({
+          appName: "conjure-blocks",
+          solver: "kissat",
+          model: essenceGenerator.workspaceToCode(ws)+"\n",
+          data: inputData,
+          conjureOptions: ["--number-of-solutions", "1"] // 1 is the default anyway
+      })
+    })
+      .then(response => response.json())
+      .then(json => resolve(json.jobid))
+      .catch(err => reject(err))
+  })}
+ 
+async function get(currentJobid) {
+  console.log(currentJobid);
+  return new Promise((resolve, reject) => {
+    fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
+    method: 'POST', headers: {
+      'Content-Type': 'application/json'
+
+  }, body: JSON.stringify({
+      appName: "conjure-blocks", 
+      jobid: currentJobid
+  })
+  })
+  .then(response => response.json())
+  .then(json => resolve(json))
+  .catch(err => reject(err))
+  })
+  
+  
+}
+
+// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+async function getSolution() {
+    let data = prompt("Please enter the data used in JSON format", "{\n\n}");
+    if (data == null || data == ""){
+      data = "{}";
+    }
+    solutionText.innerHTML = "Solving..."
+    const currentJobid = await submit(data); 
+    var solution = await get(currentJobid);
+    while (solution.status == 'wait'){
+      solution = await get(currentJobid);
+    }
+    console.log(solution);  
+    solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+}
