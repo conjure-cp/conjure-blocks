@@ -24,7 +24,7 @@ const ws = Blockly.inject(blocklyDiv, {toolbox});
 
 //add output button
 var outputButton = document.createElement("BUTTON");
-var outputButtonText = document.createTextNode("hello");
+var outputButtonText = document.createTextNode("SOLVE");
 outputButton.appendChild(outputButtonText);
 outputDiv.append(outputButton);
 outputButton.addEventListener("click", getSolution);
