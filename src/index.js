@@ -3,6 +3,9 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+/**
+ * EDITED by N-J-Martin
+ */
 
 import * as Blockly from 'blockly';
 //import {blocks} from './blocks/text';
@@ -24,7 +27,7 @@ const ws = Blockly.inject(blocklyDiv, {toolbox});
 
 //add output button
 var outputButton = document.createElement("BUTTON");
-var outputButtonText = document.createTextNode("hello");
+var outputButtonText = document.createTextNode("SOLVE");
 outputButton.appendChild(outputButtonText);
 outputDiv.append(outputButton);
 outputButton.addEventListener("click", getSolution);
