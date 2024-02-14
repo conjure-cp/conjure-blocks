@@ -1,3 +1,7 @@
+/**
+ * Added by N-J-Martin
+ */
+
 import * as Blockly from 'blockly';
 export const essenceGenerator = new Blockly.Generator('essence');
 

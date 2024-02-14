@@ -4,6 +4,8 @@ built on Blockly - a library from Google for building beginner-friendly block-ba
 
 <img src="https://developers.google.com/static/blockly/images/logos/logo_standard.png" alt="blockly logo" width="100"/>
 
+README.md adapted from the README from the sample app.
+
 ## Structure
 
 - `package.json` contains basic information about the app. This is where the scripts to run, build, etc. are listed.

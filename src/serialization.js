@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-
+// changed storage key
 const storageKey = 'essenceGeneratorWorkspace';
 
 /**
