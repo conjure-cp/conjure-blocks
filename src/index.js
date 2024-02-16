@@ -26,6 +26,35 @@ const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
 
+//variable category 
+
+const createFlyout = function (ws) {
+  let xmlList = [];
+  // Add your button and give it a callback name.
+  const button = document.createElement('button');
+  button.setAttribute('text', 'Create Typed Variable');
+  button.setAttribute('callbackKey', 'callbackName');
+
+  xmlList.push(button);
+
+  // This gets all the variables that the user creates and adds them to the
+  // flyout.
+  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
+  xmlList = xmlList.concat(blockList);
+  return xmlList;
+};
+
+ws.registerToolboxCategoryCallback(
+  'CREATE_TYPED_VARIABLE',
+  createFlyout,
+);
+
+const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
+  ['PENGUIN', 'Penguin'],
+  ['GIRAFFE', 'Giraffe'],
+]);
+typedVarModal.init();
+
 //add output button
 var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("SOLVE");
@@ -134,31 +163,3 @@ async function getSolution() {
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
 
-//variable category 
-
-const createFlyout = function (ws) {
-  let xmlList = [];
-  // Add your button and give it a callback name.
-  const button = document.createElement('button');
-  button.setAttribute('text', 'Create Typed Variable');
-  button.setAttribute('callbackKey', 'callbackName');
-
-  xmlList.push(button);
-
-  // This gets all the variables that the user creates and adds them to the
-  // flyout.
-  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
-  xmlList = xmlList.concat(blockList);
-  return xmlList;
-};
-
-ws.registerToolboxCategoryCallback(
-  'CREATE_TYPED_VARIABLE',
-  createFlyout,
-);
-
-const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
-  ['PENGUIN', 'Penguin'],
-  ['GIRAFFE', 'Giraffe'],
-]);
-typedVarModal.init();
