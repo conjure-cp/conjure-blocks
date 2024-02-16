@@ -26,7 +26,8 @@ const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
 
-//variable category 
+//variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
+// much of the code below is from the usage instructions
 
 const createFlyout = function (ws) {
   let xmlList = [];
@@ -41,6 +42,8 @@ const createFlyout = function (ws) {
   // flyout.
   const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
   xmlList = xmlList.concat(blockList);
+  // adjust so forced to set variables by declarations.
+  xmlList.splice(1,1)
   return xmlList;
 };
 
