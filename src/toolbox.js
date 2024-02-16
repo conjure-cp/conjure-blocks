@@ -869,6 +869,11 @@ export const toolbox = {
         'type': 'logical_operator'
       },
     ]
+  }, 
+  {
+    'kind': 'category',
+    'name': 'variables',
+    'custom': 'CREATE_TYPED_VARIABLE'
   }
 ]
 };
