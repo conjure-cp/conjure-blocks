@@ -208,7 +208,6 @@ essenceGenerator.forBlock['logical_operator'] = function(block, generator) {
 };
 
 
-
 essenceGenerator.scrub_ = function(block, code, thisOnly) {
     const nextBlock =
         block.nextConnection && block.nextConnection.targetBlock();

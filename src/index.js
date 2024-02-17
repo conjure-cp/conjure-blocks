@@ -58,6 +58,16 @@ const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
 ]);
 typedVarModal.init();
 
+// generator
+essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
+  console.log("block");
+  console.log(block);
+  var vars = block.getVars()
+  const code = ws.getVariableById(vars[0]).name
+  console.log(code)
+  return [code, 0];
+}
+
 //add output button
 var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("SOLVE");
