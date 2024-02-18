@@ -8,15 +8,15 @@ export const essenceGenerator = new Blockly.Generator('essence');
 // change when need to sort out precedence
 const Order = {
     ATOMIC: 0,
-    COMPARISON: 0,
-    LOGICAL: 0,
-    FACTORIAL: 1,
-    EXPONENTION: 2,
-    NEGATION: 3, 
-    MULT_DIV: 4,
-    MOD: 4,
-    ADD_SUB: 5,
-    ABSOLUTE: 6
+    COMPARISON: 400,
+    LOGICAL: 120,
+    FACTORIAL: 2000,
+    EXPONENTION: 2001,
+    NEGATION: 2000, 
+    MULT_DIV: 700,
+    MOD: 700,
+    ADD_SUB: 600,
+    ABSOLUTE: 2000
 
 
 };
