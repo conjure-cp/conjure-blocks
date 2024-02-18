@@ -65,6 +65,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       {
         "type": "input_value",
         "name": "variable",
+        "check": "int"
       },
       {
         "type": "input_value",
@@ -85,6 +86,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       {
         "type": "input_value",
         "name": "variable",
+        "check": "int"
       },
       {
         "type": "input_value",
@@ -105,6 +107,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       {
         "type": "input_value",
         "name": "variable",
+        "check": "int"
       },
       {
         "type": "input_value",
@@ -125,7 +128,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       {
         "type": "input_value",
         "name": "variable",
-
+        "check": "int"
       },
       {
         "type": "input_value",
