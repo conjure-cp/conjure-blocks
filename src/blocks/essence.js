@@ -270,7 +270,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       },
       {
         "type": "field_dropdown",
@@ -291,7 +292,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       },
       {
         "type": "input_value",
-        "name": "operand2"
+        "name": "operand2",
+        "check": ["int", "Number"]
       }
     ],
     "output": null,
@@ -305,7 +307,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       },
       {
         "type": "field_dropdown",
@@ -326,7 +329,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
       },
       {
         "type": "input_value",
-        "name": "operand2"
+        "name": "operand2",
+        "check": ["int", "Number"]
       }
     ],
     "output": null,
@@ -340,11 +344,13 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       },
       {
         "type": "input_value",
-        "name": "operand2"
+        "name": "operand2",
+        "check": ["int", "Number"]
       }
     ],
     "inputsInline": true,
@@ -359,11 +365,13 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       },
       {
         "type": "input_value",
-        "name": "operand2"
+        "name": "operand2",
+        "check": ["int", "Number"]
       }
     ],
     "inputsInline": true,
@@ -378,7 +386,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       }
     ],
     "inputsInline": true,
@@ -393,7 +402,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand1"
+        "name": "operand1",
+        "check": ["int", "Number"]
       }
     ],
     "inputsInline": true,
@@ -408,7 +418,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "args0": [
       {
         "type": "input_value",
-        "name": "operand"
+        "name": "operand",
+        "check": ["int", "Number"]
       }
     ],
     "inputsInline": true,
