@@ -63,9 +63,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "letting %1 be %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "variable",
-        "text": "name"
       },
       {
         "type": "input_value",
@@ -84,9 +83,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "letting %1 be domain %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "variable",
-        "text": "name"
       },
       {
         "type": "input_value",
@@ -105,9 +103,8 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "find %1 in domain %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "variable",
-        "text": "name"
       },
       {
         "type": "input_value",
@@ -126,9 +123,9 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "given %1 is %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "variable",
-        "text": "name"
+
       },
       {
         "type": "input_value",
@@ -147,9 +144,9 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "given  %1 is new type enum %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "NAME",
-        "text": "name"
+        "check": "enum"
       },
       {
         "type": "input_end_row"
@@ -166,9 +163,9 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "letting %1 be new type enum %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "NAME",
-        "text": "name"
+        "check": "enum"
       },
       {
         "type": "input_value",
@@ -176,7 +173,7 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
         "check": "Array"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
@@ -188,9 +185,9 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
     "message0": "letting %1 be new type of size %2",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "NAME",
-        "text": "name"
+        "check": "unnamed"
       },
       {
         "type": "input_value",

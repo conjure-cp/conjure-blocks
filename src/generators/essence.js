@@ -58,35 +58,35 @@ essenceGenerator.forBlock['int_expr'] = function(block, generator) {
 }
 
 essenceGenerator.forBlock['letting_be_expr'] = function(block, generator) {
-    const var_name = block.getFieldValue("variable");
+    const var_name = generator.valueToCode(block, "variable", Order.ATOMIC);
     const expr = generator.valueToCode(block, 'EXPR', Order.ATOMIC);
     const code = `letting ${var_name} be ${expr}`;
     return code;
 }
 
 essenceGenerator.forBlock['letting_be_domain'] = function(block, generator) {
-    const var_name = block.getFieldValue("variable");
+    const var_name = generator.valueToCode(block, "variable", Order.ATOMIC);
     const domain = generator.valueToCode(block, 'DOMAIN', Order.ATOMIC);
     const code = `letting ${var_name} be domain ${domain}`;
     return code;
 }
 
 essenceGenerator.forBlock['find'] = function(block, generator) {
-    const var_name = block.getFieldValue("variable");
+    const var_name = generator.valueToCode(block, "variable", Order.ATOMIC);
     const domain = generator.valueToCode(block, 'DOMAIN', Order.ATOMIC);
     const code = `find ${var_name} : ${domain}`;
     return code;
 }
 
 essenceGenerator.forBlock['given'] = function(block, generator) {
-    const var_name = block.getFieldValue("variable");
+    const var_name = generator.valueToCode(block, "variable", Order.ATOMIC);
     const domain = generator.valueToCode(block, 'DOMAIN', Order.ATOMIC);
     const code = `given ${var_name} : ${domain}`;
     return code;
 }
 
-essenceGenerator.forBlock['given_enum'] = function(block) {
-    const var_name = block.getFieldValue('NAME');
+essenceGenerator.forBlock['given_enum'] = function(block, generator) {
+    const var_name = generator.valueToCode(block, 'NAME', Order.ATOMIC);
     const code = `given ${var_name} new type enum`;
     return code;
 }
@@ -106,14 +106,14 @@ essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
 };
 
 essenceGenerator.forBlock['letting_enum'] = function(block, generator) {
-    const var_name = block.getFieldValue('NAME');
+    const var_name = generator.valueToCode(block, 'NAME', Order.ATOMIC);
     const val_enum = generator.valueToCode(block, 'ENUM', Order.ATOMIC);
     const code = `letting ${var_name} be new type enum {${val_enum}}`;
     return code;
 };
 
 essenceGenerator.forBlock['letting_unnamed'] = function(block, generator) {
-    const var_name = block.getFieldValue('NAME');
+    const var_name = generator.valueToCode(block, 'NAME', Order.ATOMIC);
     const size = generator.valueToCode(block, 'size', Order.ATOMIC);
     const code = `letting ${var_name} be new type of size ${size}`;
     return code;

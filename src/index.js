@@ -53,8 +53,9 @@ ws.registerToolboxCategoryCallback(
 );
 
 const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
-  ['PENGUIN', 'Penguin'],
-  ['GIRAFFE', 'Giraffe'],
+  ['int', 'int'],
+  ['enum', 'enum'],
+  ['unnamed', 'unnamed']
 ]);
 typedVarModal.init();
 
