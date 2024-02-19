@@ -61,11 +61,8 @@ typedVarModal.init();
 
 // generator
 essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
-  console.log("block");
-  console.log(block);
   var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
-  console.log(code)
   return [code, 0];
 }
 
@@ -123,7 +120,6 @@ function printGeneratedCode(){
 
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function submit(inputData) {
-  console.log(essenceGenerator.workspaceToCode(ws));
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
       method: 'POST', headers: {
@@ -142,7 +138,6 @@ async function submit(inputData) {
   })}
  
 async function get(currentJobid) {
-  console.log(currentJobid);
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
     method: 'POST', headers: {
@@ -172,8 +167,7 @@ async function getSolution() {
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
       solution = await get(currentJobid);
-    }
-    console.log(solution);  
+    } 
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
 
