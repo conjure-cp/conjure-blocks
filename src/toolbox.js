@@ -872,7 +872,7 @@ export const toolbox = {
   }, 
   {
     'kind': 'category',
-    'name': 'variables',
+    'name': 'Variables',
     'custom': 'CREATE_TYPED_VARIABLE'
   }
 ]

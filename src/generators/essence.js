@@ -9,7 +9,10 @@ export const essenceGenerator = new Blockly.Generator('essence');
 const Order = {
     ATOMIC: 0,
     COMPARISON: 400,
-    LOGICAL: 120,
+    OR: 110,
+    AND: 120,
+    IMPLY: 50,
+    IFF: 50,
     FACTORIAL: 2000,
     EXPONENTION: 2001,
     NEGATION: 2000, 
@@ -204,7 +207,17 @@ essenceGenerator.forBlock['logical_operator'] = function(block, generator) {
     const operand2 = generator.valueToCode(block, 'operand2', Order.ATOMIC);
     const operator = block.getFieldValue("OPERATOR");
     const code = `${operand1} ${operator} ${operand2}`;
-    return [code, Order.LOGICAL];
+    var order;
+    if (operator == "/\\") {
+        order = Order.AND;
+    } else if (operator == "\\/") {
+        order = Order.OR;
+    } else if (operator == "->") {
+        order = Order.IMPLY;
+    } else if (operator == "<->") {
+        order = Order.IFF;
+    }
+    return [code, order];
 };
 
 
