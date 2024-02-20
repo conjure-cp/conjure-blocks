@@ -36,16 +36,12 @@ jobs:
         run: |
           npm ci
           npm run build
+          # creates a .nojekyll file in the out directory to tell GitHub Pages not to treat the site as a Jekyll project.
+          touch dist/.nojekyll
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to the gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
         with:
-          # Upload entire repository - changd to only dist directory
-          path: './dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          branch: gh-pages
+          folder: dist
+          clean: true
