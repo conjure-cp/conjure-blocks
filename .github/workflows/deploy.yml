@@ -1,0 +1,37 @@
+name: Deploy to the gh-pages branch
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          # creates a .nojekyll file in the out directory to tell GitHub Pages not to treat the site as a Jekyll project.
+          touch dist/.nojekyll
+
+      - name: Deploy to the gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4.4.3
+        with:
+          branch: gh-pages
+          folder: dist
+          clean: true
