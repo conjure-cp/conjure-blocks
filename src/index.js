@@ -8,6 +8,7 @@
  */
 
 import * as Blockly from 'blockly';
+import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/text';
 import {blocks} from './blocks/essence';
 import {essenceGenerator} from './generators/essence';
@@ -24,6 +25,46 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
+
+//variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
+// much of the code below is from the usage instructions
+
+const createFlyout = function (ws) {
+  let xmlList = [];
+  // Add your button and give it a callback name.
+  const button = document.createElement('button');
+  button.setAttribute('text', 'Create Typed Variable');
+  button.setAttribute('callbackKey', 'callbackName');
+
+  xmlList.push(button);
+
+  // This gets all the variables that the user creates and adds them to the
+  // flyout.
+  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
+  xmlList = xmlList.concat(blockList);
+  // adjust so forced to set variables by declarations.
+  xmlList.splice(1,1)
+  return xmlList;
+};
+
+ws.registerToolboxCategoryCallback(
+  'CREATE_TYPED_VARIABLE',
+  createFlyout,
+);
+
+const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
+  ['int', 'int'],
+  ['enum', 'enum'],
+  ['unnamed', 'unnamed']
+]);
+typedVarModal.init();
+
+// generator
+essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
+  var vars = block.getVars()
+  const code = ws.getVariableById(vars[0]).name
+  return [code, 0];
+}
 
 //add output button
 var outputButton = document.createElement("BUTTON");
@@ -79,7 +120,6 @@ function printGeneratedCode(){
 
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function submit(inputData) {
-  console.log(essenceGenerator.workspaceToCode(ws));
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
       method: 'POST', headers: {
@@ -98,7 +138,6 @@ async function submit(inputData) {
   })}
  
 async function get(currentJobid) {
-  console.log(currentJobid);
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
     method: 'POST', headers: {
@@ -128,7 +167,7 @@ async function getSolution() {
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
       solution = await get(currentJobid);
-    }
-    console.log(solution);  
+    } 
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
+

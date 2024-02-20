@@ -24,6 +24,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@blockly/plugin-typed-variable-modal": "^7.0.10",
     "blockly": "^10.0.0"
   }
 }
