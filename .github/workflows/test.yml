@@ -1,0 +1,25 @@
+name: Build test
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
+
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+          # creates a .nojekyll file in the out directory to tell GitHub Pages not to treat the site as a Jekyll project.
+          touch dist/.nojekyll
