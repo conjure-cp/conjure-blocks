@@ -132,3 +132,13 @@ async function getSolution() {
     console.log(solution);  
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
+
+// generate essence file from generated code
+function downloadEssenceCode() {
+  let code = essenceGenerator.workspaceToCode(ws);
+  let file = File(code, "test.essence");
+  let url = URL.createObjectURL(file);
+  let downloading = browser.downloads.download({url: url, saveAs: true})
+    .then(() => URL.revokeObjectURL(url))
+    .catch((err) => reject(err))
+}
