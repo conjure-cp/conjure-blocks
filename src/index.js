@@ -77,6 +77,13 @@ outputButton.addEventListener("click", getSolution);
 var solutionText = document.createElement("Solution");
 outputDiv.append(solutionText);
 
+// add download button
+var downloadButton = document.createElement("BUTTON");
+var downloadButtonText = document.createTextNode("DOWNLOAD");
+downloadButton.appendChild(downloadButtonText);
+document.getElementById("generatedCode").append(downloadButton);
+downloadButton.addEventListener("click", downloadEssenceCode);
+
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
 // In a real application, you probably shouldn't use `eval`.
@@ -172,11 +179,26 @@ async function getSolution() {
 }
 
 // generate essence file from generated code
+//https://blog.logrocket.com/programmatically-downloading-files-browser/#how-to-programmatically-download-file-html
 function downloadEssenceCode() {
   let code = essenceGenerator.workspaceToCode(ws);
-  let file = File(code, "test.essence");
+  console.log(code)
+  let file = new File([code], "test.essence");
   let url = URL.createObjectURL(file);
-  let downloading = browser.downloads.download({url: url, saveAs: true})
-    .then(() => URL.revokeObjectURL(url))
-    .catch((err) => reject(err))
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "test.essence";
+
+  const clickHandler = () => {
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      removeEventListener('click', clickHandler);
+    }, 150);
+  };
+
+  a.addEventListener('click', clickHandler, false);
+
+  a.click();
+  
+  document.body.appendChild(a)
 }
