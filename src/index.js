@@ -73,9 +73,18 @@ outputButton.appendChild(outputButtonText);
 outputDiv.append(outputButton);
 outputButton.addEventListener("click", getSolution);
 
+// add download button
+var downloadButton = document.createElement("BUTTON");
+var downloadButtonText = document.createTextNode("DOWNLOAD");
+downloadButton.appendChild(downloadButtonText);
+outputDiv.append(downloadButton);
+downloadButton.addEventListener("click", downloadEssenceCode);
+
 // add output text box 
 var solutionText = document.createElement("Solution");
 outputDiv.append(solutionText);
+
+
 
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
@@ -171,3 +180,34 @@ async function getSolution() {
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
 }
 
+// generate essence file from generated code
+// This function adapted from https://blog.logrocket.com/programmatically-downloading-files-browser/#how-to-programmatically-download-file-html
+// by Glad Chinda on LogRocket. Last accessed 27th February 2024.
+function downloadEssenceCode() {
+  // create file from the produced code.
+  let filename = prompt("Please enter essence file name", "test");
+  filename = filename + ".essence"
+  let code = essenceGenerator.workspaceToCode(ws);
+  console.log(code)
+  let file = new File([code], filename);
+  let url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  //sets download URL and download name.
+  a.href = url;
+  a.download = filename;
+
+  // release URL when clicked
+  const clickHandler = () => {
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      removeEventListener('click', clickHandler);
+    }, 150);
+  };
+
+  a.addEventListener('click', clickHandler, false);
+
+  //automatic download
+  a.click();
+  
+  document.body.appendChild(a)
+}
