@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "@blockly/plugin-typed-variable-modal": "^7.0.10",
-    "blockly": "^10.4.1"
+    "blockly": "^10.4.2"
   }
 }
