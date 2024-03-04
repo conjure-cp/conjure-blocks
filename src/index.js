@@ -25,7 +25,14 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
-
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {toolbox});
+blockOut.addChangeListener(function addBlock(addNewBlockEvent){
+  addNewBlockEvent.run(true);
+});
+new Blockly.Events.BlockCreate(blockOut.newBlock("letting_be_expr"));
+//blockOut.addTopBlock(blocks["letting_be_expr"]);
+//console.log(blockOut.getTopBlocks());
+//blockOut.cleanUp();
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
 
