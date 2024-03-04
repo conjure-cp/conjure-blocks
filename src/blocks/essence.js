@@ -518,6 +518,20 @@ export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
   "tooltip": "",
   "helpUrl": ""
 },  
+{
+  "type": "output",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_label_serializable",
+      "name": "SOLUTION",
+      "text": "test"
+    }
+  ],
+  "colour": 0,
+  "tooltip": "",
+  "helpUrl": ""
+}
 
 ])
 
