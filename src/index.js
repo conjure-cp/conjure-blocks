@@ -25,7 +25,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {toolbox});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
@@ -181,12 +181,15 @@ async function getSolution() {
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
     
     if (solution.status == "ok"){
-      console.log(solution.solution);
-      let newBlock = blockOut.newBlock("output");
-      newBlock.setFieldValue(JSON.stringify(solution.solution), 'SOLUTION');
-      console.log(newBlock.getFieldValue('SOLUTION'));
-      let addNewBlockEvent = new Blockly.Events.BlockCreate(newBlock);
-      addNewBlockEvent.run(true)
+      for (let sol of solution.solution){
+        for (let v in sol){
+          let newBlock = blockOut.newBlock("output");
+          newBlock.setFieldValue(v + " = " + sol[v], 'SOLUTION');
+          let addNewBlockEvent = new Blockly.Events.BlockCreate(newBlock);
+          addNewBlockEvent.run(true)
+        }
+      }
+      
     }
 }
 
@@ -198,7 +201,6 @@ function downloadEssenceCode() {
   let filename = prompt("Please enter essence file name", "test");
   filename = filename + ".essence"
   let code = essenceGenerator.workspaceToCode(ws);
-  console.log(code)
   let file = new File([code], filename);
   let url = URL.createObjectURL(file);
   const a = document.createElement("a");
