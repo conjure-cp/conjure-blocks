@@ -184,7 +184,7 @@ async function getSolution() {
       for (let sol of solution.solution){
         for (let v in sol){
           blockOut.createVariable(v);
-          let newBlock = blockOut.newBlock('variables_get_dynamic');
+          let newBlock = blockOut.newBlock('variables_set');
           newBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR')
           //newBlock.setFieldValue(v + " = " + sol[v], 'SOLUTION');
           let addNewBlockEvent = new Blockly.Events.BlockCreate(newBlock);
