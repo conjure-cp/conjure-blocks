@@ -15,6 +15,7 @@ import {essenceGenerator} from './generators/essence';
 import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import './index.css';
+import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
@@ -184,11 +185,33 @@ async function getSolution() {
       for (let sol of solution.solution){
         for (let v in sol){
           blockOut.createVariable(v);
-          let newBlock = blockOut.newBlock('variables_set');
-          newBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR')
-          //newBlock.setFieldValue(v + " = " + sol[v], 'SOLUTION');
-          let addNewBlockEvent = new Blockly.Events.BlockCreate(newBlock);
-          addNewBlockEvent.run(true)
+          let varBlock = blockOut.newBlock('variables_set');
+          varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
+          console.log(typeof(sol[v]));
+          let valueBlock;
+          switch (typeof(sol[v])){
+            case("bigint"): 
+            case("number"): {
+                valueBlock = blockOut.newBlock('math_number');
+                valueBlock.setFieldValue(sol[v], "NUM");
+                break;
+            }
+            case("object"): {
+              console.log("enum");
+              valueBlock = null;
+              break;
+            }
+            default:{
+              console.log("idk");
+              valueBlock = null;
+              break;
+            }
+
+          };
+          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+          let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
+          addVarBlock.run(true);
+
         }
       }
       
