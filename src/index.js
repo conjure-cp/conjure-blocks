@@ -15,6 +15,7 @@ import {essenceGenerator} from './generators/essence';
 import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import './index.css';
+import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
@@ -25,6 +26,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const ws = Blockly.inject(blocklyDiv, {toolbox});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
@@ -178,6 +180,43 @@ async function getSolution() {
       solution = await get(currentJobid);
     } 
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+    
+    if (solution.status == "ok"){
+      for (let sol of solution.solution){
+        for (let v in sol){
+          blockOut.createVariable(v);
+          let varBlock = blockOut.newBlock('variables_set');
+          varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
+          //console.log(typeof(sol[v]));
+          let valueBlock;
+          switch (typeof(sol[v])){
+            case("bigint"): 
+            case("number"): {
+                valueBlock = blockOut.newBlock('math_number');
+                valueBlock.setFieldValue(sol[v], "NUM");
+                break;
+            }
+            case("string"): {
+              console.log("enum");
+              valueBlock = blockOut.newBlock('text');
+              valueBlock.setFieldValue(sol[v], "TEXT");
+              break;
+            }
+            default:{
+              console.log("idk");
+              valueBlock = null;
+              break;
+            }
+
+          };
+          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+          let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
+          addVarBlock.run(true);
+
+        }
+      }
+      
+    }
 }
 
 // generate essence file from generated code
@@ -188,7 +227,6 @@ function downloadEssenceCode() {
   let filename = prompt("Please enter essence file name", "test");
   filename = filename + ".essence"
   let code = essenceGenerator.workspaceToCode(ws);
-  console.log(code)
   let file = new File([code], filename);
   let url = URL.createObjectURL(file);
   const a = document.createElement("a");
