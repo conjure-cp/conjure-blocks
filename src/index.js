@@ -187,7 +187,7 @@ async function getSolution() {
           blockOut.createVariable(v);
           let varBlock = blockOut.newBlock('variables_set');
           varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-          console.log(typeof(sol[v]));
+          //console.log(typeof(sol[v]));
           let valueBlock;
           switch (typeof(sol[v])){
             case("bigint"): 
@@ -196,9 +196,10 @@ async function getSolution() {
                 valueBlock.setFieldValue(sol[v], "NUM");
                 break;
             }
-            case("object"): {
+            case("string"): {
               console.log("enum");
-              valueBlock = null;
+              valueBlock = blockOut.newBlock('text');
+              valueBlock.setFieldValue(sol[v], "TEXT");
               break;
             }
             default:{
