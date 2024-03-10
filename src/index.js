@@ -11,21 +11,32 @@ import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/text';
 import {blocks} from './blocks/essence';
+import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
+import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 import {toolbox} from './toolbox';
+import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(jsonBlocks);
 //Object.assign(javascriptGenerator.forBlock, forBlock);
 
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
+const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox});
+const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
+let startBlock = dataWS.newBlock("object");
+startBlock.initSvg();
+dataWS.render()
+
+//addStartBlock.run(true);
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
@@ -169,10 +180,13 @@ async function get(currentJobid) {
 
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function getSolution() {
-    let data = prompt("Please enter the data used in JSON format", "{\n\n}");
-    if (data == null || data == ""){
-      data = "{}";
-    }
+    //let data = prompt("Please enter the data used in JSON format", "{\n\n}");
+    //if (data == null || data == ""){
+    //  data = "{}"
+    console.log(dataWS.getAllBlocks());
+   // }
+    let data = jsonGenerator.workspaceToCode(dataWS) + "\n";
+    console.log("data" + data);
     solutionText.innerHTML = "Solving..."
     const currentJobid = await submit(data); 
     var solution = await get(currentJobid);
