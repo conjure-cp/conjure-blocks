@@ -36,7 +36,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
