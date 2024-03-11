@@ -65,6 +65,21 @@ ws.registerToolboxCategoryCallback(
   createFlyout,
 );
 
+const createDataFlyout = function ()  {
+  let xmlList = [];
+  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
+  xmlList = xmlList.concat(blockList);
+   // adjust so forced to set variables by declarations.
+  xmlList.splice(0,1);
+  return xmlList;
+};
+
+
+dataWS.registerToolboxCategoryCallback(
+  'GET_VARIABLE',
+  createDataFlyout,
+);
+
 const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
   ['int', 'int'],
   ['enum', 'enum'],
@@ -76,6 +91,12 @@ typedVarModal.init();
 essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
+  return [code, 0];
+}
+
+jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
+  var vars = block.getVars()
+  const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
 

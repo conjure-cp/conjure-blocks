@@ -1,6 +1,9 @@
 export const jsonToolbox = {
-  'kind': 'flyoutToolbox',
-  'contents': [
+  'kind': 'categoryToolbox',
+  'contents': [ {
+    'kind' : 'category',
+    'name' : 'Values',
+    'contents': [
     {
       'kind': 'block',
       'type': 'object'
@@ -29,5 +32,11 @@ export const jsonToolbox = {
       'kind': 'block',
       'type': 'lists_create_with'
     },
-  ]
+  ]}, 
+  {
+    'kind': 'category',
+    'name': 'Variables',
+    'custom': 'GET_VARIABLE'
+  }
+]
 }

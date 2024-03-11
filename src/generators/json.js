@@ -28,7 +28,7 @@ jsonGenerator.forBlock['logic_boolean'] = function(block) {
 };
 
 jsonGenerator.forBlock['member'] = function(block, generator) {
-    const name = block.getFieldValue('MEMBER_NAME');
+    const name = generator.valueToCode(block, 'MEMBER_NAME', Order.ATOMIC);
     const value = generator.valueToCode(block, 'MEMBER_VALUE', Order.ATOMIC);
     const code = `"${name}": ${value}`;
     return code;

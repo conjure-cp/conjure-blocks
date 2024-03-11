@@ -20,9 +20,8 @@ export const jsonBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([{
     "message0": "%1 %2 %3",
     "args0": [
       {
-        "type": "field_input",
+        "type": "input_value",
         "name": "MEMBER_NAME",
-        "text": ""
       },
       {
         "type": "field_label",
@@ -37,4 +36,5 @@ export const jsonBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([{
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
+    "inputsInline": true
   }]);
