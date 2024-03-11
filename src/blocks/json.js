@@ -1,3 +1,5 @@
+// A variation of code from https://blocklycodelabs.dev/codelabs/custom-generator/index.html?index=..%2F..index#0
+
 import * as Blockly from 'blockly';
 
 export const jsonBlocks = Blockly.common.createBlockDefinitionsFromJsonArray([{
