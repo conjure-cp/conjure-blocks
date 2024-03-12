@@ -11,22 +11,32 @@ import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/text';
 import {blocks} from './blocks/essence';
+import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
+import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 import {toolbox} from './toolbox';
+import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
-//Object.assign(javascriptGenerator.forBlock, forBlock);
+Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
+const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox});
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {});
+const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
+// adds start block to data input section
+let startBlock = dataWS.newBlock("object");
+startBlock.initSvg();
+dataWS.render()
+
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
@@ -54,6 +64,23 @@ ws.registerToolboxCategoryCallback(
   createFlyout,
 );
 
+// adding variable category to data input WS
+const createDataFlyout = function ()  {
+  let xmlList = [];
+  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
+  xmlList = xmlList.concat(blockList);
+   // adjust so forced to set variables by declarations.
+  xmlList.splice(0,1);
+  return xmlList;
+};
+
+
+dataWS.registerToolboxCategoryCallback(
+  'GET_VARIABLE',
+  createDataFlyout,
+);
+
+// setting up typed var model
 const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
   ['int', 'int'],
   ['enum', 'enum'],
@@ -61,10 +88,16 @@ const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
 ]);
 typedVarModal.init();
 
-// generator
+// generators for get variable block
 essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
+  return [code, 0];
+}
+
+jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
+  var vars = block.getVars()
+  const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
 
@@ -129,7 +162,8 @@ function printGeneratedCode(){
   console.log(essenceGenerator.workspaceToCode(ws));
 }
 
-// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+// submits data and code to conjure
+//from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function submit(inputData) {
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/submit", {
@@ -147,7 +181,8 @@ async function submit(inputData) {
       .then(json => resolve(json.jobid))
       .catch(err => reject(err))
   })}
- 
+
+// get conjure solution/ response
 async function get(currentJobid) {
   return new Promise((resolve, reject) => {
     fetch("https://conjure-aas.cs.st-andrews.ac.uk/get", {
@@ -167,27 +202,30 @@ async function get(currentJobid) {
   
 }
 
+// Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function getSolution() {
-    let data = prompt("Please enter the data used in JSON format", "{\n\n}");
-    if (data == null || data == ""){
-      data = "{}";
-    }
+    // gets the data from the data input workspace
+    let data = jsonGenerator.workspaceToCode(dataWS) + "\n";
+    console.log("data" + data);
     solutionText.innerHTML = "Solving..."
+    // waits for code to be submitted to conjure, until jobID returned
     const currentJobid = await submit(data); 
+    // get solution for our job. Need to wait until either solution found, code failed, or timed out
     var solution = await get(currentJobid);
     while (solution.status == 'wait'){
       solution = await get(currentJobid);
     } 
+    // outputs text solution
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
     
+    // if solved, create relevant blocks and add to output workspace
     if (solution.status == "ok"){
       for (let sol of solution.solution){
         for (let v in sol){
           blockOut.createVariable(v);
           let varBlock = blockOut.newBlock('variables_set');
           varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-          //console.log(typeof(sol[v]));
           let valueBlock;
           switch (typeof(sol[v])){
             case("bigint"): 
@@ -210,9 +248,11 @@ async function getSolution() {
 
           };
           varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
-          let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
-          addVarBlock.run(true);
-
+          //let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
+          //addVarBlock.run(true);
+          varBlock.initSvg();
+          valueBlock.initSvg();
+          blockOut.render();
         }
       }
       
