@@ -18,7 +18,6 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
@@ -205,10 +204,13 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function getSolution() {
-    // gets the data from the data input workspace
-    let data = jsonGenerator.workspaceToCode(dataWS) + "\n";
-    console.log("data" + data);
     solutionText.innerHTML = "Solving..."
+    // gets the data from the data input workspace
+    let data = jsonGenerator.workspaceToCode(dataWS);
+    console.log("data " + data);
+    let code = essenceGenerator.workspaceToCode(ws);
+    console.log("code " + code);
+   /*
     // waits for code to be submitted to conjure, until jobID returned
     const currentJobid = await submit(data); 
     // get solution for our job. Need to wait until either solution found, code failed, or timed out
@@ -218,45 +220,52 @@ async function getSolution() {
     } 
     // outputs text solution
     solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
-    
-    // if solved, create relevant blocks and add to output workspace
-    if (solution.status == "ok"){
-      for (let sol of solution.solution){
-        for (let v in sol){
-          blockOut.createVariable(v);
-          let varBlock = blockOut.newBlock('variables_set');
-          varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-          let valueBlock;
-          switch (typeof(sol[v])){
-            case("bigint"): 
-            case("number"): {
-                valueBlock = blockOut.newBlock('math_number');
-                valueBlock.setFieldValue(sol[v], "NUM");
-                break;
-            }
-            case("string"): {
-              console.log("enum");
-              valueBlock = blockOut.newBlock('text');
-              valueBlock.setFieldValue(sol[v], "TEXT");
-              break;
-            }
-            default:{
-              console.log("idk");
-              valueBlock = null;
-              break;
-            }
+    */
+    const client = new ConjureClient("conjure-blocks");
+    client.solve(code, {data : data})
+      .then(result => outputSolution(result));
 
-          };
-          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
-          //let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
-          //addVarBlock.run(true);
-          varBlock.initSvg();
-          valueBlock.initSvg();
-          blockOut.render();
-        }
+    
+    
+};
+
+function outputSolution(solution) {
+  solutionText.innerHTML = JSON.stringify(solution, undefined, 2)
+  // if solved, create relevant blocks and add to output workspace
+  if (solution.status == "ok"){
+    for (let sol of solution.solution){
+      for (let v in sol){
+        blockOut.createVariable(v);
+        let varBlock = blockOut.newBlock('variables_set');
+        varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
+        let valueBlock;
+        switch (typeof(sol[v])){
+          case("bigint"): 
+          case("number"): {
+              valueBlock = blockOut.newBlock('math_number');
+              valueBlock.setFieldValue(sol[v], "NUM");
+              break;
+          }
+          case("string"): {
+            console.log("enum");
+            valueBlock = blockOut.newBlock('text');
+            valueBlock.setFieldValue(sol[v], "TEXT");
+            break;
+          }
+          default:{
+            console.log("idk");
+            valueBlock = null;
+            break;
+          }
+
+        };
+        varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+        varBlock.initSvg();
+        valueBlock.initSvg();
+        blockOut.render();
       }
-      
-    }
+    }    
+  }
 }
 
 // generate essence file from generated code
