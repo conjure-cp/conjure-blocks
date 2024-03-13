@@ -34,7 +34,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
@@ -201,7 +201,7 @@ async function get(currentJobid) {
 }
 
 // Runs essence code in conjure, outputs solution logs
-// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+// from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
     solutionText.innerHTML = "Solving..."
     // gets the data from the data input workspace
@@ -209,27 +209,17 @@ async function getSolution() {
     console.log("data " + data);
     let code = essenceGenerator.workspaceToCode(ws);
     console.log("code " + code);
-   /*
-    // waits for code to be submitted to conjure, until jobID returned
-    const currentJobid = await submit(data); 
-    // get solution for our job. Need to wait until either solution found, code failed, or timed out
-    var solution = await get(currentJobid);
-    while (solution.status == 'wait'){
-      solution = await get(currentJobid);
-    } 
-    // outputs text solution
-    solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
-    */
     const client = new ConjureClient("conjure-blocks");
     client.solve(code, {data : data})
-      .then(result => outputSolution(result));
-
-    
-    
+      .then(result => outputSolution(result));   
 };
 
+// outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
+  // make writable, so blocks line up nicely
+  blockOut.options = new Blockly.Options({readOnly: false});
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+  // clear any blocks from previous runs
   blockOut.clear();
   // if solved, create relevant blocks and add to output workspace
   if (solution.status == "ok"){
@@ -242,6 +232,7 @@ function outputSolution(solution) {
         switch (typeof(sol[v])){
           case("bigint"): 
           case("number"): {
+              console.log("number");
               valueBlock = blockOut.newBlock('math_number');
               valueBlock.setFieldValue(sol[v], "NUM");
               break;
@@ -262,10 +253,13 @@ function outputSolution(solution) {
         varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
         varBlock.initSvg();
         valueBlock.initSvg();
+        blockOut.cleanUp();
         blockOut.render();
       }
     }    
+    blockOut.options = new Blockly.Options({readOnly: true});
   }
+ 
 }
 
 // generate essence file from generated code
