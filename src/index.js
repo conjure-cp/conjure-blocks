@@ -9,7 +9,6 @@
 
 import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
-//import {blocks} from './blocks/text';
 import {blocks} from './blocks/essence';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
@@ -230,7 +229,8 @@ async function getSolution() {
 };
 
 function outputSolution(solution) {
-  solutionText.innerHTML = JSON.stringify(solution, undefined, 2)
+  solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+  blockOut.clear();
   // if solved, create relevant blocks and add to output workspace
   if (solution.status == "ok"){
     for (let sol of solution.solution){
