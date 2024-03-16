@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
 // Base config that applies to either development or production mode.
 const config = {
   entry: './src/index.js',
@@ -21,6 +20,10 @@ const config = {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.txt$/i,
+        use: 'raw-loader',
+      }
     ],
   },
   plugins: [

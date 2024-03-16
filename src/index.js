@@ -18,6 +18,7 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
+import './blocks/autoEssence'
 import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly

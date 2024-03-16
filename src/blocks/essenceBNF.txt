@@ -1,0 +1,69 @@
+Statement := DeclarationStatement
+           | BranchingStatement
+           | SuchThatStatement
+           | WhereStatement
+           | ObjectiveStatement
+
+DeclarationStatement := FindStatement
+                      | GivenStatement
+                      | LettingStatement
+                      | GivenEnum
+                      | LettingEnum
+                      | LettingUnnamed
+
+FindStatement := "find" Name ":" Domain
+GivenStatement := "given" Name ":" Domain
+LettingStatement := "letting" Name "be" Expression
+                  | "letting" Name "be" "domain" Domain
+
+GivenEnum := "given" Name "new type enum"
+
+LettingEnum := "letting" Name "be" "new type enum" list(Name, ",", "{}")
+
+LettingUnnamed := "letting" Name "be" "new type of size" Expression
+
+BranchingStatement := "branching" "on" list(BranchingOn, ",", "[]")
+
+BranchingOn := Name
+             | Expression
+
+SuchThatStatement := "such that" list(Expression, ",")
+
+WhereStatement := "where" list(Expression, ",")
+
+ObjectiveStatement := "minimising" Expression
+                    | "maximising" Expression
+
+Domain := "bool"
+        | "int" list(Range, ",", "()")
+        | "int" "(" Expression ")"
+        | Name list(Range, ",", "()") # the Name refers to an enumerated type
+        | Name                        # the Name refers to an unnamed type
+        | "tuple" list(Domain, ",", "()")
+        | "record" list(NameDomain, ",", "{}")
+        | "variant" list(NameDomain, ",", "{}")
+        | "matrix indexed by" list(Domain, ",", "[]") "of" Domain
+        | "set" list(Attribute, ",", "()") "of" Domain
+        | "mset" list(Attribute, ",", "()") "of" Domain
+        | "function" list(Attribute, ",", "()") Domain "-->" Domain
+        | "sequence" list(Attribute, ",", "()") "of" Domain
+        | "relation" list(Attribute, ",", "()") "of" list(Domain, "*", "()")
+        | "partition" list(Attribute, ",", "()") "from" Domain
+
+Range := Expression
+       | Expression ".."
+       | ".." Expression
+       | Expression ".." Expression
+
+Attribute := Name
+           | Name Expression
+
+NameDomain := Name ":" Domain
+
+Expression := Literal
+            | Name
+            | Quantification
+            | Comprehension Expression [GeneratorOrCondition]
+            | Operator
+
+Operator := ...
