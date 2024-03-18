@@ -10,12 +10,14 @@
 import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/text';
-import {blocks} from './blocks/essence';
+//import {blocks} from './blocks/essence';
+import {blocks} from './blocks/autoEssence';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
-import {toolbox} from './toolbox';
+//import {toolbox} from './toolbox';
+import { toolbox } from './blocks/autoEssence';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import './blocks/autoEssence'
