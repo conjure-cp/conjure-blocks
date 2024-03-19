@@ -13,7 +13,8 @@ import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/essence';
 import {blocks} from './blocks/autoEssence';
 import {jsonBlocks} from './blocks/json';
-import {essenceGenerator} from './generators/essence';
+//import {essenceGenerator} from './generators/essence';
+import {essenceGenerator} from './blocks/autoEssence';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 //import {toolbox} from './toolbox';
@@ -137,6 +138,7 @@ const runCode = () => {
 };
 
 // Load the initial state from storage and run the code.
+ws.clear();
 load(ws);
 runCode();
 

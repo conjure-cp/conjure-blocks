@@ -1,6 +1,8 @@
 console.log("hello");
 import file from './essenceBNF.txt';
 import * as Blockly from 'blockly';
+import {essenceGen} from '../generators/essence';
+export const essenceGenerator = essenceGen;
 console.log(typeof(file))
 let lines = file.split("\r\n");
 
@@ -47,6 +49,7 @@ for (let b of usable){
     message = message.replaceAll(/"/g, "");
     console.log("message" + message);
     blockArray.push(createBlockJSON(name[0].trim(), message.trim(), args));
+    addTranslation(name[0].trim(), args, message.trim());
 }
 
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
@@ -77,8 +80,9 @@ function createBlockJSON(name, message, args){
             "name": a
         })
     }
+    //addTranslation(name, args, message);
     // change args names to check types later?
-   return {
+    return {
         "type": name,
         "message0": message,
         "args0": jsonArgs,
@@ -90,4 +94,17 @@ function createBlockJSON(name, message, args){
         "tooltip": "",
         "helpUrl": ""
       }
+}
+
+function addTranslation(name, args, message){
+    essenceGenerator.forBlock[name] = function (block, generator) {
+        let code = message;
+        for (let i = 1; i <= args.length; i++) {
+            console.log(i);
+              // no precedence currently
+            code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i], 0)}`);
+        }
+        console.log("code " + code);
+        return code;
+    };
 }
