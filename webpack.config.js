@@ -22,7 +22,7 @@ const config = {
       },
       {
         test: /\.txt$/i,
-        use: 'raw-loader',
+        type: 'asset/source',
       }
     ],
   },
