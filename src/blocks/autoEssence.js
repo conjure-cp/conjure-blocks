@@ -79,47 +79,8 @@ for (let b of usable){
 
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
 //auto gen this too soon.
-export const toolbox = {
-    'kind': 'flyoutToolbox',
-    'contents': [
-        {
-            'kind': 'block',
-            'type': 'FindStatement1'
-        }, 
-        {
-            'kind': 'block',
-            'type': 'GivenStatement1'
-        },
-        {
-            'kind': 'block',
-            'type': 'GivenEnum1'
-        }, 
-        {
-            'kind': 'block', 
-            'type': 'LettingEnum1'
-        },
-        {
-            'kind': 'block',
-            'type': 'LettingUnnamed1'
-        }, 
-        {
-            'kind': 'block',
-            'type': 'lists_create_with'
-        },
-        {
-            'kind': 'block',
-            'type': 'math_number'
-        },
-        {
-            'kind': 'block',
-            'type': 'LettingStatement1'
-        },
-        {
-            'kind': 'block',
-            'type': 'LettingStatement2'
-        }
-    ]
-}
+let toolboxJSON = getToolBoxJSON(blockArray);
+export const toolbox = toolboxJSON;
 
 function createBlockJSON(name, message, args){
     let jsonArgs = [];
@@ -161,5 +122,29 @@ function addTranslation(name, args, message){
         }
         console.log("code " + code);
         return code;
+    };
+}
+
+function getToolBoxJSON(blockArray) {
+    let contentArray = [];
+    contentArray.push({
+        'kind': 'block',
+        'type': 'math_number'
+    });
+    contentArray.push({
+        'kind': 'block',
+        'type': 'lists_create_with'
+    });
+
+    for (let block of blockArray){
+        console.log(block);
+        contentArray.push({
+            'kind': 'block',
+            'type': block.type
+        })
+    }
+    return {
+        'kind': 'flyoutToolbox',
+        'contents': contentArray
     };
 }

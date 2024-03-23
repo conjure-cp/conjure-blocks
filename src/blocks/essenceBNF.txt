@@ -21,15 +21,15 @@ LettingEnum := "letting" Name "be" "new type enum" list(Name, ",", "{}")
 
 LettingUnnamed := "letting" Name "be" "new type of size" Expression
 
-!BranchingStatement := "branching" "on" list(BranchingOn, ",", "[]")
+BranchingStatement := "branching" "on" list(BranchingOn, ",", "[]")
 
 !BranchingOn := Name | Expression
 
-!SuchThatStatement := "such that" list(Expression, ",")
+SuchThatStatement := "such that" list(Expression, ",")
 
-!WhereStatement := "where" list(Expression, ",")
+WhereStatement := "where" list(Expression, ",")
 
-!ObjectiveStatement := "minimising" Expression  | "maximising" Expression
+ObjectiveStatement := "minimising" Expression  | "maximising" Expression
 
 !Domain := "bool"
 !       | "int" list(Range, ",", "()")
@@ -55,7 +55,7 @@ LettingUnnamed := "letting" Name "be" "new type of size" Expression
 !Attribute := Name
 !          | Name Expression
 
-!NameDomain := Name ":" Domain
+NameDomain := Name ":" Domain
 
 !Expression := Literal
 !            | Name
