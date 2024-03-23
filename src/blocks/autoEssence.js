@@ -28,11 +28,23 @@ for (let b of usable){
     // get list part and remove
     let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g
     let lists = definition.matchAll(list);
+    let newList;
     for (let l of lists){
         console.log("lists: ", l)
-    }
-    definition = definition.replaceAll(list, "Array");
+        if (l[0].includes("{}")){
+            newList = "{Array}";
+        } else if (l[0].includes("[]")){
+            newList = "[Array]";
+        } else if (l[0].includes("()")){
+            newList = "(Array)";
+        } else {
+            newList = "Array";
+        }
+    };
     
+
+    definition = definition.replaceAll(list, newList);
+    console.log("def without list", definition);
     let quoted = /\"[\w\:\s]*\"/g;
     let matches = definition.matchAll(quoted);
     let replaced = definition.replaceAll(quoted, "#");
