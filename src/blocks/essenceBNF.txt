@@ -17,9 +17,9 @@ GivenStatement := "given" Name ":" Domain
 
 GivenEnum := "given" Name "new type enum"
 
-!LettingEnum := "letting" Name "be" "new type enum" list(Name, ",", "{}")
+LettingEnum := "letting" Name "be" "new type enum" list(Name, ",", "{}")
 
-!LettingUnnamed := "letting" Name "be" "new type of size" Expression
+LettingUnnamed := "letting" Name "be" "new type of size" Expression
 
 !BranchingStatement := "branching" "on" list(BranchingOn, ",", "[]")
 

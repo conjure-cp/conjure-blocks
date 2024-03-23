@@ -25,6 +25,14 @@ for (let b of usable){
     console.log(name[0]);
     let definition = b.slice(b.indexOf("=") + 1)
     console.log(definition);
+    // get list part and remove
+    let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g
+    let lists = definition.matchAll(list);
+    for (let l of lists){
+        console.log("lists: ", l)
+    }
+    definition = definition.replaceAll(list, "Array");
+    
     let quoted = /\"[\w\:\s]*\"/g;
     let matches = definition.matchAll(quoted);
     let replaced = definition.replaceAll(quoted, "#");
@@ -68,6 +76,22 @@ export const toolbox = {
         {
             'kind': 'block',
             'type': 'GivenEnum'
+        }, 
+        {
+            'kind': 'block', 
+            'type': 'LettingEnum'
+        },
+        {
+            'kind': 'block',
+            'type': 'LettingUnnamed'
+        }, 
+        {
+            'kind': 'block',
+            'type': 'lists_create_with'
+        },
+        {
+            'kind': 'block',
+            'type': 'math_number'
         }
     ]
 }
@@ -75,12 +99,16 @@ export const toolbox = {
 function createBlockJSON(name, message, args){
     let jsonArgs = [];
     for (let a of args){
-        jsonArgs.push({
+        let json = { 
             "type": "input_value",
             "name": a
-        })
+        }
+        if (a == "Array"){
+            json.check = "Array";
+        }
+
+        jsonArgs.push(json);
     }
-    //addTranslation(name, args, message);
     // change args names to check types later?
     return {
         "type": name,
@@ -98,9 +126,11 @@ function createBlockJSON(name, message, args){
 
 function addTranslation(name, args, message){
     essenceGenerator.forBlock[name] = function (block, generator) {
+        console.log("block: ", name);
+        console.log("args: ", args);
         let code = message;
+        console.log(args[0]);
         for (let i = 1; i <= args.length; i++) {
-            console.log(i);
               // no precedence currently
             code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i], 0)}`);
         }
