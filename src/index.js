@@ -8,16 +8,20 @@
  */
 
 import * as Blockly from 'blockly';
-import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
+//import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/text';
-import {blocks} from './blocks/essence';
+//import {blocks} from './blocks/essence';
+import {blocks} from './blocks/autoEssence';
 import {jsonBlocks} from './blocks/json';
-import {essenceGenerator} from './generators/essence';
+//import {essenceGenerator} from './generators/essence';
+import {essenceGenerator} from './blocks/autoEssence';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
-import {toolbox} from './toolbox';
+//import {toolbox} from './toolbox';
+import { toolbox } from './blocks/autoEssence';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
+import './blocks/autoEssence'
 import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
@@ -29,7 +33,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
-const ws = Blockly.inject(blocklyDiv, {toolbox});
+const ws = Blockly.inject(blocklyDiv, {toolbox, scrollbars:true});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
@@ -40,7 +44,7 @@ const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnl
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
-
+/*
 const createFlyout = function (ws) {
   let xmlList = [];
   // Add your button and give it a callback name.
@@ -100,7 +104,7 @@ jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
-
+*/
 //add output button
 var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("SOLVE");
@@ -134,6 +138,7 @@ const runCode = () => {
 };
 
 // Load the initial state from storage and run the code.
+
 load(ws);
 runCode();
 
