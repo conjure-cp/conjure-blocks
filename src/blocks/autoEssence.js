@@ -1,4 +1,3 @@
-console.log("hello");
 import file from './essenceBNF.txt';
 import * as Blockly from 'blockly';
 import {essenceGen} from '../generators/essence';
@@ -23,54 +22,60 @@ let def = /\w+(?= :=)/;
 for (let b of usable){
     let name = def.exec(b);
     console.log(name[0]);
-    let definition = b.slice(b.indexOf("=") + 1)
-    console.log(definition);
-    // get list part and remove
-    let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g
-    let lists = definition.matchAll(list);
-    let newList;
-    for (let l of lists){
-        console.log("lists: ", l)
-        if (l[0].includes("{}")){
-            newList = "{Array}";
-        } else if (l[0].includes("[]")){
-            newList = "[Array]";
-        } else if (l[0].includes("()")){
-            newList = "(Array)";
-        } else {
-            newList = "Array";
-        }
-    };
-    
+    let allDefinitions = b.slice(b.indexOf("=") + 1);
+    let definitions = allDefinitions.split("|");
+    let index = 1;
+    for (let definition of definitions){
+        console.log(definition);
+        // get list part and remove
+        let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g;
+        let lists = definition.matchAll(list);
+        let newList;
+        for (let l of lists){
+            console.log("lists: ", l)
+            if (l[0].includes("{}")){
+                newList = "{Array}";
+            } else if (l[0].includes("[]")){
+                newList = "[Array]";
+            } else if (l[0].includes("()")){
+                newList = "(Array)";
+            } else {
+                newList = "Array";
+            }
+        };
+        
 
-    definition = definition.replaceAll(list, newList);
-    console.log("def without list", definition);
-    let quoted = /\"[\w\:\s]*\"/g;
-    let matches = definition.matchAll(quoted);
-    let replaced = definition.replaceAll(quoted, "#");
-    console.log(replaced);
-    let argsTypes = replaced.matchAll(/\w+/g); 
-    let argsReplaced = replaced;
-    let count = 1;
-    let args = []
-    for (let a of argsTypes){
-        argsReplaced = argsReplaced.replace(/([A-Z]|[a-z])+/, `%${count}`);
-        //console.log("type: "+ JSON.stringify(a));
-        //console.log(typeof(a));
-        args.push(a[0].trim());
-        count++;
+        definition = definition.replaceAll(list, newList);
+        console.log("def without list", definition);
+        let quoted = /\"[\w\:\s]*\"/g;
+        let matches = definition.matchAll(quoted);
+        let replaced = definition.replaceAll(quoted, "#");
+        console.log(replaced);
+        let argsTypes = replaced.matchAll(/\w+/g); 
+        let argsReplaced = replaced;
+        let count = 1;
+        let args = []
+        for (let a of argsTypes){
+            argsReplaced = argsReplaced.replace(/([A-Z]|[a-z])+/, `%${count}`);
+            //console.log("type: "+ JSON.stringify(a));
+            //console.log(typeof(a));
+            args.push(a[0].trim());
+            count++;
+        }
+        
+        console.log(argsReplaced);
+        let message = argsReplaced;
+        for (let m of matches) {
+            message = message.replace(/#/, m);
+        }
+        message = message.replaceAll(/"/g, "");
+        console.log("message" + message);
+        blockArray.push(createBlockJSON(name[0].trim()+index, message.trim(), args));
+        addTranslation(name[0].trim()+index, args, message.trim());
+        index++;
     }
-    
-    console.log(argsReplaced);
-    let message = argsReplaced;
-    for (let m of matches) {
-        message = message.replace(/#/, m);
-    }
-    message = message.replaceAll(/"/g, "");
-    console.log("message" + message);
-    blockArray.push(createBlockJSON(name[0].trim(), message.trim(), args));
-    addTranslation(name[0].trim(), args, message.trim());
 }
+
 
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
 //auto gen this too soon.
@@ -79,23 +84,23 @@ export const toolbox = {
     'contents': [
         {
             'kind': 'block',
-            'type': 'FindStatement'
+            'type': 'FindStatement1'
         }, 
         {
             'kind': 'block',
-            'type': 'GivenStatement'
+            'type': 'GivenStatement1'
         },
         {
             'kind': 'block',
-            'type': 'GivenEnum'
+            'type': 'GivenEnum1'
         }, 
         {
             'kind': 'block', 
-            'type': 'LettingEnum'
+            'type': 'LettingEnum1'
         },
         {
             'kind': 'block',
-            'type': 'LettingUnnamed'
+            'type': 'LettingUnnamed1'
         }, 
         {
             'kind': 'block',
@@ -104,6 +109,14 @@ export const toolbox = {
         {
             'kind': 'block',
             'type': 'math_number'
+        },
+        {
+            'kind': 'block',
+            'type': 'LettingStatement1'
+        },
+        {
+            'kind': 'block',
+            'type': 'LettingStatement2'
         }
     ]
 }

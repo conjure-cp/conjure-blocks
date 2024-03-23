@@ -13,7 +13,7 @@
 
 FindStatement := "find" Name ":" Domain
 GivenStatement := "given" Name ":" Domain
-!LettingStatement := "letting" Name "be" Expression | "letting" Name "be" "domain" Domain
+LettingStatement := "letting" Name "be" Expression | "letting" Name "be" "domain" Domain
 
 GivenEnum := "given" Name "new type enum"
 

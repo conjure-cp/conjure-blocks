@@ -138,7 +138,7 @@ const runCode = () => {
 };
 
 // Load the initial state from storage and run the code.
-ws.clear();
+
 load(ws);
 runCode();
 
