@@ -33,7 +33,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
-const ws = Blockly.inject(blocklyDiv, {toolbox});
+const ws = Blockly.inject(blocklyDiv, {toolbox, scrollbars:true});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
