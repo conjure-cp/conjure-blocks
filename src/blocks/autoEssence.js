@@ -132,7 +132,7 @@ function addTranslation(name, args, message){
         console.log(args[0]);
         for (let i = 1; i <= args.length; i++) {
               // no precedence currently
-            code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i], 0)}`);
+            code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1], 0)}`);
         }
         console.log("code " + code);
         return code;
