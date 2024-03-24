@@ -9,7 +9,6 @@
 
 import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
-//import {blocks} from './blocks/text';
 import {blocks} from './blocks/essence';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
@@ -18,7 +17,6 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
@@ -36,7 +34,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
@@ -203,60 +201,65 @@ async function get(currentJobid) {
 }
 
 // Runs essence code in conjure, outputs solution logs
-// from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
+// from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    // gets the data from the data input workspace
-    let data = jsonGenerator.workspaceToCode(dataWS) + "\n";
-    console.log("data" + data);
     solutionText.innerHTML = "Solving..."
-    // waits for code to be submitted to conjure, until jobID returned
-    const currentJobid = await submit(data); 
-    // get solution for our job. Need to wait until either solution found, code failed, or timed out
-    var solution = await get(currentJobid);
-    while (solution.status == 'wait'){
-      solution = await get(currentJobid);
-    } 
-    // outputs text solution
-    solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
-    
-    // if solved, create relevant blocks and add to output workspace
-    if (solution.status == "ok"){
-      for (let sol of solution.solution){
-        for (let v in sol){
-          blockOut.createVariable(v);
-          let varBlock = blockOut.newBlock('variables_set');
-          varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-          let valueBlock;
-          switch (typeof(sol[v])){
-            case("bigint"): 
-            case("number"): {
-                valueBlock = blockOut.newBlock('math_number');
-                valueBlock.setFieldValue(sol[v], "NUM");
-                break;
-            }
-            case("string"): {
-              console.log("enum");
-              valueBlock = blockOut.newBlock('text');
-              valueBlock.setFieldValue(sol[v], "TEXT");
-              break;
-            }
-            default:{
-              console.log("idk");
-              valueBlock = null;
-              break;
-            }
+    // gets the data from the data input workspace
+    let data = jsonGenerator.workspaceToCode(dataWS);
+    console.log("data " + data);
+    let code = essenceGenerator.workspaceToCode(ws);
+    console.log("code " + code);
+    const client = new ConjureClient("conjure-blocks");
+    client.solve(code, {data : data})
+      .then(result => outputSolution(result));   
+};
 
-          };
-          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
-          //let addVarBlock = new Blockly.Events.BlockCreate(varBlock);
-          //addVarBlock.run(true);
-          varBlock.initSvg();
-          valueBlock.initSvg();
-          blockOut.render();
-        }
+// outputs the solution in blocks, and outputs the log
+function outputSolution(solution) {
+  // make writable, so blocks line up nicely
+  blockOut.options = new Blockly.Options({readOnly: false});
+  solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+  // clear any blocks from previous runs
+  blockOut.clear();
+  // if solved, create relevant blocks and add to output workspace
+  if (solution.status == "ok"){
+    for (let sol of solution.solution){
+      for (let v in sol){
+        blockOut.createVariable(v);
+        let varBlock = blockOut.newBlock('variables_set');
+        varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
+        let valueBlock;
+        switch (typeof(sol[v])){
+          case("bigint"): 
+          case("number"): {
+              console.log("number");
+              valueBlock = blockOut.newBlock('math_number');
+              valueBlock.setFieldValue(sol[v], "NUM");
+              break;
+          }
+          case("string"): {
+            console.log("enum");
+            valueBlock = blockOut.newBlock('text');
+            valueBlock.setFieldValue(sol[v], "TEXT");
+            break;
+          }
+          default:{
+            console.log("idk");
+            valueBlock = null;
+            break;
+          }
+
+        };
+        varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+        varBlock.initSvg();
+        valueBlock.initSvg();
+        blockOut.cleanUp();
+        blockOut.render();
       }
-      
-    }
+    }    
+    blockOut.options = new Blockly.Options({readOnly: true});
+  }
+ 
 }
 
 // generate essence file from generated code
