@@ -49,7 +49,7 @@ for (let b of usable){
         
 
         definition = definition.replaceAll(list, newList);
-        let quoted = /\"[\w\:\s]*\"/g;
+        let quoted = /\"[\w\:\s\(\)\.]*\"/g;
         let matches = definition.matchAll(quoted);
         let replaced = definition.replaceAll(quoted, "#");
         let argsTypes = replaced.matchAll(/\w+/g); 
