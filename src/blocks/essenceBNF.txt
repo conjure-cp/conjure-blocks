@@ -30,27 +30,14 @@ SuchThatStatement := "such that" list(Expression, ",")
 WhereStatement := "where" list(Expression, ",")
 
 ObjectiveStatement := "minimising" Expression  | "maximising" Expression
+=====
+Domain := "bool" | "int" list(Range, ",", "()") | "int" "(" Expression ")" | Name list(Range, ",", "()") | "tuple" list(Domain, ",", "()") | "record" list(NameDomain, ",", "{}") | "variant" list(NameDomain, ",", "{}") | "matrix indexed by" list(Domain, ",", "[]") "of" Domain | "set" list(Attribute, ",", "()") "of" Domain | "mset" list(Attribute, ",", "()") "of" Domain | "function" list(Attribute, ",", "()") Domain "-->" Domain | "sequence" list(Attribute, ",", "()") "of" Domain | "partition" list(Attribute, ",", "()") "from" Domain
 
-!Domain := "bool"
-!       | "int" list(Range, ",", "()")
-!        | "int" "(" Expression ")"
-!        | Name list(Range, ",", "()") # the Name refers to an enumerated type
-!        | Name                        # the Name refers to an unnamed type
-!      | "tuple" list(Domain, ",", "()")
-!        | "record" list(NameDomain, ",", "{}")
-!        | "variant" list(NameDomain, ",", "{}")
-!        | "matrix indexed by" list(Domain, ",", "[]") "of" Domain
-!        | "set" list(Attribute, ",", "()") "of" Domain
-!        | "mset" list(Attribute, ",", "()") "of" Domain
-!        | "function" list(Attribute, ",", "()") Domain "-->" Domain
-!        | "sequence" list(Attribute, ",", "()") "of" Domain
+!| Name                        
+! the Name refers to an unnamed type
 !        | "relation" list(Attribute, ",", "()") "of" list(Domain, "*", "()")
-!        | "partition" list(Attribute, ",", "()") "from" Domain
-
-!Range := Expression
-!       | Expression ".."
-!       | ".." Expression
-!       | Expression ".." Expression
+      
+Range := Expression | Expression ".." | ".." Expression | Expression ".." Expression
 
 !Attribute := Name
 !          | Name Expression
