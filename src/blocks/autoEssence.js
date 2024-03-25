@@ -3,77 +3,36 @@ import * as Blockly from 'blockly';
 import {essenceGen} from '../generators/essence';
 export const essenceGenerator = essenceGen;
 
-let lines = file.split("\r\n");
 
 let stages = ["statements", "values"];
 let stage = stages[0];
-let comment = /^!/;
-let usable = [];
-for (let s of lines){
-    if (! (comment.test(s)) & (s.trim() != '')) {
-        usable.push(s);
-    }
-}
-
-
 
 let blockArray = []
 
-let def = /\w+(?= :=)/;
+let usableLines = getUsableLines();
 
-for (let b of usable){
+for (let b of usableLines){
     if (b == "=====") {
         stage = stages[stages.indexOf(stage) + 1];
         continue;
     }
+   
+    let def = /\w+(?= :=)/;
     let name = def.exec(b);
-    let allDefinitions = b.slice(b.indexOf("=") + 1);
-    let definitions = allDefinitions.split("|");
+    let definitions = getDefinitions(b);
     let index = 1;
     for (let definition of definitions){
         // get list part and remove
-        let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g;
-        let lists = definition.matchAll(list);
-        let newList;
-        for (let l of lists){
-            if (l[0].includes("{}")){
-                newList = "{Array}";
-            } else if (l[0].includes("[]")){
-                newList = "[Array]";
-            } else if (l[0].includes("()")){
-                newList = "(Array)";
-            } else {
-                newList = "Array";
-            }
-        };
+        definition = dealWithLists(definition);
+        let metadata = getMessageAndArgs(definition);
+        let message = metadata[0];
+        let args = metadata[1];
         
-
-        definition = definition.replaceAll(list, newList);
-        let quoted = /\"[\w\:\s\(\)\.]*\"/g;
-        let matches = definition.matchAll(quoted);
-        let replaced = definition.replaceAll(quoted, "#");
-        let argsTypes = replaced.matchAll(/\w+/g); 
-        let argsReplaced = replaced;
-        let count = 1;
-        let args = []
-        for (let a of argsTypes){
-            argsReplaced = argsReplaced.replace(/([A-Z]|[a-z])+/, `%${count}`);
-            args.push(a[0].trim());
-            count++;
-        }
-        
-        let message = argsReplaced;
-        for (let m of matches) {
-            message = message.replace(/#/, m);
-        }
-        message = message.replaceAll(/"/g, "");
-
         // diff block types
         if (stage == "statements") {
             blockArray.push(createBlockJSON(name[0].trim()+index, message.trim(), args));
             addTranslation(name[0].trim()+index, args, message.trim());
         } else if (stage == "values") {
-            console.log("name:",  name);
             blockArray.push(createValueJSON(name[0].trim()+index, message.trim(), args));
             addValueTranslation(name[0].trim()+index, args, message.trim());
         }
@@ -184,4 +143,69 @@ function getToolBoxJSON(blockArray) {
         'kind': 'flyoutToolbox',
         'contents': contentArray
     };
+
+}
+
+function getUsableLines() {
+    let lines = file.split("\r\n");
+    let comment = /^!/;
+    let usable = [];
+    for (let s of lines){
+        if (! (comment.test(s)) & (s.trim() != '')) {
+            usable.push(s);
+        }
+    }
+
+    return usable;
+}
+
+function getDefinitions(line) {
+    let allDefinitions = line.slice(line.indexOf("=") + 1);
+    let definitions = allDefinitions.split("|");
+    return definitions;
+}
+
+function dealWithLists(definition) {
+    let list = /list\([\w\d\s,"{}\[\]\(\)]+\)/g;
+    let lists = definition.matchAll(list);
+    let newList;
+    for (let l of lists){
+        if (l[0].includes("{}")){
+            newList = "{Array}";
+        } else if (l[0].includes("[]")){
+            newList = "[Array]";
+        } else if (l[0].includes("()")){
+            newList = "(Array)";
+        } else {
+            newList = "Array";
+        }
+    };
+        
+
+    definition = definition.replaceAll(list, newList);
+    return definition;
+}
+
+function getMessageAndArgs(definition){
+    let quoted = /\"[\w\:\s\(\)\.]*\"/g;
+    let matches = definition.matchAll(quoted);
+    // replace quoted parts with #, so can replace words not # into arg stand ins - %1 etc (and get the type for them)
+    let replaced = definition.replaceAll(quoted, "#");
+    let argsTypes = replaced.matchAll(/\w+/g); 
+    let argsReplaced = replaced;
+    let count = 1;
+    let args = []
+    for (let a of argsTypes){
+        argsReplaced = argsReplaced.replace(/([A-Z]|[a-z])+/, `%${count}`);
+        args.push(a[0].trim());
+        count++;
+    }
+    
+    // replace the text back into the message
+    let message = argsReplaced;
+    for (let m of matches) {
+        message = message.replace(/#/, m);
+    }
+    message = message.replaceAll(/"/g, "");
+    return [message, args];
 }
