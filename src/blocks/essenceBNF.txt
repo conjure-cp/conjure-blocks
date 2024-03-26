@@ -1,16 +1,3 @@
-!Statement := DeclarationStatement
-!           | BranchingStatement
-!           | SuchThatStatement
-!           | WhereStatement
-!           | ObjectiveStatement
-
-!DeclarationStatement := FindStatement
-!                      | GivenStatement
-!                      | LettingStatement
-!                      | GivenEnum
-!                      | LettingEnum
-!                     | LettingUnnamed
-
 FindStatement := "find" Name ":" Domain
 GivenStatement := "given" Name ":" Domain
 LettingStatement := "letting" Name "be" Expression | "letting" Name "be" "domain" Domain
@@ -51,3 +38,13 @@ NameDomain := Name ":" Domain
 !            | Operator
 
 !Operator := ...
+
+=====
+
+Statement := DeclarationStatement | BranchingStatement | SuchThatStatement | WhereStatement | ObjectiveStatement
+
+DeclarationStatement := FindStatement  | GivenStatement | LettingStatement | GivenEnum | LettingEnum | LettingUnnamed
+
+!Added this to get own domain category
+
+Domains := Domain

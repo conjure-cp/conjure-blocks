@@ -4,10 +4,12 @@ import {essenceGen} from '../generators/essence';
 export const essenceGenerator = essenceGen;
 
 
-let stages = ["statements", "values"];
+let stages = ["statements", "values", "categories"];
 let stage = stages[0];
 
-let blockArray = []
+let blockArray = [];
+let usedBlocks  = [];
+let categories = {};
 
 let usableLines = getUsableLines();
 
@@ -16,35 +18,66 @@ for (let b of usableLines){
         stage = stages[stages.indexOf(stage) + 1];
         continue;
     }
+
+   
    
     let def = /\w+(?= :=)/;
     let name = def.exec(b);
     let definitions = getDefinitions(b);
-    let index = 1;
-    for (let definition of definitions){
-        // get list part and remove
-        definition = dealWithLists(definition);
-        let metadata = getMessageAndArgs(definition);
-        let message = metadata[0];
-        let args = metadata[1];
-        
-        // diff block types
-        if (stage == "statements") {
-            blockArray.push(createBlockJSON(name[0].trim()+index, message.trim(), args));
-            addTranslation(name[0].trim()+index, args, message.trim());
-        } else if (stage == "values") {
-            blockArray.push(createValueJSON(name[0].trim()+index, message.trim(), args));
-            addValueTranslation(name[0].trim()+index, args, message.trim());
+   
+    if (stage == "statements" || stage == "values") {
+        let index = 1;
+        for (let definition of definitions){
+            // get list part and remove
+            definition = dealWithLists(definition);
+            let metadata = getMessageAndArgs(definition);
+            let message = metadata[0];
+            let args = metadata[1];
+            
+            // diff block types
+            if (stage == "statements") {
+                blockArray.push(createBlockJSON(name[0].trim()+index, message.trim(), args));
+                addTranslation(name[0].trim()+index, args, message.trim());
+            } else if (stage == "values") {
+                blockArray.push(createValueJSON(name[0].trim()+index, message.trim(), args));
+                addValueTranslation(name[0].trim()+index, args, message.trim());
+            }
+            
+            index++;
         }
-        
-        index++;
+    } else {
+        let contents = [];
+        for (let d of definitions) {
+            d = d.trim();
+            if (categories[d] == null){
+                for (let b of blockArray) {
+                    if (b.type.includes(d)) {
+                        contents.push({
+                        "kind" : "block",
+                        "type": b.type
+                        });
+                        usedBlocks.push(b);
+                    }
+                }   
+            } else {
+                contents.push({
+                    "kind": "category",
+                    "name": d,
+                    "contents": categories[d]
+                })
+                categories[d] = null;
+                
+            }
+        }
+        let type = name[0].trim();
+        categories[type] = contents;        
     }
 }
 
-
+console.log(categories);
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
 //auto gen this too soon.
-let toolboxJSON = getToolBoxJSON(blockArray);
+let toolboxJSON = getToolBoxJSON();
 export const toolbox = toolboxJSON;
 
 function createBlockJSON(name, message, args){
@@ -122,28 +155,51 @@ function addValueTranslation(name, args, message){
     };
 }
 
-function getToolBoxJSON(blockArray) {
-    let contentArray = [];
-    contentArray.push({
-        'kind': 'block',
-        'type': 'math_number'
-    });
-    contentArray.push({
-        'kind': 'block',
-        'type': 'lists_create_with'
-    });
-
-    for (let block of blockArray){
-        contentArray.push({
-            'kind': 'block',
-            'type': block.type
-        })
+function getToolBoxJSON() {
+    let othercontent = [];
+    for (let b of blockArray){
+        if (!(usedBlocks.includes(b))){
+            othercontent.push({
+                "kind": "block",
+                "type": b.type
+            });
+        }
     }
-    return {
-        'kind': 'flyoutToolbox',
-        'contents': contentArray
+
+    let toolbox = {
+        "kind": "categoryToolbox",
+        "contents": [
+            {
+                "kind": "category",
+                "name": "core",
+                "contents": [
+                    {
+                        'kind': 'block',
+                        'type': 'math_number'
+                    },
+                    {
+                        'kind': 'block',
+                        'type': 'lists_create_with'
+                    }
+                ]
+            },
+            {
+                "kind": "category",
+                "name": "other",
+                "contents": othercontent
+            }
+        ]
+
     };
 
+    for (let c in categories){
+        toolbox.contents.push({
+            "kind": "category",
+            "name": c,
+            "contents": categories[c]
+        });
+    }
+    return toolbox;
 }
 
 function getUsableLines() {
