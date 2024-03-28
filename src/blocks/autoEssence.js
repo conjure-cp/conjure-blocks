@@ -77,7 +77,20 @@ for (let b of usableLines){
 let toolboxJSON = getToolBoxJSON();
 export const toolbox = toolboxJSON;
 addTypeChecks();
+blockArray.push({"type": "variables_get",
+"message0": "%1",
+"args0": [
+  {    // Beginning of the field variable dropdown
+    "type": "field_variable",
+    "name": "VAR",    // Static name of the field
+    "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"    // Given at runtime
+  }    // End of the field variable dropdown
+],
+"output": "Name"
+});
+
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
+console.log(blockArray);
 
 function createBlockJSON(name, message, args){
     let jsonArgs = [];
@@ -88,6 +101,9 @@ function createBlockJSON(name, message, args){
         }
         if (a == "Array"){
             json.check = "Array";
+        }
+        if (a == "Name"){
+            json.check = "Name";
         }
 
         jsonArgs.push(json);
@@ -115,6 +131,9 @@ function createValueJSON(name, message, args){
         }
         if (a == "Array"){
             json.check = "Array";
+        }
+        if (a == "Name"){
+            json.check = "Name";
         }
 
         jsonArgs.push(json);
@@ -182,6 +201,12 @@ function getToolBoxJSON() {
                     }
                 ]
             },
+            // use built in variable category
+            {
+                "kind": "category",
+                "name": "Variables",
+                "custom": "VARIABLES"
+            },
             {
                 "kind": "category",
                 "name": "other",
@@ -213,7 +238,7 @@ function addTypeChecks() {
                 }
             } else {
                 for (let bl of blockArray){
-                    if (bl.type.startsWith(type)){
+                    if (type != "Name" && type != "Array" && bl.type.startsWith(type)){
                         inputTypes.push(bl.type);
                     }
                 }

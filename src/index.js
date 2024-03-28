@@ -42,31 +42,36 @@ dataWS.render()
 
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
 
-//variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
-// much of the code below is from the usage instructions
-/*
+
 const createFlyout = function (ws) {
-  let xmlList = [];
+  let jsonList = [];
+  let button = {
+    "kind": "button",
+    "text": "Create Variable",
+    "callbackKey": "variableButton"
+  }
+  jsonList.push(button);
   // Add your button and give it a callback name.
-  const button = document.createElement('button');
-  button.setAttribute('text', 'Create Typed Variable');
-  button.setAttribute('callbackKey', 'callbackName');
-
-  xmlList.push(button);
-
+  jsonList.push({
+    'kind': 'block',
+    'type': 'variables_get'
+  })
   // This gets all the variables that the user creates and adds them to the
-  // flyout.
-  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
-  xmlList = xmlList.concat(blockList);
-  // adjust so forced to set variables by declarations.
-  xmlList.splice(1,1)
-  return xmlList;
+  
+  return jsonList;
 };
 
+const varCallBack = function () {
+  Blockly.Variables.createVariableButtonHandler(ws, null, 'Name');
+}
+
 ws.registerToolboxCategoryCallback(
-  'CREATE_TYPED_VARIABLE',
+  'VARIABLES',
   createFlyout,
 );
+ws.registerButtonCallback("variableButton", varCallBack);
+
+/*
 
 // adding variable category to data input WS
 const createDataFlyout = function ()  {
@@ -91,20 +96,26 @@ const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
   ['unnamed', 'unnamed']
 ]);
 typedVarModal.init();
+*/
+
 
 // generators for get variable block
-essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
+
+essenceGenerator.forBlock['variables_get'] = function(block) {
   var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
 
-jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
+
+/*
+jsonGenerator.forBlock['variables_get'] = function(block) {
   var vars = block.getVars()
   const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
 */
+
 //add output button
 var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("SOLVE");
