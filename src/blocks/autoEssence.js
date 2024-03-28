@@ -51,7 +51,7 @@ for (let b of usableLines){
             d = d.trim();
             if (categories[d] == null){
                 for (let b of blockArray) {
-                    if (b.type.includes(d)) {
+                    if (b.type.startsWith(d)) {
                         contents.push({
                         "kind" : "block",
                         "type": b.type
@@ -74,11 +74,10 @@ for (let b of usableLines){
     }
 }
 
-console.log(categories);
-export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
-//auto gen this too soon.
 let toolboxJSON = getToolBoxJSON();
 export const toolbox = toolboxJSON;
+addTypeChecks();
+export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
 
 function createBlockJSON(name, message, args){
     let jsonArgs = [];
@@ -112,7 +111,7 @@ function createValueJSON(name, message, args){
     for (let a of args){
         let json = { 
             "type": "input_value",
-            "name": a
+            "name": a,
         }
         if (a == "Array"){
             json.check = "Array";
@@ -125,7 +124,7 @@ function createValueJSON(name, message, args){
         "type": name,
         "message0": message,
         "args0": jsonArgs,
-        "output": null,
+        "output": name,
         "inputsInline": true,
         "colour": 290,
         "tooltip": "",
@@ -200,6 +199,31 @@ function getToolBoxJSON() {
         });
     }
     return toolbox;
+}
+
+function addTypeChecks() {
+    for (let b of blockArray){
+        let inputTypes = [];
+        for (let a of b.args0){
+            let type = a.name;
+            // adds all 
+            if (categories[type] != null){
+                for (let t in categories[type]){
+                    inputTypes.push(t.type);
+                }
+            } else {
+                for (let bl of blockArray){
+                    if (bl.type.startsWith(type)){
+                        inputTypes.push(bl.type);
+                    }
+                }
+            }
+            if (inputTypes.length > 0){
+                a['check'] = inputTypes;
+            }
+            
+        }
+    }
 }
 
 function getUsableLines() {
