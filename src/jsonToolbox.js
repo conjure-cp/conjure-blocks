@@ -36,9 +36,9 @@ export const jsonToolbox = {
     },
   ]}, 
   {
-    'kind': 'category',
-    'name': 'Variables',
-    'custom': 'GET_VARIABLE'
+    "kind": "category",
+    "name": "Variables",
+    "custom": "VARIABLES"
   }
 ]
 }

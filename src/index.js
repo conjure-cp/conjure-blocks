@@ -43,7 +43,7 @@ dataWS.render()
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly:true});
 
 
-const createFlyout = function (ws) {
+const createFlyout = function () {
   let jsonList = [];
   let button = {
     "kind": "button",
@@ -63,6 +63,18 @@ const createFlyout = function (ws) {
 
 const varCallBack = function () {
   Blockly.Variables.createVariableButtonHandler(ws, null, 'Name');
+  let wsVariables = ws.getAllVariableNames();
+  let dataWSVariables = dataWS.getAllVariableNames();
+  for (let v of wsVariables){
+    if (!(dataWSVariables.includes(v))){
+        dataWS.createVariable(v, "Name");
+    }
+  }
+  for (let v of dataWSVariables){
+    if (!(wsVariables.includes(v))){
+        ws.createVariable(v, "Name");
+    }
+  }
 }
 
 ws.registerToolboxCategoryCallback(
@@ -71,6 +83,11 @@ ws.registerToolboxCategoryCallback(
 );
 ws.registerButtonCallback("variableButton", varCallBack);
 
+dataWS.registerToolboxCategoryCallback(
+  'VARIABLES',
+  createFlyout,
+);
+dataWS.registerButtonCallback("variableButton", varCallBack);
 /*
 
 // adding variable category to data input WS
