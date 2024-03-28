@@ -22,7 +22,6 @@ import { toolbox } from './blocks/autoEssence';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import './blocks/autoEssence'
-import { variables } from 'blockly/blocks';
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
@@ -51,7 +50,7 @@ const createFlyout = function () {
     "callbackKey": "variableButton"
   }
   jsonList.push(button);
-  // Add your button and give it a callback name.
+
   jsonList.push({
     'kind': 'block',
     'type': 'variables_get'
@@ -70,11 +69,7 @@ const varCallBack = function () {
         dataWS.createVariable(v, "Name");
     }
   }
-  for (let v of dataWSVariables){
-    if (!(wsVariables.includes(v))){
-        ws.createVariable(v, "Name");
-    }
-  }
+  
 }
 
 ws.registerToolboxCategoryCallback(
