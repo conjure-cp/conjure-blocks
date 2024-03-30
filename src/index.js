@@ -120,13 +120,13 @@ essenceGenerator.forBlock['variables_get'] = function(block) {
 }
 
 
-/*
+
 jsonGenerator.forBlock['variables_get'] = function(block) {
   var vars = block.getVars()
   const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
-*/
+
 
 //add output button
 var outputButton = document.createElement("BUTTON");

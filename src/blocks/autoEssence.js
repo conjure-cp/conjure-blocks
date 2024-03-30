@@ -99,10 +99,10 @@ function createBlockJSON(name, message, args){
             "type": "input_value",
             "name": a
         }
-        if (a == "Array"){
+        if (a.trim() == "Array"){
             json.check = "Array";
         }
-        if (a == "Name"){
+        if (a.trim() == "Name"){
             json.check = "Name";
         }
 
@@ -129,10 +129,10 @@ function createValueJSON(name, message, args){
             "type": "input_value",
             "name": a,
         }
-        if (a == "Array"){
+        if (a.trim() == "Array"){
             json.check = "Array";
         }
-        if (a == "Name"){
+        if (a.trim() == "Name"){
             json.check = "Name";
         }
 
@@ -230,7 +230,7 @@ function addTypeChecks() {
     for (let b of blockArray){
         let inputTypes = [];
         for (let a of b.args0){
-            let type = a.name;
+            let type = a.name.trim();
             // adds all 
             if (categories[type] != null){
                 for (let t in categories[type]){
@@ -302,7 +302,11 @@ function getMessageAndArgs(definition){
     let args = []
     for (let a of argsTypes){
         argsReplaced = argsReplaced.replace(/([A-Z]|[a-z])+/, `%${count}`);
-        args.push(a[0].trim());
+        let newArg = a[0].trim();
+        while (args.includes(newArg)){
+            newArg = newArg + " ";
+        }
+        args.push(newArg);
         count++;
     }
     
