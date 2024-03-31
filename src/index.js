@@ -8,16 +8,11 @@
  */
 
 import * as Blockly from 'blockly';
-//import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
-//import {blocks} from './blocks/text';
-//import {blocks} from './blocks/essence';
 import {blocks} from './blocks/autoEssence';
 import {jsonBlocks} from './blocks/json';
-//import {essenceGenerator} from './generators/essence';
 import {essenceGenerator} from './blocks/autoEssence';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
-//import {toolbox} from './toolbox';
 import { toolbox } from './blocks/autoEssence';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
@@ -55,7 +50,6 @@ const createFlyout = function () {
     'kind': 'block',
     'type': 'variables_get'
   })
-  // This gets all the variables that the user creates and adds them to the
   
   return jsonList;
 };
@@ -83,33 +77,6 @@ dataWS.registerToolboxCategoryCallback(
   createFlyout,
 );
 dataWS.registerButtonCallback("variableButton", varCallBack);
-/*
-
-// adding variable category to data input WS
-const createDataFlyout = function ()  {
-  let xmlList = [];
-  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
-  xmlList = xmlList.concat(blockList);
-   // adjust so forced to set variables by declarations.
-  xmlList.splice(0,1);
-  return xmlList;
-};
-
-
-dataWS.registerToolboxCategoryCallback(
-  'GET_VARIABLE',
-  createDataFlyout,
-);
-
-// setting up typed var model
-const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
-  ['int', 'int'],
-  ['enum', 'enum'],
-  ['unnamed', 'unnamed']
-]);
-typedVarModal.init();
-*/
-
 
 // generators for get variable block
 
@@ -118,8 +85,6 @@ essenceGenerator.forBlock['variables_get'] = function(block) {
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
-
-
 
 jsonGenerator.forBlock['variables_get'] = function(block) {
   var vars = block.getVars()

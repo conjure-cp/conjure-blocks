@@ -1,7 +1,6 @@
 import file from './essenceBNF.txt';
 import * as Blockly from 'blockly';
-import {essenceGen} from '../generators/essence';
-export const essenceGenerator = essenceGen;
+export const essenceGenerator = new Blockly.Generator('essence');
 
 
 let stages = ["statements", "values", "categories"];
@@ -90,7 +89,6 @@ blockArray.push({"type": "variables_get",
 });
 
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray(blockArray);
-console.log(blockArray);
 
 function createBlockJSON(name, message, args){
     let jsonArgs = [];
@@ -198,6 +196,10 @@ function getToolBoxJSON() {
                     {
                         'kind': 'block',
                         'type': 'lists_create_with'
+                    },
+                    {
+                        'kind': 'block',
+                        'type': 'text'
                     }
                 ]
             },
@@ -318,3 +320,38 @@ function getMessageAndArgs(definition){
     message = message.replaceAll(/"/g, "");
     return [message, args];
 }
+
+essenceGenerator.scrub_ = function(block, code, thisOnly) {
+    const nextBlock =
+        block.nextConnection && block.nextConnection.targetBlock();
+    if (nextBlock && !thisOnly) {
+      return code + '\n' + essenceGenerator.blockToCode(nextBlock);
+    }
+    return code;
+};
+
+essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
+    const values = [];
+  for (let i = 0; i < block.itemCount_; i++) {
+    const valueCode = generator.valueToCode(block, 'ADD' + i,
+        Order.ATOMIC);
+    if (valueCode) {
+      values.push(valueCode);
+    }
+  }
+  const valueString = values.join(', ');
+  const codeString = `${valueString}`;
+  return [codeString, 0];
+};
+
+essenceGenerator.forBlock['math_number'] = function(block) {
+    const code = String(block.getFieldValue('NUM'));
+    return [code, 0];
+};
+
+
+essenceGenerator.forBlock['text'] = function(block) {
+    const textValue = block.getFieldValue('TEXT');
+    const code = `${textValue}`;
+    return [code, 0];
+};
