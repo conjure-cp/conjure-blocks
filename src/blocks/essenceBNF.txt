@@ -37,7 +37,13 @@ NameDomain := Name ":" Domain
 !            | Comprehension Expression [GeneratorOrCondition]
 !            | Operator
 
-!Operator := ...
+Boolean := Expression "/\" Expression | Expression "\/" Expression | Expression "->" Expression | Expression "<->" Expression | "!" Expression
+
+Arithmetic := Expression "+" Expression |  Expression "-" Expression |  Expression "*" Expression |  Expression "/" Expression |  Expression "%" Expression |  Expression "**" Expression | "-" Expression | Expression "!"
+! doesn't allow bars for abs value
+
+Comparions := Expression ">" Expression | Expression ">=" Expression | Expression "<" Expression | Expression "<=" Expression | Expression "=" Expression | Expression "!=" Expression
+
 
 =====
 
@@ -48,3 +54,5 @@ DeclarationStatement := FindStatement  | GivenStatement | LettingStatement | Giv
 !Added this to get own domain category
 
 Domains := Domain
+
+Operations := Boolean | Arithmetic | Comparions
