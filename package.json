@@ -15,7 +15,7 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "css-loader": "^7.1.1",
+    "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.5.0",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
@@ -24,7 +24,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@blockly/plugin-typed-variable-modal": "^7.0.13",
-    "blockly": "^10.4.3"
+    "@blockly/plugin-typed-variable-modal": "^8.0.1",
+    "blockly": "^11.1.0"
   }
 }
