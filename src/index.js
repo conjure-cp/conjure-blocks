@@ -29,6 +29,7 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
+
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
