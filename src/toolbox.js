@@ -7,6 +7,7 @@
  * EDITED by N-J-Martin
  */
 
+//  kept original toolbox for reference, use one below
 /*
 This toolbox contains nearly every single built-in block that Blockly offers,
 in addition to the custom block 'add_text' this sample app adds.
@@ -719,7 +720,7 @@ listed here.
 };
 */
 
-
+// use this 
 
 export const toolbox = {
   'kind': 'categoryToolbox',
