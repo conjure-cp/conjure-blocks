@@ -17,11 +17,11 @@ README.md adapted from the README from the sample app.
 ### Source Code
 
 - `index.html` contains the skeleton HTML for the page. This file is modified during the build to import the bundled source code output by webpack.
-- `index.js` is the entry point of the app. It configures Blockly and sets up the page to show the blocks, the generated code, and the output of running the code in JavaScript.
+- `index.js` is the entry point of the app. It configures Blockly and sets up the page to show the essence blocks, data input window, generated essence code, and block solution
 - `serialization.js` has code to save and load the workspace using the browser's local storage. This is how your workspace is saved even after refreshing or leaving the page. You could replace this with code that saves the user's data to a cloud database instead.
-- `toolbox.js` contains the toolbox definition for the app. The current toolbox contains nearly every block that Blockly provides out of the box. You probably want to replace this definition with your own toolbox that uses your custom blocks and only includes the default blocks that are relevant to your application.
+- `toolbox.js` the original toolbox has been replaced by Essence-specific blocks
 - `blocks/essence.js` has code for custom Essence blocks
-- `generators/javascript.js` contains the JavaScript generator for the custom text block. You'll need to include block generators for any custom blocks you create, in whatever programming language(s) your application will use.
+- `generators/json.js` contains the JavaScript generator for block data input window
 - `generators/essence.js` contains Essence generator for Essence blocks.
 
 ## Serving

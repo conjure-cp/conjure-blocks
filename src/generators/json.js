@@ -1,5 +1,5 @@
 // A variation of code from https://blocklycodelabs.dev/codelabs/custom-generator/index.html?index=..%2F..index#
-// JSON translation also needed, not necessarily Essence specific
+// JSON translation also needed for block data input
 
 import * as Blockly from 'blockly';
 
