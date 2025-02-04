@@ -3,7 +3,7 @@
  */
 
 import * as Blockly from 'blockly';
-
+// JSON for essence-specific blocks
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
   {
     "type": "int_range",
