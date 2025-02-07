@@ -24,6 +24,9 @@ const Order = {
 
 };
 
+
+// generator functions for essence specific blocks 
+
 essenceGenerator.forBlock['math_number'] = function(block) {
     const code = String(block.getFieldValue('NUM'));
     return [code, Order.ATOMIC];
