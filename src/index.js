@@ -18,6 +18,12 @@ import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 
+// grammar testing
+const grammar = require('./grammar');
+console.log(grammar.rules.abs_value.apply());
+console.log(typeof(grammar.rules.abs_value));
+
+
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
 Blockly.common.defineBlocks(jsonBlocks);
