@@ -18,10 +18,10 @@ import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import { rules } from './blocks/automatedBlocks';
+import { basic } from './predefinedFunctions';
 console.log(rules);
-const temp = {}
-temp.expression = 'e';
-console.log(rules.abs_value(temp));
+
+console.log(rules.abs_value(basic));
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
