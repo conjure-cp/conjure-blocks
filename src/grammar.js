@@ -1,6 +1,6 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), laso consider installing treesitter, might be more readable
-
-module.exports = {
+import { seq} from "./predefinedFunctions";
+export const grammar =  {
   name: 'essence',
 
   extras: $ => [
@@ -205,3 +205,10 @@ module.exports = {
     )
   }
 }
+
+/*
+const seq = function(a, b, c) {
+  console.log("seq 2 called");
+  return 0;
+}
+  */

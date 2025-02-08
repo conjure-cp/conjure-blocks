@@ -17,12 +17,11 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-
-// grammar testing
-const grammar = require('./grammar');
-console.log(grammar.rules.abs_value.apply());
-console.log(typeof(grammar.rules.abs_value));
-
+import { rules } from './blocks/automatedBlocks';
+console.log(rules);
+const temp = {}
+temp.expression = 'e';
+console.log(rules.abs_value(temp));
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
