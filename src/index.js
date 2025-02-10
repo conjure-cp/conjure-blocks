@@ -21,7 +21,10 @@ import { rules } from './blocks/automatedBlocks';
 import { basic } from './predefinedFunctions';
 console.log(rules);
 
-console.log(rules.abs_value(basic));
+//console.log(rules.abs_value(basic));
+for (let r in rules){
+  console.log(rules[r](basic));
+}
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
