@@ -18,12 +18,12 @@ import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import { rules } from './blocks/automatedBlocks';
-import { basic } from './predefinedFunctions';
 console.log(rules);
 
 //console.log(rules.abs_value(basic));
+//basic = {}
 for (let r in rules){
-  console.log(rules[r](basic));
+  console.log(rules[r](rules))
 }
 
 // Register the blocks and generator with Blockly
