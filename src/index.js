@@ -17,14 +17,7 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import { rules } from './blocks/automatedBlocks';
-console.log(rules);
-
-//console.log(rules.abs_value(basic));
-//basic = {}
-for (let r in rules){
-  console.log(rules[r](rules))
-}
+import {autoBlocks} from './blocks/automatedBlocks'
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(blocks);
