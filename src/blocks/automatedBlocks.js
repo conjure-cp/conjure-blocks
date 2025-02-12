@@ -1,4 +1,4 @@
-import { blocks } from 'blockly/blocks';
+import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
 const rules = grammar.rules;
 const autoBlocks = [];
@@ -11,8 +11,11 @@ for (let r in rules){
     //console.log(rules[r](rules))
     const block = {};
     block.type = r;
-    block.message0 = rules[r](rules);
+    block.message0 = rules[r](rules).toString();
     block.output = null; 
+    block.colour = 100;
+    block.tooltip = "";
+    block.helpUrl = "";
     autoBlocks.push(block);
 }
 
@@ -41,4 +44,4 @@ export const autoToolbox = {
 };
 
 
-export const essenceBlocks = autoBlocks;
+export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
