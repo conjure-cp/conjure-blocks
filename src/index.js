@@ -9,7 +9,7 @@
 
 import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
-import {blocks} from './blocks/essence';
+//import {blocks} from './blocks/essence';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './generators/essence';
 import {jsonGenerator} from './generators/json';
@@ -17,10 +17,11 @@ import {save, load} from './serialization';
 import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import {autoBlocks} from './blocks/automatedBlocks'
+import {essenceBlocks} from './blocks/automatedBlocks';
+import { autoToolbox } from './blocks/automatedBlocks';
 
 // Register the blocks and generator with Blockly
-Blockly.common.defineBlocks(blocks);
+Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
@@ -28,7 +29,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
-const ws = Blockly.inject(blocklyDiv, {toolbox});
+const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 
 // adds start block to data input section
@@ -58,6 +59,7 @@ const createFlyout = function (ws) {
   xmlList.splice(1,1)
   return xmlList;
 };
+
 
 ws.registerToolboxCategoryCallback(
   'CREATE_TYPED_VARIABLE',

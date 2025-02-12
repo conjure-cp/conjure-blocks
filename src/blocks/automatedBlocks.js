@@ -16,6 +16,29 @@ for (let r in rules){
     autoBlocks.push(block);
 }
 
-console.log(autoBlocks)
+console.log(autoBlocks);
 
-export default autoBlocks;
+const toolboxContents = [];
+
+for (let b of autoBlocks) {
+    const def = {}
+    def.kind = 'block';
+    def.type = b.type;
+    toolboxContents.push(def);
+}
+
+console.log(toolboxContents);
+
+export const autoToolbox = {
+    'kind': 'categoryToolbox',
+    'contents': [
+        {
+            'kind': 'category',
+            'name':'all',
+            'contents': toolboxContents
+        }
+    ]
+};
+
+
+export const essenceBlocks = autoBlocks;
