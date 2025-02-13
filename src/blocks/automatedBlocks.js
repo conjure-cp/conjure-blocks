@@ -4,14 +4,22 @@ const rules = grammar.rules;
 const autoBlocks = [];
 console.log(rules);
 
+
 //console.log(rules.abs_value(basic));
 //basic = {}
 //console.log(rules.TRUE(rules))
 for (let r in rules){
     //console.log(rules[r](rules))
     const block = {};
+    let item = rules[r](rules);
+    if (typeof(item) != String){
+        console.log(item)
+        block.message0 = item.message;
+        block.args0 = item.args;
+    } else {
+        block.message0= item.toString();
+    }
     block.type = r;
-    block.message0 = rules[r](rules).toString();
     block.output = r; 
     autoBlocks.push(block);
 }

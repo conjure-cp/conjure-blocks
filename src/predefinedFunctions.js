@@ -1,5 +1,24 @@
 export const seq = function(...args) {
-    return "seq called"
+    const argCount = 1;
+    const messageArgs = [];
+    let message = "";
+    for (let a of args) {
+        if (typeof(a) == Function) {
+            message = message.concat("$"+argCount+" ");
+            messageArgs.push({
+                "type": "input_value",
+                "name": "VALUE"
+            });
+            argCount ++;
+        }else{
+            message = message.concat(a + " ");
+        }
+    }
+    
+    return {
+        "message": message.trimEnd(),
+        "args": messageArgs
+    };
 };
 
 export const repeat = function(arg) {
