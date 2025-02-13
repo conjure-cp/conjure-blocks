@@ -31,3 +31,7 @@ prec.left = function(...args) {
     return "prec left called"
 };
 
+prec.right = function(...args) {
+    return "prec right called"
+};
+

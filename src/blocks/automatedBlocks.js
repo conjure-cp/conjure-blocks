@@ -12,10 +12,7 @@ for (let r in rules){
     const block = {};
     block.type = r;
     block.message0 = rules[r](rules).toString();
-    block.output = null; 
-    block.colour = 100;
-    block.tooltip = "";
-    block.helpUrl = "";
+    block.output = r; 
     autoBlocks.push(block);
 }
 
@@ -31,6 +28,8 @@ for (let b of autoBlocks) {
 }
 
 console.log(toolboxContents);
+
+
 
 export const autoToolbox = {
     'kind': 'categoryToolbox',

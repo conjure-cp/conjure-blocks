@@ -13,7 +13,8 @@ export const grammar =  {
     //top level statements
     program: $ => repeat(choice(
       $.find_statement_list,
-      $.constraint_list
+      $.constraint_list,
+      $.letting_statement_list,
     )),
 
     single_line_comment: $ => token(seq('$', /.*/)),
@@ -33,17 +34,15 @@ export const grammar =  {
 
     FALSE: $ => "false",
 
-    variable: $ => $.identifier,
-
-    identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    variable: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),
 
     find_statement: $ => seq(
-      field("variable_list", $.variable_list),
+      $.variable_list,
       ":",
-      field("domain", $.domain),
+      $.domain,
       optional(",")
     ),
 
@@ -57,7 +56,8 @@ export const grammar =  {
 
     domain: $ => choice(
       $.bool_domain,
-      $.int_domain
+      $.int_domain,
+      $.variable
     ),
 
     bool_domain: $ => "bool",
@@ -66,7 +66,7 @@ export const grammar =  {
       "int", 
       optional(seq(
         "(",
-        field("range_list", $.range_list),
+        $.range_list,
         //TODO: eventually add in expressions here
         ")"
       ))
@@ -88,127 +88,69 @@ export const grammar =  {
 
     int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 
-    //constraints
-    constraint_list: $ => seq("such that", repeat($.constraint)),
+    //letting statements
+    letting_statement_list: $ => seq("letting", repeat($.letting_statement)),
 
-    constraint: $ => seq($.expression, optional(",")),
+    letting_statement: $ => seq(
+      $.variable_list,
+      "be",
+      choice($.expression, seq("domain", $.domain))
+    ),
+
+    //constraints
+    constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
 
     expression: $ => choice(
-      $.unary_minus_expr,
-      $.or_expr,
-      $.and_expr,
-      $.comparison,
-      $.math_expr,
+      seq("(", $.expression, ")"),
       $.not_expr,
-      $.sub_expr,
-      $.min,
-      $.max,
-      $.sum,
-      $.all_diff,
+      $.abs_value,
+      $.exponent,
+      $.negative_expr,
+      $.product_expr,
+      $.sum_expr,
+      $.comparison,
+      $.and_expr,
+      $.or_expr,
+      $.implication,
+      $.quantifier_expr,
       $.constant,
-      $.variable,
-      $.abs_value
+      $.variable
     ),
 
-    unary_minus_expr: $ => prec.left(seq("-", $.expression)),
+    not_expr: $ => prec(20, seq("!", $.expression)),
+
+    abs_value: $ => prec(20, seq("|", $.expression, "|")),
+
+    exponent: $ => prec(18, prec.right(seq($.expression, "**", $.expression))),
+
+    negative_expr: $ => prec(15, prec.left(seq("-", $.expression))),
+
+    product_expr: $ => prec(10, prec.left(seq($.expression, $.multiplicative_op, $.expression))),
     
-    or_expr: $ => prec.left(choice(
-      seq($.expression, "\\/", $.expression),
-      seq(
-        "or([",
-        repeat(seq(
-          $.expression,
-          optional(",")
-        )),
-        "])"
-      )
-    )),
+    multiplicative_op: $ => choice("*", "/", "%"),
 
-    and_expr: $ => prec.left(choice(
-      seq($.expression, "/\\", $.expression),
-      seq(
-        "and[",
-        repeat(seq(
-          $.expression,
-          optional(",")
-        )),
-        "])"
-      )
-    )),
+    sum_expr: $ => prec(1, prec.left(seq($.expression, $.additive_op, $.expression))),
 
-    comparison: $ => prec(1, prec.left(seq($.expression, $.comp_op, $.expression))),
+    additive_op: $ => choice("+", "-"), 
 
-    comp_op: $ => choice(
-      "=",
-      "!=",
-      "<=",
-      ">=",
-      "<",
-      ">",
-      "->"
-    ),
+    comparison: $ => prec(0, prec.left(seq($.expression, $.comp_op, $.expression))),
 
-    math_expr: $ => prec(2, prec.left(seq($.expression, $.math_op, $.expression))),
+    comp_op: $ => choice("=", "!=", "<=", ">=", "<", ">"),
 
-    math_op: $ => choice(
-      "+",
-      "-",
-      "*",
-      "/", 
-      "%"
-    ),
+    and_expr: $ => prec(-1, prec.left(seq($.expression, "/\\", $.expression))),
+    
+    or_expr: $ => prec(-2, prec.left(seq($.expression, "\\/", $.expression))),
 
-    not_expr: $ => prec(2, prec.left(seq("!", $.expression))),
+    implication: $ => prec(-4, prec.left(seq($.expression, "->", $.expression))),
 
-    sub_expr: $ => seq("(", $.expression, ")"),
-
-    min: $ => seq(
-      "min([",
-      repeat(seq(
-        choice($.variable, $.constant),
-        ","
-      )),
-      "])"
-    ),
-
-    max: $ => seq(
-      "max([",
-      repeat(seq(
-        choice($.variable, $.constant),
-        ","
-      )),
-      "])"
-    ),
-
-    sum: $ => seq(
-      "sum([",
+    quantifier_expr: $ => prec(-10, seq(
+      choice("and", "or", "min", "max", "sum", "allDiff"),
+      "([",
       repeat(seq(
         $.expression,
         optional(",")
       )),
       "])"
-    ),
-
-    all_diff: $ => seq(
-      "allDiff([",
-      repeat(seq(
-        $.expression,
-        optional(",")
-      )),
-      "])"
-    ),
-
-    abs_value: $ => seq(
-      "|",
-      $.expression,
-      "|"
-    )
+    )),
   }
-}
-
-/*
-const seq = function(a, b, c) {
-  console.log("seq 2 called");
-  return 0;
-}
-  */
+};
