@@ -20,7 +20,7 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-    return "repeat called"
+    return arg
 };
 
 export const choice = function(...args) {
@@ -36,7 +36,7 @@ export const field = function(name, rule) {
 };
 
 export const optional = function(arg) {
-    return "optional called"
+    return arg;
 };
 
 
