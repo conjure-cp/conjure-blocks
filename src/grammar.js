@@ -11,16 +11,16 @@ export const grammar =  {
 
   rules: {
     //top level statements
-    program: $ => repeat(choice(
+    /*program: $ => repeat(choice(
       $.find_statement_list,
       $.constraint_list,
       $.letting_statement_list,
     )),
+    */
+    //single_line_comment: $ => token(seq('$', /.*/)),
 
-    single_line_comment: $ => token(seq('$', /.*/)),
-
-    e_prime_label: $ => token("language ESSENCE' 1.0"),
-
+    //e_prime_label: $ => token("language ESSENCE' 1.0"),
+    
     //general
     constant: $ => choice(
       $.integer,

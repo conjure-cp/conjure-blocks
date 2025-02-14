@@ -20,7 +20,7 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-    return arg
+    return "repeat called"
 };
 
 export const choice = function(...args) {
