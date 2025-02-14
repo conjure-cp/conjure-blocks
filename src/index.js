@@ -11,7 +11,7 @@ import * as Blockly from 'blockly';
 import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
 //import {blocks} from './blocks/essence';
 import {jsonBlocks} from './blocks/json';
-import {essenceGenerator} from './generators/essence';
+import {essenceGenerator} from './blocks/automatedBlocks';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 import {toolbox} from './toolbox';
