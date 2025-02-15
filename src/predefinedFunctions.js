@@ -1,3 +1,5 @@
+import {grammar} from '../src/grammar';
+
 export const seq = function(...args) {
     let argCount = 1;
     const argOut = [];
@@ -10,7 +12,20 @@ export const seq = function(...args) {
                 "name":"TEMP"+argCount
             })
             argCount ++;
-        }else{
+        } else if (typeof(a) === "object" && a.constructor.name != "RegExp") {
+            // merge 2 block JSON together.
+            const addedArgs = a.args;
+            let addedMessage = a.message;
+            for (let i = 0; i < addedArgs.length; i++){
+                addedMessage = addedMessage.replace("%"+(i+1), "%"+argCount);
+                argOut.push({
+                    "type": "input_value",
+                    "name":"TEMP"+argCount
+                })
+                argCount++;
+            }
+            message = message.concat(addedMessage + " ");
+        } else {
             message = message.concat(a + " ");
         }
     }
@@ -36,6 +51,7 @@ export const field = function(name, rule) {
 };
 
 export const optional = function(arg) {
+    // as optional, just return anyway
     return arg;
 };
 

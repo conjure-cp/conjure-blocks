@@ -62,7 +62,8 @@ export const grammar =  {
 
     bool_domain: $ => "bool",
 
-    int_domain: $ => prec.left(seq(
+    // removed prec.left (add back in)
+    int_domain: $ => seq(
       "int", 
       optional(seq(
         "(",
@@ -70,7 +71,7 @@ export const grammar =  {
         //TODO: eventually add in expressions here
         ")"
       ))
-    )),
+    ),
 
     range_list: $ => prec(2, seq(
       choice(
