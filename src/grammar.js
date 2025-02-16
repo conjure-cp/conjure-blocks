@@ -1,5 +1,5 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), laso consider installing treesitter, might be more readable
-import { seq, choice, repeat, token, field, optional, prec} from "./predefinedFunctions";
+import { seq, choice, repeat, optional, prec} from "./predefinedFunctions";
 export const grammar =  {
   name: 'essence',
 

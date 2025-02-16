@@ -1,5 +1,3 @@
-import {grammar} from '../src/grammar';
-
 export const seq = function(...args) {
     let argCount = 1;
     const argOut = [];
@@ -46,14 +44,6 @@ export const repeat = function(arg) {
 
 export const choice = function(...args) {
     return "choice called"
-};
-
-export const token = function(arg) {
-    return "token called"
-};
-
-export const field = function(name, rule) {
-    return "field called"
 };
 
 export const optional = function(arg) {
