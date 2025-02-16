@@ -37,6 +37,12 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
+// add lists block
+
+toolboxContents.push ( {
+    'kind': 'block',
+    'type': 'lists_create_with',
+  })
 console.log(toolboxContents);
 
 // define generator function for blocks
@@ -49,6 +55,21 @@ function generatorFunction(type, message, args){
         return [code, 0];
     }
 }
+
+// define generator for list
+essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
+    const values = [];
+  for (let i = 0; i < block.itemCount_; i++) {
+    const valueCode = generator.valueToCode(block, 'ADD' + i,
+        0);
+    if (valueCode) {
+      values.push(valueCode);
+    }
+  }
+  const valueString = values.join(', ');
+  const codeString = `${valueString}`;
+  return [codeString, 0];
+};
 
 export const autoToolbox = {
     'kind': 'categoryToolbox',
