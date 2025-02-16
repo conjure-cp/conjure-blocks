@@ -43,7 +43,23 @@ export const repeat = function(arg) {
 };
 
 export const choice = function(...args) {
-    return "choice called"
+    // drop down only if all strings - not sure how to handle cases where the $.x are args
+    const options = [];
+    for (let a of args){
+        if (typeof(a) === "string") {
+            options.push([a, a]);
+        } else {
+            return "dead";
+        }
+    }
+    return {
+        "message": "%1 ",
+        "args": [{
+            "type": "field_dropdown",
+            "name": "OPTION",
+            "options": options
+        }]
+    }
 };
 
 export const optional = function(arg) {

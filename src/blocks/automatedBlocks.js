@@ -50,7 +50,11 @@ function generatorFunction(type, message, args){
     essenceGenerator.forBlock[type] = function (block, generator) {
         let code = message;
         for (let i = 1; i <= args.length; i++) {
-            code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1].name, 0)}`);
+            if (args[i-1].type === "field_dropdown"){
+                code = code.replace(`%${i}`, `${block.getFieldValue(args[i-1].name)}`);
+            } else {
+                code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1].name, 0)}`);
+            }
         }
         return [code, 0];
     }
