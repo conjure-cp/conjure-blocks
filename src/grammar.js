@@ -34,6 +34,7 @@ export const grammar =  {
 
     FALSE: $ => "false",
 
+    //need to replace soon
     variable: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     //find statements

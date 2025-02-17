@@ -4,6 +4,8 @@ export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
 const autoBlocks = [];
+const toolboxContents = [];
+
 console.log(rules);
 
 //defining blocks
@@ -18,17 +20,21 @@ for (let r in rules){
         block.message0 = out.message;
         block.args0 = out.args;
         generatorFunction(block.type, block.message0, block.args0);
-    }else {
+        autoBlocks.push(block);
+    }else if (out.constructor.name === "RegExp"){
+        regexBlock(block.type, out);  
+    } else {
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
+        autoBlocks.push(block);
     }
-    autoBlocks.push(block);
+    
 }
 
 console.log(autoBlocks);
 
 // add blocks to toolbox 
-const toolboxContents = [];
+
 
 for (let b of autoBlocks) {
     const def = {}
@@ -74,6 +80,46 @@ essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
   const codeString = `${valueString}`;
   return [codeString, 0];
 };
+
+// regex blocks 
+function regexBlock(type, regex){
+    Blockly.Blocks[type] = {
+        init: function() {
+          // Remove all 'a' characters from the text input's value.
+          var validator = function(newValue) {
+            const match = regex.exec(newValue);
+            if (match == null || match[0] != newValue){
+                return null;
+            } else {
+                return newValue;
+            }
+          };
+          
+          // stop gap for now
+          let temp = "0";
+          if (!regex.test(temp)){
+            temp = "a";
+          }
+      
+          this.appendDummyInput()
+              .appendField(new Blockly.FieldTextInput(temp, validator), 'INPUT');
+          this.setOutput(true, type);
+        }
+      };
+
+    toolboxContents.push ( {
+    'kind': 'block',
+    'type': type,
+    })
+    
+    essenceGenerator.forBlock[type] = function(block, generator) {
+        const code = `${block.getFieldValue('INPUT')}`;
+        return [code, 0];
+    }
+}
+
+
+
 
 export const autoToolbox = {
     'kind': 'categoryToolbox',
