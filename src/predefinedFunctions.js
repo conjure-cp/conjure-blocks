@@ -67,16 +67,23 @@ export const optional = function(arg) {
     return arg;
 };
 
+let prec = function(number, rule) {
+    rule["prec"] = number;
+    return rule;
+}
+    
+prec.left = function (rule, number=0) {
+        // ignoring as number precedence provided in grammar
+        return rule
+    };
 
-export const prec = function(number, rule) {
-    return "prec called"
-};
+prec.right = function (rule, number=0) {
+        // ignoring as number precedence provided in grammar
+        return rule
+    };
 
-prec.left = function(...args) {
-    return "prec left called"
-};
+export {prec};
+    
 
-prec.right = function(...args) {
-    return "prec right called"
-};
+
 

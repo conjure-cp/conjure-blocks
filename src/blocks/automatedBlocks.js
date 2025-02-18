@@ -19,7 +19,7 @@ for (let r in rules){
     if (out.constructor.name === "Object"){
         block.message0 = out.message;
         block.args0 = out.args;
-        generatorFunction(block.type, block.message0, block.args0);
+        generatorFunction(block.type, block.message0, block.args0, out.prec);
         autoBlocks.push(block);
     }else if (out.constructor.name === "RegExp"){
         regexBlock(block.type, out);  
@@ -52,7 +52,7 @@ toolboxContents.push ( {
 console.log(toolboxContents);
 
 // define generator function for blocks
-function generatorFunction(type, message, args){
+function generatorFunction(type, message, args, prec=0){
     essenceGenerator.forBlock[type] = function (block, generator) {
         let code = message;
         for (let i = 1; i <= args.length; i++) {
@@ -62,7 +62,7 @@ function generatorFunction(type, message, args){
                 code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1].name, 0)}`);
             }
         }
-        return [code, 0];
+        return [code, prec];
     }
 }
 
