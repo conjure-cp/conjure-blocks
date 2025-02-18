@@ -16,6 +16,7 @@ for (let r in rules){
     const block = {};
     block.type = r;
     block.output = r; 
+    block.inputsInline = true;
     if (out.constructor.name === "Object"){
         block.message0 = out.message;
         block.args0 = out.args;
@@ -104,6 +105,7 @@ function regexBlock(type, regex){
           this.appendDummyInput()
               .appendField(new Blockly.FieldTextInput(temp, validator), 'INPUT');
           this.setOutput(true, type);
+          this.setInputsInline(true);
         }
       };
 
