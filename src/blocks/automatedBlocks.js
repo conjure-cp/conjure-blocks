@@ -9,7 +9,7 @@ const toolboxContents = [];
 console.log(rules);
 
 //defining blocks
-
+let categories = {};
 for (let r in rules){
     //console.log(rules[r](rules))
     let out = rules[r](rules);
@@ -25,11 +25,7 @@ for (let r in rules){
     }else if (out.constructor.name === "RegExp"){
         regexBlock(block.type, out);  
     } else if (out.constructor.name === "Array"){
-        toolboxContents.push({
-            'kind':'category',
-            'name': block.type,
-            'contents': out
-        })
+        categories[r] = out;
     } else {
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
@@ -38,6 +34,7 @@ for (let r in rules){
     
 }
 
+console.log(categories);
 console.log(autoBlocks);
 
 // add blocks to toolbox 
@@ -48,6 +45,19 @@ for (let b of autoBlocks) {
     def.kind = 'block';
     def.type = b.type;
     toolboxContents.push(def);
+}
+
+for (let c of categories) {
+    const def = {}
+    def.kind = 'category';
+    def.name = c;
+    def.contents = categories[c];
+    for (let d of contents) {
+        if (categories.includes(d)){
+            contents.remove();
+        }
+    }
+
 }
 
 // add lists block

@@ -50,12 +50,8 @@ export const choice = function(...args) {
         if (typeof(a) === "string") {
             options.push([a, a]);
         } else{
-            console.log(typeof(a));
             // is a block, so a tool box category
-            contents.push({
-                'kind':'block',
-                'type': a.name
-            })
+            contents.push(a.name);
         }
     }
     if (options.length != 0){
