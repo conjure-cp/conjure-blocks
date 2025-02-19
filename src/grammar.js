@@ -97,14 +97,17 @@ export const grammar =  {
     letting_statement: $ => seq(
       $.variable_list,
       "be",
-      choice($.expression, seq("domain", $.domain))
+      choice($.expression, $.domain_expr)
     ),
 
     //constraints
     constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
+    // separated out for
+    bracket_expr: $ => seq("(", $.expression, ")"),
+    domain_expr: $ => seq("domain", $.domain),
 
     expression: $ => choice(
-      seq("(", $.expression, ")"),
+      $.bracket_expr,
       $.not_expr,
       $.abs_value,
       $.exponent,

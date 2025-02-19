@@ -10,7 +10,7 @@ export const seq = function(...args) {
                 "name":"TEMP"+argCount
             })
             argCount ++;
-        } else if (typeof(a) === "object" && a.constructor.name != "RegExp") {
+        } else if (typeof(a) === "object" && a.constructor.name != "RegExp" && a.constructor.name != "Array") {
             // merge 2 block JSON together.
             const addedArgs = a.args;
             let addedMessage = a.message;
@@ -45,21 +45,32 @@ export const repeat = function(arg) {
 export const choice = function(...args) {
     // drop down only if all strings - not sure how to handle cases where the $.x are args
     const options = [];
+    const contents = [];
     for (let a of args){
         if (typeof(a) === "string") {
             options.push([a, a]);
-        } else {
-            return "dead";
+        } else{
+            console.log(typeof(a));
+            // is a block, so a tool box category
+            contents.push({
+                'kind':'block',
+                'type': a.name
+            })
         }
     }
-    return {
-        "message": "%1 ",
-        "args": [{
-            "type": "field_dropdown",
-            "name": "OPTION",
-            "options": options
-        }]
+    if (options.length != 0){
+        return {
+            "message": "%1 ",
+            "args": [{
+                "type": "field_dropdown",
+                "name": "OPTION",
+                "options": options
+            }]
+        }
+    } else {
+        return contents;
     }
+    
 };
 
 export const optional = function(arg) {

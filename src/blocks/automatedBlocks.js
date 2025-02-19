@@ -24,6 +24,12 @@ for (let r in rules){
         autoBlocks.push(block);
     }else if (out.constructor.name === "RegExp"){
         regexBlock(block.type, out);  
+    } else if (out.constructor.name === "Array"){
+        toolboxContents.push({
+            'kind':'category',
+            'name': block.type,
+            'contents': out
+        })
     } else {
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
