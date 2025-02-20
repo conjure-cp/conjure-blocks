@@ -47,18 +47,27 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
-for (let c of categories) {
+for (let c in categories) {
     const def = {}
     def.kind = 'category';
     def.name = c;
     def.contents = categories[c];
-    for (let d of contents) {
-        if (categories.includes(d)){
-            contents.remove();
+    for (let d of def.contents) {
+        if (categories[d]){
+            const subCat = categories[d];
+            delete categories.d;
+            def.contents = def.contents.filter((x) => x != d);
+            def.contents.concat(subCat);
         }
     }
-
+    console.log(def.contents);
+    def.contents = def.contents.map((x) => {return {
+        'kind':'block',
+        'type': x
+    };});
+    toolboxContents.push(def);
 }
+
 
 // add lists block
 
