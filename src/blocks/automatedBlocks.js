@@ -15,7 +15,7 @@ for (let r in rules){
     let out = rules[r](rules);
     const block = {};
     block.type = r;
-    block.output = r; 
+    block.output = [r]; 
     block.inputsInline = true;
     if (out.constructor.name === "Object"){
         block.message0 = out.message;
@@ -47,6 +47,8 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
+// but blocks into  categories - currently just merges subcategories, but should include as subcategory later
+// als need to later remove blocks from all category that is in a category
 for (let c in categories) {
     const def = {}
     def.kind = 'category';
@@ -55,12 +57,11 @@ for (let c in categories) {
     for (let d of def.contents) {
         if (categories[d]){
             const subCat = categories[d];
-            delete categories.d;
             def.contents = def.contents.filter((x) => x != d);
             def.contents.concat(subCat);
+            categories[c].push(...subCat);
         }
     }
-    console.log(def.contents);
     def.contents = def.contents.map((x) => {return {
         'kind':'block',
         'type': x
@@ -68,6 +69,15 @@ for (let c in categories) {
     toolboxContents.push(def);
 }
 
+// update output types in blocks, for the categories they are in
+console.log(categories);
+for (let b of autoBlocks){
+    for (let c in categories){;
+        if (categories[c].includes(b.type)){
+            b.output.push(c);
+        }
+    }
+}
 
 // add lists block
 
