@@ -7,9 +7,20 @@ export const seq = function(...args) {
             message = message.concat("%"+argCount+" ");
             argOut.push({
                 "type": "input_value",
-                "name":"TEMP"+argCount
+                "name":"TEMP"+argCount,
+                "check": a.name
             })
             argCount ++;
+        } else if (a.constructor.name === "Array") {
+            console.log(a);
+            message = message.concat("%"+argCount+" ");
+            argOut.push({
+                "type": "input_value",
+                "name":"TEMP"+argCount,
+                "check": a
+            })
+            argCount ++;
+        
         } else if (typeof(a) === "object" && a.constructor.name != "RegExp" && a.constructor.name != "Array") {
             // merge 2 block JSON together.
             const addedArgs = a.args;
@@ -39,6 +50,7 @@ export const repeat = function(arg) {
         "name":"TEMP1",
         "check":"Array"
     }]
+    // can you check array types?
     return {message, args}
 };
 
