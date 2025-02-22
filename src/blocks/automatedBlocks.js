@@ -165,6 +165,11 @@ export const autoToolbox = {
             'kind': 'category',
             'name':'all',
             'contents': toolboxContents
+        },
+        {
+            'kind': 'category',
+            'name': 'Variables',
+            'custom': 'CREATE_TYPED_VARIABLE'
         }
     ]
 };

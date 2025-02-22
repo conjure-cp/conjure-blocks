@@ -14,7 +14,6 @@ import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
 import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
-import {toolbox} from './toolbox';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
@@ -24,6 +23,7 @@ import { autoToolbox } from './blocks/automatedBlocks';
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
+console.log(Blockly.constants.VariablesDynamic);
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
@@ -41,7 +41,6 @@ const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnl
 
 //variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
 // much of the code below is from the usage instructions
-
 const createFlyout = function (ws) {
   let xmlList = [];
   // Add your button and give it a callback name.
@@ -51,12 +50,31 @@ const createFlyout = function (ws) {
 
   xmlList.push(button);
 
+  // correct output types
+  //const varList = ws.getAllVariables();
+ // for (let v of varList){
+    //console.log(v);
+    /*if (v.type == "integer"){
+      v.type = [v.type, "constant", "expression", "variable"];
+    } else {
+      v.type = [v.type, "expression"]
+    }*/
+    //console.log(v);
+  //}
+
+ // console.log(ws.getAllVariables());
+  
+
   // This gets all the variables that the user creates and adds them to the
   // flyout.
   const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
   xmlList = xmlList.concat(blockList);
   // adjust so forced to set variables by declarations.
   xmlList.splice(1,1)
+
+  for (let b of xmlList){
+    console.log(b);
+  }
   return xmlList;
 };
 
@@ -84,15 +102,15 @@ dataWS.registerToolboxCategoryCallback(
 
 // setting up typed var model
 const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
-  ['int', 'int'],
-  ['enum', 'enum'],
-  ['unnamed', 'unnamed']
+  ['int', 'integer'],
+  ['untyped', 'variable']
 ]);
 typedVarModal.init();
 
 // generators for get variable block
 essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
+  console.log(ws.getVariableById(vars[0]));
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
@@ -135,8 +153,8 @@ const runCode = () => {
   //eval(code);
 };
 
-// Load the initial state from storage and run the code.
-load(ws);
+// Load the initial state from storage and run the code/.
+//load(ws);
 runCode();
 
 // Every time the workspace changes state, save the changes to storage.
