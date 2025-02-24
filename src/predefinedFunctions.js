@@ -12,7 +12,6 @@ export const seq = function(...args) {
             })
             argCount ++;
         } else if (a.constructor.name === "Array") {
-            console.log(a);
             message = message.concat("%"+argCount+" ");
             argOut.push({
                 "type": "input_value",

@@ -39,50 +39,64 @@ dataWS.render()
 
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
 
-//variable category using https://www.npmjs.com/package/@blockly/plugin-typed-variable-modal.
-// much of the code below is from the usage instructions
 const createFlyout = function (ws) {
-  let xmlList = [];
-  // Add your button and give it a callback name.
-  const button = document.createElement('button');
-  button.setAttribute('text', 'Create Typed Variable');
-  button.setAttribute('callbackKey', 'callbackName');
-
-  xmlList.push(button);
-
-  // correct output types
-  //const varList = ws.getAllVariables();
- // for (let v of varList){
-    //console.log(v);
-    /*if (v.type == "integer"){
-      v.type = [v.type, "constant", "expression", "variable"];
-    } else {
-      v.type = [v.type, "expression"]
-    }*/
-    //console.log(v);
-  //}
-
- // console.log(ws.getAllVariables());
+  let blockList = [];
   
+  blockList.push({
+    "kind": "button",
+    "text": "create int_domain variable",
+    "callbackKey": "int_callback"
+  });
 
-  // This gets all the variables that the user creates and adds them to the
-  // flyout.
-  const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(ws);
-  xmlList = xmlList.concat(blockList);
-  // adjust so forced to set variables by declarations.
-  xmlList.splice(1,1)
+  blockList.push({
+    "kind": "button",
+    "text": "create bool_domain variable",
+    "callbackKey": "bool_callback"
+  });
 
-  for (let b of xmlList){
-    console.log(b);
+  for (let v of ws.getVariablesOfType('int_domain')){
+    blockList.push({
+      'kind':'block',
+      'type':'variables_get_integer',
+      'fields': {
+        'VAR': {
+          "name": v.name,
+          "type": "int_domain"
+        }
+      }
+    })
   }
-  return xmlList;
-};
 
+  for (let v of ws.getVariablesOfType('bool_domain')){
+    blockList.push({
+      'kind':'block',
+      'type':'variables_get_bool',
+      'fields': {
+        'VAR': {
+          "name": v.name,
+          "type": "bool_domain"
+        }
+      }
+    })
+  }
+  return blockList;
+
+};
 
 ws.registerToolboxCategoryCallback(
   'CREATE_TYPED_VARIABLE',
   createFlyout,
 );
+
+const int_button_callback = function () {
+  Blockly.Variables.createVariableButtonHandler(ws, null, 'int_domain');
+}
+const bool_button_callback = function () {
+  Blockly.Variables.createVariableButtonHandler(ws, null, 'bool_domain');
+}
+ws.registerButtonCallback('int_callback', int_button_callback);
+ws.registerButtonCallback('bool_callback', bool_button_callback);
+
 
 // adding variable category to data input WS
 const createDataFlyout = function ()  {
@@ -100,17 +114,15 @@ dataWS.registerToolboxCategoryCallback(
   createDataFlyout,
 );
 
-// setting up typed var model
-const typedVarModal = new TypedVariableModal(ws, 'callbackName', [
-  ['int', 'integer'],
-  ['untyped', 'variable']
-]);
-typedVarModal.init();
-
 // generators for get variable block
-essenceGenerator.forBlock['variables_get_dynamic'] = function(block) {
+essenceGenerator.forBlock['variables_get_integer'] = function(block) {
   var vars = block.getVars()
-  console.log(ws.getVariableById(vars[0]));
+  const code = ws.getVariableById(vars[0]).name
+  return [code, 0];
+}
+  
+essenceGenerator.forBlock['variables_get_bool'] = function(block) {
+  var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
@@ -120,7 +132,6 @@ jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
-
 //add output button
 var outputButton = document.createElement("BUTTON");
 var outputButtonText = document.createTextNode("SOLVE");

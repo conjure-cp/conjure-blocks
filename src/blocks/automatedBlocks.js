@@ -155,8 +155,38 @@ function regexBlock(type, regex){
     }
 }
 
+// variable getter blocks
 
+autoBlocks.push( {
+    "type": "variables_get_integer",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+        "variableTypes": ["int_domain", "domain", "expression", "variable"],
+        "defaultType": "int_domain"
+      }
+    ],
+    "output": ["int_domain", "domain", "expression", "variable"]  
+  });
 
+autoBlocks.push( {
+    "type": "variables_get_bool",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+        "variableTypes": ["bool_domain", "domain", "expression", "variable"],
+        "defaultType": "bool_domain"
+      }
+    ],
+    "output": ["bool_domain", "domain", "expression", "variable"] ,
+    "colour": 120
+  });
 
 export const autoToolbox = {
     'kind': 'categoryToolbox',
