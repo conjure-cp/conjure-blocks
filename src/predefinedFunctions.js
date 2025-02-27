@@ -3,6 +3,7 @@ export const seq = function(...args) {
     const argOut = [];
     let message = "";
     for (let a of args) {
+        // builds message and args list
         if (typeof(a) === "function") {
             message = message.concat("%"+argCount+" ");
             argOut.push({
@@ -54,7 +55,7 @@ export const repeat = function(arg) {
 };
 
 export const choice = function(...args) {
-    // drop down only if all strings - not sure how to handle cases where the $.x are args
+    // drop down only if all strings
     const options = [];
     const contents = [];
     for (let a of args){
@@ -86,6 +87,7 @@ export const optional = function(arg) {
 };
 
 let prec = function(number, rule) {
+    // sets precedence
     rule["prec"] = number;
     return rule;
 }

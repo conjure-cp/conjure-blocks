@@ -23,10 +23,10 @@ export const save = function(workspace) {
  */
 export const load = function(workspace) {
   //const data = window.localStorage?.getItem(storageKey);
-  //if (!data) return;
+  if (!data) return;
 
   // Don't emit events during loading.
-  //Blockly.Events.disable();
-  //Blockly.serialization.workspaces.load(JSON.parse(data), workspace, false);
-  //Blockly.Events.enable();
+  Blockly.Events.disable();
+  Blockly.serialization.workspaces.load(JSON.parse(data), workspace, false);
+  Blockly.Events.enable();
 };

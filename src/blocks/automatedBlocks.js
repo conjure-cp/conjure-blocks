@@ -11,22 +11,24 @@ console.log(rules);
 //defining blocks
 let categories = {};
 for (let r in rules){
-    //console.log(rules[r](rules))
     let out = rules[r](rules);
     const block = {};
     block.type = r;
     block.output = [r]; 
     block.inputsInline = true;
     if (out.constructor.name === "Object"){
+        // normal block
         block.message0 = out.message;
         block.args0 = out.args;
         generatorFunction(block.type, block.message0, block.args0, out.prec);
         autoBlocks.push(block);
     }else if (out.constructor.name === "RegExp"){
+        // regex value block
         regexBlock(block.type, out);  
     } else if (out.constructor.name === "Array"){
         categories[r] = out;
     } else {
+        // toolbox category
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
         autoBlocks.push(block);
@@ -34,12 +36,7 @@ for (let r in rules){
     
 }
 
-console.log(categories);
-console.log(autoBlocks);
-
 // add blocks to toolbox 
-
-
 for (let b of autoBlocks) {
     const def = {}
     def.kind = 'block';
@@ -47,8 +44,8 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
-// but blocks into  categories - currently just merges subcategories, but should include as subcategory later
-// als need to later remove blocks from all category that is in a category
+// put blocks into categories - currently just merges subcategories, but should include as subcategory later
+// also need to later remove blocks from all category that is in a category
 for (let c in categories) {
     const def = {}
     def.kind = 'category';
@@ -80,7 +77,6 @@ for (let b of autoBlocks){
 }
 
 // add lists block
-
 toolboxContents.push ( {
     'kind': 'block',
     'type': 'lists_create_with',
@@ -121,7 +117,6 @@ essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
 function regexBlock(type, regex){
     Blockly.Blocks[type] = {
         init: function() {
-          // Remove all 'a' characters from the text input's value.
           var validator = function(newValue) {
             const match = regex.exec(newValue);
             if (match == null || match[0] != newValue){
@@ -131,7 +126,7 @@ function regexBlock(type, regex){
             }
           };
           
-          // stop gap for now
+          // stop gap for now - for initial value
           let temp = "0";
           if (!regex.test(temp)){
             temp = "a";
@@ -139,16 +134,19 @@ function regexBlock(type, regex){
       
           this.appendDummyInput()
               .appendField(new Blockly.FieldTextInput(temp, validator), 'INPUT');
-          this.setOutput(true, type);
+              // currently hand written - can this be automated?
+          this.setOutput(true, [type, "constant", "expression"]);
           this.setInputsInline(true);
         }
       };
 
+    // add to toolbox
     toolboxContents.push ( {
     'kind': 'block',
     'type': type,
     })
     
+    //generator
     essenceGenerator.forBlock[type] = function(block, generator) {
         const code = `${block.getFieldValue('INPUT')}`;
         return [code, 0];
@@ -188,6 +186,7 @@ autoBlocks.push( {
     "colour": 120
   });
 
+  // toolbox definition
 export const autoToolbox = {
     'kind': 'categoryToolbox',
     'contents': [
@@ -204,5 +203,5 @@ export const autoToolbox = {
     ]
 };
 
-
+// creates block list form JSON definitons
 export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
