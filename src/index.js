@@ -114,7 +114,7 @@ dataWS.registerToolboxCategoryCallback(
   createDataFlyout,
 );
 
-// generators for get variable block
+// generators for get variable blocks
 essenceGenerator.forBlock['variables_get_integer'] = function(block) {
   var vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
