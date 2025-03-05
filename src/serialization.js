@@ -22,7 +22,7 @@ export const save = function(workspace) {
  * @param {Blockly.Workspace} workspace Blockly workspace to load into.
  */
 export const load = function(workspace) {
-  const data = window.localStorage?.getItem(storageKey);
+  //const data = window.localStorage?.getItem(storageKey);
   if (!data) return;
 
   // Don't emit events during loading.
