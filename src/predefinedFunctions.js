@@ -1,3 +1,5 @@
+export var listblocks = [];
+
 export const seq = function(...args) {
     let argCount = 1;
     const argOut = [];
@@ -51,6 +53,8 @@ export const repeat = function(arg) {
         "check":"Array"
     }]
     // can you check array types?
+    // code seems complicated - look at mutators
+    listblocks.push("test");
     return {message, args}
 };
 

@@ -203,5 +203,7 @@ export const autoToolbox = {
     ]
 };
 
+import { listblocks } from '../predefinedFunctions';
+console.log(listblocks);
 // creates block list form JSON definitons
 export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
