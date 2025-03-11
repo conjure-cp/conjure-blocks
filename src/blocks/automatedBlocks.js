@@ -7,6 +7,57 @@ const autoBlocks = [];
 const toolboxContents = [];
 
 console.log(rules);
+// testing list block
+autoBlocks.push({
+    'type': 'lists_create_empty',
+    'message0': 'list %1',
+    "args0": [
+        {
+            'type': 'input_value',
+            'name':'temp'
+        }
+    ],
+    'output': 'Array',
+    'style': 'list_blocks',
+    'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
+    'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
+    // These are the serialization hooks for the lists_create_with block.
+    'mutator': 'list_mutator'
+  },)
+
+  autoBlocks.push({
+    'type': 'list_item',
+    'message0':'%1',
+    'args0': [
+        {
+            'type': 'input_value',
+            'name': 'temp'
+        }
+    ],
+    'output':'item'
+  })
+
+
+  Blockly.Extensions.registerMutator(
+    'list_mutator',
+    {saveExtraState: function() {
+        return {
+          'itemCount': this.itemCount_,
+        };
+      },
+      
+        loadExtraState: function(state) {
+        this.itemCount_ = state['itemCount'];
+        // This is a helper function which adds or removes inputs from the block.
+        //this.updateShape_();
+      }},
+    undefined,
+    ["list_item"]
+    );
+
+essenceGenerator.forBlock['lists_create_empty'] = function(block, generator) {
+    return ['list', 0]
+}
 
 //defining blocks
 let categories = {};
