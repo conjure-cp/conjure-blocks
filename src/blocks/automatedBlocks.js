@@ -26,9 +26,10 @@ for (let r in rules){
         // regex value block
         regexBlock(block.type, out);  
     } else if (out.constructor.name === "Array"){
+        // toolbox category
         categories[r] = out;
     } else {
-        // toolbox category
+        //constants
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
         autoBlocks.push(block);
@@ -68,10 +69,16 @@ for (let c in categories) {
 
 // update output types in blocks, for the categories they are in
 console.log(categories);
+let num_cats = Object.keys(categories).length;
 for (let b of autoBlocks){
+    let colour = 0;
     for (let c in categories){;
+        console.log(num_cats);
+        colour = colour + 360/num_cats;
+        // update colours too
         if (categories[c].includes(b.type)){
             b.output.push(c);
+            b.colour = colour;
         }
     }
 }
