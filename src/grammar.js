@@ -158,5 +158,23 @@ export const grammar =  {
       )),
       "])"
     )),
+
+    
+    //adding other toolbox/colour only categories
+    muliplicative: $ => choice(
+      $.product_expr,
+      $.multiplicative_op
+    ),
+
+    additive: $ => choice(
+      $.additive_op,
+      $.sum_expr
+    ),
+
+    comparing: $ => choice(
+      $.comparison,
+      $.comp_op
+    )
   }
+
 };

@@ -73,11 +73,12 @@ let num_cats = Object.keys(categories).length;
 for (let b of autoBlocks){
     let colour = 0;
     for (let c in categories){;
-        console.log(num_cats);
+        // try to get colours evenly spread
         colour = colour + 360/num_cats;
         // update colours too
         if (categories[c].includes(b.type)){
             b.output.push(c);
+            // final colour depends on last category
             b.colour = colour;
         }
     }
