@@ -51,20 +51,43 @@ for (let c in categories) {
     const def = {}
     def.kind = 'category';
     def.name = c;
-    def.contents = categories[c];
-    for (let d of def.contents) {
+    def.contents = getContents(categories[c]);
+    /*for (let d of def.contents) {
         if (categories[d]){
             const subCat = categories[d];
             def.contents = def.contents.filter((x) => x != d);
             def.contents.concat(subCat);
             categories[c].push(...subCat);
         }
-    }
-    def.contents = def.contents.map((x) => {return {
+    }*/
+    /*def.contents = def.contents.map((x) => {return {
         'kind':'block',
         'type': x
-    };});
+    };});*/
     toolboxContents.push(def);
+}
+
+function getContents(blockList) {
+    let contents = [];
+    for (let b of blockList) {
+        // is subcategory
+        if (categories[b]) {
+            let temp = categories[b];
+            delete categories.b;
+            contents.push({
+                'kind': 'category',
+                'name': b,
+                'contents': getContents(temp)
+            })
+        } else {
+            contents.push({
+                'kind': 'block',
+                'type': b
+            })
+        }
+    }
+
+    return contents;
 }
 
 // update output types in blocks, for the categories they are in
