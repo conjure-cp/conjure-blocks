@@ -120,7 +120,10 @@ export const grammar =  {
       $.implication,
       $.quantifier_expr,
       $.constant,
-      $.variable
+      $.variable,
+      $.comparing,
+      $.additive,
+      $.muliplicative
     ),
 
     not_expr: $ => prec(20, seq("!", $.expression)),
