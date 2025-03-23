@@ -45,6 +45,7 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
+let subcategories = []
 // put blocks into categories - currently just merges subcategories, but should include as subcategory later
 // also need to later remove blocks from all category that is in a category
 for (let c in categories) {
@@ -79,6 +80,7 @@ function getContents(blockList) {
                 'name': b,
                 'contents': getContents(temp)
             })
+            subcategories.push(b)
         } else {
             contents.push({
                 'kind': 'block',
@@ -90,8 +92,18 @@ function getContents(blockList) {
     return contents;
 }
 
+// remove subcategories from main categories list (remove duplicates)
+for (let i = 0; i < toolboxContents.length; i++){
+    for (let s of subcategories){
+        if(toolboxContents[i].name == s){
+            toolboxContents.splice(i,1);
+            i--;
+            break;
+        }
+    }
+}
+
 // update output types in blocks, for the categories they are in
-console.log(categories);
 let num_cats = Object.keys(categories).length;
 for (let b of autoBlocks){
     let colour = 0;
