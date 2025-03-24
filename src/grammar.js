@@ -177,6 +177,21 @@ export const grammar =  {
     comparing: $ => choice(
       $.comparison,
       $.comp_op
+    ),
+
+    find: $ => choice(
+      $.find_statement,
+      $.find_statement_list
+    ),
+    
+    letting: $ => choice(
+      $.letting_statement,
+      $.letting_statement_list
+    ),
+
+    range: $ => choice(
+      $.int_range,
+      $.range_list
     )
   }
 
