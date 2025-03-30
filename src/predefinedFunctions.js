@@ -1,4 +1,128 @@
+import * as Blockly from 'blockly';
+
 export var listblocks = [];
+// list helper and mutator
+var helper = function() {
+    this.itemCount_ = 1;
+    this.updateShape_();
+  }
+
+Blockly.Extensions.registerMutator(
+    'list_mutator',
+    {saveExtraState: function() {
+        return {
+          'itemCount': this.itemCount_,
+        };
+      },
+      
+        loadExtraState: function(state) {
+        this.itemCount_ = state['itemCount'];
+        // This is a helper function which adds or removes inputs from the block.
+        this.updateShape_();
+      },
+      saveExtraState: function (itemCount) {
+        return {
+          'itemCount': this.itemCount_,
+        };
+      },
+            // These are the decompose and compose functions for the lists_create_with block.
+      decompose: function(workspace) {
+        // This is a special sub-block that only gets created in the mutator UI.
+        // It acts as our "top block"
+        var topBlock = workspace.newBlock('lists_create_with_container');
+        topBlock.initSvg();
+
+        // Then we add one sub-block for each item in the list.
+        var connection = topBlock.getInput('STACK').connection;
+        for (var i = 0; i < this.itemCount_; i++) {
+          var itemBlock = workspace.newBlock('lists_create_with_item');
+          itemBlock.initSvg();
+          connection.connect(itemBlock.previousConnection);
+          connection = itemBlock.nextConnection;
+        }
+
+        // And finally we have to return the top-block.
+        return topBlock;
+      },
+
+      // The container block is the top-block returned by decompose.
+      compose: function(topBlock) {
+        // First we get the first sub-block (which represents an input on our main block).
+        var itemBlock = topBlock.getInputTargetBlock('STACK');
+
+        // Then we collect up all of the connections of on our main block that are
+        // referenced by our sub-blocks.
+        // This relates to the saveConnections hook (explained below).
+        var connections = [];
+        while (itemBlock && !itemBlock.isInsertionMarker()) {  // Ignore insertion markers!
+          connections.push(itemBlock.valueConnection_);
+          itemBlock = itemBlock.nextConnection &&
+              itemBlock.nextConnection.targetBlock();
+        }
+
+        // Then we disconnect any children where the sub-block associated with that
+        // child has been deleted/removed from the stack.
+        for (var i = 0; i < this.itemCount_; i++) {
+          var connection = this.getInput('ADD' + i).connection.targetConnection;
+          if (connection && connections.indexOf(connection) == -1) {
+            connection.disconnect();
+          }
+        }
+
+        // Then we update the shape of our block (removing or adding iputs as necessary).
+        // `this` refers to the main block.
+        this.itemCount_ = connections.length;
+        this.updateShape_();
+
+        // And finally we reconnect any child blocks.
+        console.log(connections);
+        for (var i = 0; i < this.itemCount_; i++) {
+          if (connections[i]){
+            connections[i].reconnect(this, 'ADD' + i);
+          }
+        }
+      },
+      saveConnections: function (containerBlock) {
+        let itemBlock = containerBlock.getInputTargetBlock(
+          'STACK',
+        );
+        let i = 0;
+        while (itemBlock) {
+          if (itemBlock.isInsertionMarker()) {
+            itemBlock = itemBlock.getNextBlock();
+            continue;
+          }
+          const input = this.getInput('ADD' + i);
+          itemBlock.valueConnection_ = input.connection.targetConnection;
+          itemBlock = itemBlock.getNextBlock();
+        }
+      },
+      updateShape_: function () {
+        if (this.itemCount_ && this.getInput('EMPTY')) {
+          this.removeInput('EMPTY');
+        } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
+          this.appendDummyInput('EMPTY').appendField(
+            '',
+          );
+        }
+        // Add new inputs.
+        for (let i = 0; i < this.itemCount_; i++) {
+          if (!this.getInput('ADD' + i)) {
+            const input = this.appendValueInput('ADD' + i).setAlign(Blockly.inputs.Align.RIGHT);
+            if (i === 0) {
+              input.appendField('');
+            }
+          }
+        }
+        // Remove deleted inputs.
+        for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+          this.removeInput('ADD' + i);
+        }
+      }},
+     helper
+      ,
+    ["lists_create_with_item"]
+    );
 
 export const seq = function(...args) {
     let argCount = 1;
@@ -45,6 +169,7 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
+    console.log(arg)
     // add list slot
     const message = "%1 ";
     const args = [{
@@ -52,9 +177,24 @@ export const repeat = function(arg) {
         "name":"TEMP1",
         "check":"Array"
     }]
-    // can you check array types?
-    // code seems complicated - look at mutators
-    listblocks.push("test");
+    // testing list block - copied + fit in list block code 
+    listblocks.push({
+        'type': 'lists_create_empty',
+        'message0': "list",
+        "args0": [
+        ],
+        'output': 'Array',
+        'style': 'list_blocks',
+        'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
+        'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
+        "extraState": {
+        "itemCount": 1// or whatever the count is
+      },
+        // These are the serialization hooks for the lists_create_with block.
+        'mutator': 'list_mutator'
+      },)
+    
+  
     return {message, args}
 };
 

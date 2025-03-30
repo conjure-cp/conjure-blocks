@@ -3,158 +3,10 @@ import {grammar} from '../grammar';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
-const autoBlocks = [];
+let autoBlocks = [];
 const toolboxContents = [];
 
 console.log(rules);
-// testing list block - copied + fit in list block code 
-autoBlocks.push({
-    'type': 'lists_create_empty',
-    'message0': 'list',
-    "args0": [
-    ],
-    'output': 'Array',
-    'style': 'list_blocks',
-    'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
-    'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
-    "extraState": {
-    "itemCount": 3 // or whatever the count is
-  },
-    // These are the serialization hooks for the lists_create_with block.
-    'mutator': 'list_mutator'
-  },)
-
-  autoBlocks.push({
-    'type': 'list_item',
-    'message0':'blah',
-    'args0': [
-    ],
-    'nextStatement': null,
-    'previousStatement': null,
-    'colour':100
-  })
-
-  var helper = function() {
-    this.itemCount_ = 1;
-    this.updateShape_();
-  }
-
-  Blockly.Extensions.registerMutator(
-    'list_mutator',
-    {saveExtraState: function() {
-        return {
-          'itemCount': this.itemCount_,
-        };
-      },
-      
-        loadExtraState: function(state) {
-        this.itemCount_ = state['itemCount'];
-        // This is a helper function which adds or removes inputs from the block.
-        this.updateShape_();
-      },
-      saveExtraState: function (itemCount) {
-        return {
-          'itemCount': this.itemCount_,
-        };
-      },
-            // These are the decompose and compose functions for the lists_create_with block.
-      decompose: function(workspace) {
-        // This is a special sub-block that only gets created in the mutator UI.
-        // It acts as our "top block"
-        var topBlock = workspace.newBlock('lists_create_with_container');
-        topBlock.initSvg();
-
-        // Then we add one sub-block for each item in the list.
-        var connection = topBlock.getInput('STACK').connection;
-        for (var i = 0; i < this.itemCount_; i++) {
-          var itemBlock = workspace.newBlock('lists_create_with_item');
-          itemBlock.initSvg();
-          connection.connect(itemBlock.previousConnection);
-          connection = itemBlock.nextConnection;
-        }
-
-        // And finally we have to return the top-block.
-        return topBlock;
-      },
-
-      // The container block is the top-block returned by decompose.
-      compose: function(topBlock) {
-        // First we get the first sub-block (which represents an input on our main block).
-        var itemBlock = topBlock.getInputTargetBlock('STACK');
-
-        // Then we collect up all of the connections of on our main block that are
-        // referenced by our sub-blocks.
-        // This relates to the saveConnections hook (explained below).
-        var connections = [];
-        while (itemBlock && !itemBlock.isInsertionMarker()) {  // Ignore insertion markers!
-          connections.push(itemBlock.valueConnection_);
-          itemBlock = itemBlock.nextConnection &&
-              itemBlock.nextConnection.targetBlock();
-        }
-
-        // Then we disconnect any children where the sub-block associated with that
-        // child has been deleted/removed from the stack.
-        for (var i = 0; i < this.itemCount_; i++) {
-          var connection = this.getInput('ADD' + i).connection.targetConnection;
-          if (connection && connections.indexOf(connection) == -1) {
-            connection.disconnect();
-          }
-        }
-
-        // Then we update the shape of our block (removing or adding iputs as necessary).
-        // `this` refers to the main block.
-        this.itemCount_ = connections.length;
-        this.updateShape_();
-
-        // And finally we reconnect any child blocks.
-        console.log(connections);
-        for (var i = 0; i < this.itemCount_; i++) {
-          if (connections[i]){
-            connections[i].reconnect(this, 'ADD' + i);
-          }
-        }
-      },
-      saveConnections: function (containerBlock) {
-        let itemBlock = containerBlock.getInputTargetBlock(
-          'STACK',
-        );
-        let i = 0;
-        while (itemBlock) {
-          if (itemBlock.isInsertionMarker()) {
-            itemBlock = itemBlock.getNextBlock();
-            continue;
-          }
-          const input = this.getInput('ADD' + i);
-          itemBlock.valueConnection_ = input.connection.targetConnection;
-          itemBlock = itemBlock.getNextBlock();
-        }
-      },
-      updateShape_: function () {
-        if (this.itemCount_ && this.getInput('EMPTY')) {
-          this.removeInput('EMPTY');
-        } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
-          this.appendDummyInput('EMPTY').appendField(
-            'LIST_1',
-          );
-        }
-        // Add new inputs.
-        for (let i = 0; i < this.itemCount_; i++) {
-          if (!this.getInput('ADD' + i)) {
-            const input = this.appendValueInput('ADD' + i).setAlign(Blockly.inputs.Align.RIGHT);
-            if (i === 0) {
-              input.appendField('');
-            }
-          }
-        }
-        // Remove deleted inputs.
-        for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
-          this.removeInput('ADD' + i);
-        }
-      }},
-     helper
-      ,
-    ["list_item"]
-    );
 
 essenceGenerator.forBlock['lists_create_empty'] = function(block, generator) {
     return ['list', 0]
@@ -188,6 +40,10 @@ for (let r in rules){
     
 }
 
+// add lists block
+import { listblocks } from '../predefinedFunctions';
+autoBlocks = autoBlocks.concat(listblocks);
+console.log(autoBlocks);
 // add blocks to toolbox 
 for (let b of autoBlocks) {
     const def = {}
@@ -228,11 +84,7 @@ for (let b of autoBlocks){
     }
 }
 
-// add lists block
-toolboxContents.push ( {
-    'kind': 'block',
-    'type': 'lists_create_with',
-  })
+
 console.log(toolboxContents);
 
 // define generator function for blocks
@@ -355,7 +207,17 @@ export const autoToolbox = {
     ]
 };
 
-import { listblocks } from '../predefinedFunctions';
-console.log(listblocks);
+// block to add to list mutators
+autoBlocks.push({
+  'type': 'list_item',
+  'message0':'blah',
+  'args0': [
+  ],
+  'nextStatement': null,
+  'previousStatement': null,
+  'colour':100
+})
+
+
 // creates block list form JSON definitons
 export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
