@@ -45,8 +45,8 @@ for (let r in rules){
 }
 
 // add lists block
-import { listblocks } from '../predefinedFunctions';
-autoBlocks = autoBlocks.concat(listblocks);
+//import { listblocks } from '../predefinedFunctions';
+//autoBlocks = autoBlocks.concat(listblocks);
 console.log(autoBlocks);
 // add blocks to toolbox 
 for (let b of autoBlocks) {
