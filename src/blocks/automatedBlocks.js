@@ -102,6 +102,20 @@ function generatorFunction(type, message, args, prec=0){
                 code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1].name, 0)}`);
             }
         }
+
+        // as repeat at end, lists after args 
+        console.log(block.itemCount_);
+        const values = [];
+        for (let i = 0; i < block.itemCount_; i++) {
+            const valueCode = generator.valueToCode(block, 'ADD' + i,
+                0);
+            if (valueCode) {
+              values.push(valueCode);
+            }
+          }
+          console.log(values);
+          const valueString = values.join(', ');
+          code = code.concat(` ${valueString}`);
         return [code, prec];
     }
 }
