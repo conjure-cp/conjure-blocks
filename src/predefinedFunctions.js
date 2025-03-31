@@ -3,7 +3,7 @@ import * as Blockly from 'blockly';
 export var listblocks = [];
 // list helper and mutator
 var helper = function() {
-    this.itemCount_ = 1;
+    this.itemCount_ = 0;
     this.updateShape_();
   }
 
@@ -128,6 +128,7 @@ export const seq = function(...args) {
     let argCount = 1;
     const argOut = [];
     let message = "";
+    let out = {}
     for (let a of args) {
         // builds message and args list
         if (typeof(a) === "function") {
@@ -159,32 +160,34 @@ export const seq = function(...args) {
                 argCount++;
             }
             message = message.concat(addedMessage + " ");
+            Object.assign(out, a);
         } else {
             message = message.concat(a + " ");
         }
     }
     
-    return {"message" : message.trimEnd(),
-        "args": argOut};
+    out["message"] =  message.trimEnd();
+    out["args"] = argOut;
+
+    return out;
 };
 
 export const repeat = function(arg) {
     console.log(arg)
     // add list slot
-    const message = "%1 ";
+    /*const message = "%1 ";
     const args = [{
         "type":"input_value",
         "name":"TEMP1",
         "check":"Array"
-    }]
+    }]*/
     // testing list block - copied + fit in list block code 
-    listblocks.push({
-        'type': 'lists_create_empty',
-        'message0': "list",
-        "args0": [
+    return {
+        'message': "",
+        "args": [
         ],
-        'output': 'Array',
-        'style': 'list_blocks',
+        //'output': 'Array',
+        //'style': 'list_blocks',
         'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
         'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
         "extraState": {
@@ -192,10 +195,8 @@ export const repeat = function(arg) {
       },
         // These are the serialization hooks for the lists_create_with block.
         'mutator': 'list_mutator'
-      },)
-    
-  
-    return {message, args}
+      }
+
 };
 
 export const choice = function(...args) {

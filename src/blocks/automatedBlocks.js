@@ -24,6 +24,10 @@ for (let r in rules){
         // normal block
         block.message0 = out.message;
         block.args0 = out.args;
+        // delete messgae and args to merge other out properties with block
+        delete out.message;
+        delete out.args;
+        Object.assign(block, out);
         generatorFunction(block.type, block.message0, block.args0, out.prec);
         autoBlocks.push(block);
     }else if (out.constructor.name === "RegExp"){
