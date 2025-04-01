@@ -179,7 +179,6 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-    console.log(arg)
     // add list slot
     /*const message = "%1 ";
     const args = [{
@@ -191,8 +190,9 @@ export const repeat = function(arg) {
     if (typeof(arg) == "function"){
       addMutator(arg.name)
     } else {
-      // later add inner blocks only allowed.
-      addMutator(null);
+      // from grammar can assume, only other option is of form seq(type, ",") - so can just check args
+      console.log(arg.args);
+      addMutator(arg.args[0].check);
     }
   
     mutatorCount++;
