@@ -120,7 +120,10 @@ export const grammar =  {
       $.implication,
       $.quantifier_expr,
       $.constant,
-      $.variable
+      $.variable,
+      $.comparing,
+      $.additive,
+      $.muliplicative
     ),
 
     not_expr: $ => prec(20, seq("!", $.expression)),
@@ -158,5 +161,38 @@ export const grammar =  {
       )),
       "])"
     )),
+
+    
+    //adding other toolbox/colour only categories
+    muliplicative: $ => choice(
+      $.product_expr,
+      $.multiplicative_op
+    ),
+
+    additive: $ => choice(
+      $.additive_op,
+      $.sum_expr
+    ),
+
+    comparing: $ => choice(
+      $.comparison,
+      $.comp_op
+    ),
+
+    find: $ => choice(
+      $.find_statement,
+      $.find_statement_list
+    ),
+    
+    letting: $ => choice(
+      $.letting_statement,
+      $.letting_statement_list
+    ),
+
+    range: $ => choice(
+      $.int_range,
+      $.range_list
+    )
   }
+
 };
