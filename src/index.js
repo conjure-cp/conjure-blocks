@@ -23,7 +23,6 @@ import { autoToolbox } from './blocks/automatedBlocks';
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
-console.log(Blockly.constants.VariablesDynamic);
 // Set up UI elements and inject Blockly
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
