@@ -34,9 +34,10 @@ for (let r in rules){
         // regex value block
         regexBlock(block.type, out);  
     } else if (out.constructor.name === "Array"){
+        // toolbox category
         categories[r] = out;
     } else {
-        // toolbox category
+        //constants
         block.message0 = out.toString();
         generatorFunction(block.type, block.message0, []);
         autoBlocks.push(block);
@@ -56,34 +57,76 @@ for (let b of autoBlocks) {
     toolboxContents.push(def);
 }
 
+let subcategories = []
 // put blocks into categories - currently just merges subcategories, but should include as subcategory later
 // also need to later remove blocks from all category that is in a category
 for (let c in categories) {
     const def = {}
     def.kind = 'category';
     def.name = c;
-    def.contents = categories[c];
-    for (let d of def.contents) {
+    def.contents = getContents(categories[c]);
+    /*for (let d of def.contents) {
         if (categories[d]){
             const subCat = categories[d];
             def.contents = def.contents.filter((x) => x != d);
             def.contents.concat(subCat);
             categories[c].push(...subCat);
         }
-    }
-    def.contents = def.contents.map((x) => {return {
+    }*/
+    /*def.contents = def.contents.map((x) => {return {
         'kind':'block',
         'type': x
-    };});
+    };});*/
     toolboxContents.push(def);
 }
 
+function getContents(blockList) {
+    let contents = [];
+    for (let b of blockList) {
+        // is subcategory
+        if (categories[b]) {
+            let temp = categories[b];
+            delete categories.b;
+            contents.push({
+                'kind': 'category',
+                'name': b,
+                'contents': getContents(temp)
+            })
+            subcategories.push(b)
+        } else {
+            contents.push({
+                'kind': 'block',
+                'type': b
+            })
+        }
+    }
+
+    return contents;
+}
+
+// remove subcategories from main categories list (remove duplicates)
+for (let i = 0; i < toolboxContents.length; i++){
+    for (let s of subcategories){
+        if(toolboxContents[i].name == s){
+            toolboxContents.splice(i,1);
+            i--;
+            break;
+        }
+    }
+}
+
 // update output types in blocks, for the categories they are in
-console.log(categories);
+let num_cats = Object.keys(categories).length;
 for (let b of autoBlocks){
+    let colour = 0;
     for (let c in categories){;
+        // try to get colours evenly spread
+        colour = colour + 360/num_cats;
+        // update colours too
         if (categories[c].includes(b.type)){
             b.output.push(c);
+            // final colour depends on last category
+            b.colour = colour;
         }
     }
 }
