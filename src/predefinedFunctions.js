@@ -3,9 +3,9 @@ import * as Blockly from 'blockly';
 let mutatorCount = 0;
 
 function addMutator(inputType) {
-  // list helper and mutator
+  // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
-      this.itemCount_ = 0;
+      this.itemCount_ = 1;
       this.updateShape_();
     }
 
@@ -79,7 +79,6 @@ function addMutator(inputType) {
           this.updateShape_();
 
           // And finally we reconnect any child blocks.
-          console.log(connections);
           for (var i = 0; i < this.itemCount_; i++) {
             if (connections[i]){
               connections[i].reconnect(this, 'ADD' + i);
@@ -179,19 +178,12 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-    // add list slot
-    /*const message = "%1 ";
-    const args = [{
-        "type":"input_value",
-        "name":"TEMP1",
-        "check":"Array"
-    }]*/
-    // testing list block - copied + fit in list block code 
+   
     if (typeof(arg) == "function"){
+      // add mutator to add extra slots to list.
       addMutator(arg.name)
     } else {
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args
-      console.log(arg.args);
       addMutator(arg.args[0].check);
     }
   

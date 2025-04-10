@@ -47,14 +47,20 @@ export const grammar =  {
       $.domain,
      // optional(",")
     ),
-
-    variable_list: $ => seq(
+    
+    // as range list, ensure list properly
+    /*variable_list: $ => seq(
       $.variable,
       optional(repeat(seq(
         ",",
         $.variable
       )))
-    ),
+    ),*/
+    variable_list: $ => repeat(seq(
+        ",",
+        $.variable
+      ))
+    ,
 
     domain: $ => choice(
       $.bool_domain,
@@ -75,7 +81,7 @@ export const grammar =  {
       ))
     ),
 
-    range_list: $ => prec(2, seq(
+    /*range_list: $ => prec(2, seq(
       choice(
         $.int_range,
         $.integer
@@ -87,7 +93,9 @@ export const grammar =  {
           $.integer
         ),
       )))
-    )),
+    )),*/
+    // remove precedence, so don't get duplicate brackets, also ensures list corrects
+    range_list : $ => repeat(seq(",", choice($.int_range, $.integer))),
 
     int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 

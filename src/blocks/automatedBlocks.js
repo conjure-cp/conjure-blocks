@@ -6,8 +6,6 @@ const rules = grammar.rules;
 let autoBlocks = [];
 const toolboxContents = [];
 
-console.log(rules);
-
 essenceGenerator.forBlock['lists_create_empty'] = function(block, generator) {
     return ['list', 0]
 }
@@ -45,10 +43,6 @@ for (let r in rules){
     
 }
 
-// add lists block
-//import { listblocks } from '../predefinedFunctions';
-//autoBlocks = autoBlocks.concat(listblocks);
-console.log(autoBlocks);
 // add blocks to toolbox 
 for (let b of autoBlocks) {
     const def = {}
@@ -131,9 +125,6 @@ for (let b of autoBlocks){
     }
 }
 
-
-console.log(toolboxContents);
-
 // define generator function for blocks
 function generatorFunction(type, message, args, prec=0){
     essenceGenerator.forBlock[type] = function (block, generator) {
@@ -147,7 +138,6 @@ function generatorFunction(type, message, args, prec=0){
         }
 
         // as repeat at end, lists after args 
-        console.log(block.itemCount_);
         const values = [];
         for (let i = 0; i < block.itemCount_; i++) {
             const valueCode = generator.valueToCode(block, 'ADD' + i,
@@ -156,7 +146,6 @@ function generatorFunction(type, message, args, prec=0){
               values.push(valueCode);
             }
           }
-          console.log(values);
           const valueString = values.join(', ');
           code = code.concat(` ${valueString}`);
         return [code, prec];
