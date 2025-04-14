@@ -3,10 +3,12 @@ import {grammar} from '../grammar';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
-const autoBlocks = [];
+let autoBlocks = [];
 const toolboxContents = [];
 
-console.log(rules);
+essenceGenerator.forBlock['lists_create_empty'] = function(block, generator) {
+    return ['list', 0]
+}
 
 //defining blocks
 let categories = {};
@@ -20,6 +22,10 @@ for (let r in rules){
         // normal block
         block.message0 = out.message;
         block.args0 = out.args;
+        // delete messgae and args to merge other out properties with block
+        delete out.message;
+        delete out.args;
+        Object.assign(block, out);
         generatorFunction(block.type, block.message0, block.args0, out.prec);
         autoBlocks.push(block);
     }else if (out.constructor.name === "RegExp"){
@@ -119,13 +125,6 @@ for (let b of autoBlocks){
     }
 }
 
-// add lists block
-toolboxContents.push ( {
-    'kind': 'block',
-    'type': 'lists_create_with',
-  })
-console.log(toolboxContents);
-
 // define generator function for blocks
 function generatorFunction(type, message, args, prec=0){
     essenceGenerator.forBlock[type] = function (block, generator) {
@@ -137,6 +136,18 @@ function generatorFunction(type, message, args, prec=0){
                 code = code.replace(`%${i}`, `${generator.valueToCode(block, args[i-1].name, 0)}`);
             }
         }
+
+        // as repeat at end, lists after args 
+        const values = [];
+        for (let i = 0; i < block.itemCount_; i++) {
+            const valueCode = generator.valueToCode(block, 'ADD' + i,
+                0);
+            if (valueCode) {
+              values.push(valueCode);
+            }
+          }
+          const valueString = values.join(', ');
+          code = code.concat(` ${valueString}`);
         return [code, prec];
     }
 }
@@ -245,6 +256,18 @@ export const autoToolbox = {
         }
     ]
 };
+
+// block to add to list mutators
+autoBlocks.push({
+  'type': 'list_item',
+  'message0':'blah',
+  'args0': [
+  ],
+  'nextStatement': null,
+  'previousStatement': null,
+  'colour':100
+})
+
 
 // creates block list form JSON definitons
 export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
