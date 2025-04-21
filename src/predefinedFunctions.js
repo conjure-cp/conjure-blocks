@@ -2,7 +2,8 @@ import * as Blockly from 'blockly';
 
 let mutatorCount = 0;
 
-function addMutator(inputType) {
+function addMutator(inputType, connector) {
+  console.log(connector)
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
       this.itemCount_ = 1;
@@ -114,6 +115,8 @@ function addMutator(inputType) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
                 input.appendField('');
+              } else {
+                input.appendField(connector, 'ADD' + i);
               }
             }
           }
@@ -181,10 +184,12 @@ export const repeat = function(arg) {
    
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
-      addMutator(arg.name)
+      addMutator(arg.name, "")
     } else {
-      // from grammar can assume, only other option is of form seq(type, ",") - so can just check args
-      addMutator(arg.args[0].check);
+      const text = arg.message.replace(/%[0-9]+/, "")
+      console.log(text)
+      // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
+      addMutator(arg.args[0].check, text.charAt(0));
     }
   
     mutatorCount++;

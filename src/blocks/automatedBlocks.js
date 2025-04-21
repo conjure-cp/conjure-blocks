@@ -146,7 +146,11 @@ function generatorFunction(type, message, args, prec=0){
               values.push(valueCode);
             }
           }
-          const valueString = values.join(', ');
+        console.log(block.inputList)
+          
+        let valueString = values.join(`${block.getFieldValue("ADD1")}`);
+        
+          
           code = code.concat(` ${valueString}`);
         return [code, prec];
     }
