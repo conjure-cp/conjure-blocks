@@ -36,7 +36,7 @@ export const grammar =  {
     FALSE: $ => "false",
 
     //need to replace soon
-    variable: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    variable: $ => {},
 
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),

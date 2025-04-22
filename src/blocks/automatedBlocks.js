@@ -18,7 +18,9 @@ for (let r in rules){
     block.type = r;
     block.output = [r]; 
     block.inputsInline = true;
-    if (out.constructor.name === "Object"){
+    // check not variable/empty function essentially,skip
+    if (!(out)){}
+    else if (out.constructor.name === "Object"){
         // normal block
         block.message0 = out.message;
         block.args0 = out.args;
