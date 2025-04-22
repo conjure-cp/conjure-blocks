@@ -45,7 +45,7 @@ export const grammar =  {
       $.variable_list,
       ":",
       $.domain,
-     // optional(",")
+      optional(",")
     ),
     
     // as range list, ensure list properly
