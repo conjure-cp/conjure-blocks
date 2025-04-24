@@ -21,6 +21,9 @@ for (let r in rules){
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
+        if (out.message.match(/%\d+$/gm)) {
+            block.inputsInline = false;
+          }
         // normal block
         block.message0 = out.message;
         block.args0 = out.args;
