@@ -93,10 +93,13 @@ function getContents(blockList) {
             })
             subcategories.push(b)
         } else {
-            contents.push({
-                'kind': 'block',
-                'type': b
-            })
+            if (b != "variable") {
+                contents.push({
+                    'kind': 'block',
+                    'type': b
+                })
+            }
+            
         }
     }
 
