@@ -108,6 +108,9 @@ export const grammar =  {
       choice($.expression, $.domain_expr)
     ),
 
+    // adding given so can demonstrate data entry
+    given_list: $ => seq("given", repeat(seq($.find_statement))),
+
     //constraints
     constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
     // separated out for
@@ -189,7 +192,8 @@ export const grammar =  {
 
     find: $ => choice(
       $.find_statement,
-      $.find_statement_list
+      $.find_statement_list,
+      $.given_list
     ),
     
     letting: $ => choice(
