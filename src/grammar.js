@@ -11,7 +11,7 @@ export const grammar =  {
   ],
 
   rules: {
-    //top level statements
+    //top level statements - use to change shape and define statment connectors?
     /*program: $ => repeat(choice(
       $.find_statement_list,
       $.constraint_list,
@@ -130,6 +130,7 @@ export const grammar =  {
       $.or_expr,
       $.implication,
       $.quantifier_expr,
+      $.expr_list,
       $.constant,
       $.variable,
       $.comparing,
@@ -166,12 +167,14 @@ export const grammar =  {
     quantifier_expr: $ => prec(-10, seq(
       choice("and", "or", "min", "max", "sum", "allDiff"),
       "([",
-      repeat(seq(
-        $.expression,
-        optional(",")
-      )),
+      $.expr_list,
       "])"
     )),
+
+    expr_list: $ => repeat(seq(
+      $.expression,
+      optional(",")
+    )), 
 
     
     //adding other toolbox/colour only categories
