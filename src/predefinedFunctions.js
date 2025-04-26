@@ -197,8 +197,6 @@ export const repeat = function(arg) {
         'message': "",
         "args": [
         ],
-        //'output': 'Array',
-        //'style': 'list_blocks',
         'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
         'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
         "extraState": {

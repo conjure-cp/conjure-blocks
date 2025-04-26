@@ -6,10 +6,6 @@ const rules = grammar.rules;
 let autoBlocks = [];
 const toolboxContents = [];
 
-essenceGenerator.forBlock['lists_create_empty'] = function(block, generator) {
-    return ['list', 0]
-}
-
 //defining blocks
 let categories = {};
 for (let r in rules){
@@ -21,6 +17,7 @@ for (let r in rules){
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
+        // if block message ends with argument, likely more set up for longer input -so better not inline
         if (out.message.match(/%\d+$/gm)) {
             block.inputsInline = false;
           }
@@ -64,25 +61,13 @@ for (let c in categories) {
     def.kind = 'category';
     def.name = c;
     def.contents = getContents(categories[c]);
-    /*for (let d of def.contents) {
-        if (categories[d]){
-            const subCat = categories[d];
-            def.contents = def.contents.filter((x) => x != d);
-            def.contents.concat(subCat);
-            categories[c].push(...subCat);
-        }
-    }*/
-    /*def.contents = def.contents.map((x) => {return {
-        'kind':'block',
-        'type': x
-    };});*/
     toolboxContents.push(def);
 }
 
 function getContents(blockList) {
     let contents = [];
     for (let b of blockList) {
-        // is subcategory
+        // is subcategory, the recurse.
         if (categories[b]) {
             let temp = categories[b];
             delete categories.b;
@@ -164,20 +149,6 @@ function generatorFunction(type, message, args, prec=0){
     }
 }
 
-// define generator for list
-essenceGenerator.forBlock['lists_create_with'] = function(block, generator) {
-    const values = [];
-  for (let i = 0; i < block.itemCount_; i++) {
-    const valueCode = generator.valueToCode(block, 'ADD' + i,
-        0);
-    if (valueCode) {
-      values.push(valueCode);
-    }
-  }
-  const valueString = values.join(', ');
-  const codeString = `${valueString}`;
-  return [codeString, 0];
-};
 
 // regex blocks 
 function regexBlock(type, regex){
