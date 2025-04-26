@@ -78,6 +78,11 @@ const createFlyout = function (ws) {
       }
     })
   }
+
+  blockList.push({
+    'kind':'block',
+    'type': 'variable_list'
+  })
   return blockList;
 
 };
