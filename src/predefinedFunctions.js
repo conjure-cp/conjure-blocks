@@ -3,7 +3,6 @@ import * as Blockly from 'blockly';
 let mutatorCount = 0;
 
 function addMutator(inputType, connector) {
-  console.log(connector)
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
       this.itemCount_ = 1;
@@ -187,9 +186,8 @@ export const repeat = function(arg) {
       addMutator(arg.name, "")
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
-      console.log(text)
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      addMutator(arg.args[0].check, text.charAt(0));
+      addMutator(arg.args[0].check, text);
     }
   
     mutatorCount++;
