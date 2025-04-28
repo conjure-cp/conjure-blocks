@@ -143,7 +143,6 @@ function generatorFunction(type, message, args, prec=0){
               values.push(valueCode);
             }
           }
-        console.log(block.inputList)
           
         let valueString = values.join(`${block.getFieldValue("ADD1")}`);
         
