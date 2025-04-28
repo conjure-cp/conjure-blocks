@@ -8,8 +8,6 @@
  */
 
 import * as Blockly from 'blockly';
-import {TypedVariableModal} from '@blockly/plugin-typed-variable-modal';
-//import {blocks} from './blocks/essence';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
 import {jsonGenerator} from './generators/json';
@@ -38,6 +36,8 @@ dataWS.render()
 
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
 
+// add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
+// and a variable_list block
 const createFlyout = function (ws) {
   let blockList = [];
   
@@ -78,6 +78,11 @@ const createFlyout = function (ws) {
       }
     })
   }
+
+  blockList.push({
+    'kind':'block',
+    'type': 'variable_list'
+  })
   return blockList;
 
 };
