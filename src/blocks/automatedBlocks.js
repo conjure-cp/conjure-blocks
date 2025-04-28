@@ -114,6 +114,10 @@ for (let b of autoBlocks){
             b.output.push(c);
             // final colour depends on last category
             b.colour = colour;
+            if (c == "program"){
+                b.nextStatement = null;
+                b.previousStatement = null;
+            }
         }
     }
 }

@@ -18,6 +18,12 @@ export const grammar =  {
       $.letting_statement_list,
     )),
     */
+    program: $ => choice(
+      $.find_statement_list,
+      $.constraint_list,
+      $.letting_statement_list,
+      $.given_list
+    ),
     //single_line_comment: $ => token(seq('$', /.*/)),
 
     //e_prime_label: $ => token("language ESSENCE' 1.0"),
