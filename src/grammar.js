@@ -12,12 +12,13 @@ export const grammar =  {
 
   rules: {
     //top level statements - use to change shape and define statment connectors?
-    /*program: $ => repeat(choice(
+    program: $ => choice(
       $.find_statement_list,
       $.constraint_list,
       $.letting_statement_list,
-    )),
-    */
+      $.given_list
+    ),
+
     //single_line_comment: $ => token(seq('$', /.*/)),
 
     //e_prime_label: $ => token("language ESSENCE' 1.0"),
