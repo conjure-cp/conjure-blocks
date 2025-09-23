@@ -109,6 +109,7 @@ function addMutator(inputType, connector) {
             );
           }
           // Add new inputs.
+          let ws = Blockly.getMainWorkspace()
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
@@ -117,6 +118,11 @@ function addMutator(inputType, connector) {
               } else {
                 input.appendField(connector, 'ADD' + i);
               }
+              let stmt = ws.newBlock("find_statement");
+              stmt.initSvg();
+              let out = stmt.outputConnection
+              out.reconnect(this, "ADD"+ i)
+              ws.render();
             }
           }
           // Remove deleted inputs.

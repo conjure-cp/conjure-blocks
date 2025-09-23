@@ -118,6 +118,8 @@ for (let b of autoBlocks){
     }
 }
 
+
+
 // define generator function for blocks
 function generatorFunction(type, message, args, prec=0){
     essenceGenerator.forBlock[type] = function (block, generator) {
