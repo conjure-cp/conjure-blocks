@@ -118,21 +118,30 @@ function addMutator(inputType, connector) {
               } else {
                 input.appendField(connector, 'ADD' + i);
               }
-              let stmt = ws.newBlock("find_statement");
-              stmt.initSvg();
-              let out = stmt.outputConnection
-              out.reconnect(this, "ADD"+ i)
-              ws.render();
+              
+              try{
+                console.log("here")
+                let stmt = ws.newBlock(inputType);
+                stmt.initSvg();
+                let out = stmt.outputConnection
+                out.reconnect(this, "ADD"+ i)
+                ws.render();
+              } catch(err) {
+                console.log(err)
+              }
             }
           }
           // Remove deleted inputs.
+          console.log(this.getChildren(true))
           for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+            //console.log(i)
+            //console.log(this)
             this.removeInput('ADD' + i);
           }
         }},
       helper
         ,
-      ["lists_create_with_item"]
+      ["lists_create_with_item"] 
       );
 
   }
