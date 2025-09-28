@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly';
+import { blocks } from 'blockly/blocks';
 
 let mutatorCount = 0;
 
@@ -119,23 +120,24 @@ function addMutator(inputType, connector) {
                 input.appendField(connector, 'ADD' + i);
               }
               
+              // adds corresponding block in gap, if fixed. - can I think of a better way, then using try-catch?
               try{
-                console.log("here")
-                let stmt = ws.newBlock(inputType);
-                stmt.initSvg();
-                let out = stmt.outputConnection
-                out.reconnect(this, "ADD"+ i)
-                ws.render();
+                let blocks = ws.getAllBlocks();
+                if (blocks.includes(this)){
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD"+ i)
+                  ws.render();
+                }
+                
               } catch(err) {
                 console.log(err)
               }
             }
           }
           // Remove deleted inputs.
-          console.log(this.getChildren(true))
           for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
-            //console.log(i)
-            //console.log(this)
             this.removeInput('ADD' + i);
           }
         }},
