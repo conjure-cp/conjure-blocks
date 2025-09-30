@@ -1,7 +1,8 @@
 import * as Blockly from 'blockly';
 let mutatorCount = 0;
+export const autoBlocks = [];
 
-function addMutator(inputFunct, inputType, connector) {
+function addMutator(inputType, connector) {
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
       this.itemCount_ = 1;
@@ -118,16 +119,9 @@ function addMutator(inputFunct, inputType, connector) {
                 input.appendField(connector, 'ADD' + i);
               }
               
-              // adds corresponding block in gap, if fixed. - can I think of a better way, then using try-catch?
-              if (inputType != "variable"){
-                console.log(inputType)
-                console.log(inputFunct)
-              }
-              try{
-                //let tb = ws.getToolbox()
-                //console.log( ws.getToolbox().getToolboxItems()[0]) - need to use ctaegory list in automatedBlocks to check, as toolbox not upated yet
-                //console.log(tb.getToolboxItemById(this.id))
-                
+              // adds corresponding block in gap, if a block is possible
+              if (inputType != "variable" & isBlock(inputType)){
+                    
                 let blocks = ws.getAllBlocks();
                 if (blocks.includes(this)){
                   let stmt = ws.newBlock(inputType);
@@ -136,10 +130,8 @@ function addMutator(inputFunct, inputType, connector) {
                   out.reconnect(this, "ADD"+ i)
                   ws.render();
                 }
-                
-              } catch(err) {
-                console.log(err)
               }
+            
             }
           }
           // Remove deleted inputs.
@@ -207,12 +199,11 @@ export const repeat = function(arg) {
    
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
-      addMutator(arg, arg.name, "")
+      addMutator(arg.name, "")
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      console.log(arg)
-      addMutator(arg.args[0], arg.args[0].check, text);
+      addMutator(arg.args[0].check, text);
     }
   
     mutatorCount++;
@@ -280,6 +271,16 @@ prec.right = function (rule, number=0) {
     };
 
 export {prec};
+
+let isBlock = function (block) {
+  for (let b of autoBlocks){
+    if (b.type == block) {
+      return true
+    }
+  }
+  return false
+
+}
     
 
 

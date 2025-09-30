@@ -1,9 +1,10 @@
 import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
+import { autoBlocks } from '../predefinedFunctions';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
-let autoBlocks = [];
+
 const toolboxContents = [];
 
 //defining blocks
