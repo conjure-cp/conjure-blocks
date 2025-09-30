@@ -1,9 +1,7 @@
 import * as Blockly from 'blockly';
-import { blocks } from 'blockly/blocks';
-
 let mutatorCount = 0;
 
-function addMutator(inputType, connector) {
+function addMutator(inputFunct, inputType, connector) {
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
       this.itemCount_ = 1;
@@ -121,7 +119,15 @@ function addMutator(inputType, connector) {
               }
               
               // adds corresponding block in gap, if fixed. - can I think of a better way, then using try-catch?
+              if (inputType != "variable"){
+                console.log(inputType)
+                console.log(inputFunct)
+              }
               try{
+                //let tb = ws.getToolbox()
+                //console.log( ws.getToolbox().getToolboxItems()[0]) - need to use ctaegory list in automatedBlocks to check, as toolbox not upated yet
+                //console.log(tb.getToolboxItemById(this.id))
+                
                 let blocks = ws.getAllBlocks();
                 if (blocks.includes(this)){
                   let stmt = ws.newBlock(inputType);
@@ -138,6 +144,7 @@ function addMutator(inputType, connector) {
           }
           // Remove deleted inputs.
           for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+
             this.removeInput('ADD' + i);
           }
         }},
@@ -200,11 +207,12 @@ export const repeat = function(arg) {
    
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
-      addMutator(arg.name, "")
+      addMutator(arg, arg.name, "")
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      addMutator(arg.args[0].check, text);
+      console.log(arg)
+      addMutator(arg.args[0], arg.args[0].check, text);
     }
   
     mutatorCount++;

@@ -38,6 +38,12 @@ export const grammar =  {
     //need to replace soon
     variable: $ => {},
 
+    variable_list: $ => repeat(seq(
+        ",",
+        $.variable
+      ))
+    ,
+
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),
 
@@ -56,11 +62,7 @@ export const grammar =  {
         $.variable
       )))
     ),*/
-    variable_list: $ => repeat(seq(
-        ",",
-        $.variable
-      ))
-    ,
+  
 
     domain: $ => choice(
       $.bool_domain,
