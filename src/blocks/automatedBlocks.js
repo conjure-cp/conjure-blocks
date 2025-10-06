@@ -1,9 +1,10 @@
 import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
+import { autoBlocks } from '../predefinedFunctions';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
-let autoBlocks = [];
+
 const toolboxContents = [];
 
 //defining blocks
@@ -130,6 +131,8 @@ for (let b of autoBlocks){
 
     }
 }
+
+
 
 // define generator function for blocks
 function generatorFunction(type, message, args, prec=0){

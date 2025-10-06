@@ -1,6 +1,5 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), also consider installing treesitter, might be more readable
 import { seq, choice, repeat, optional, prec} from "./predefinedFunctions";
-
 export const grammar =  {
   name: 'essence',
 
@@ -39,6 +38,12 @@ export const grammar =  {
     //need to replace soon
     variable: $ => {},
 
+    variable_list: $ => repeat(seq(
+        ",",
+        $.variable
+      ))
+    ,
+
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),
 
@@ -57,11 +62,7 @@ export const grammar =  {
         $.variable
       )))
     ),*/
-    variable_list: $ => repeat(seq(
-        ",",
-        $.variable
-      ))
-    ,
+  
 
     domain: $ => choice(
       $.bool_domain,
