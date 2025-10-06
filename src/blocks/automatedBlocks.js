@@ -111,10 +111,23 @@ for (let b of autoBlocks){
         colour = colour + 360/num_cats;
         // update colours too
         if (categories[c].includes(b.type)){
-            b.output.push(c);
+            if (b.output) {
+                 b.output.push(c);
+            }
+           
             // final colour depends on last category
             b.colour = colour;
+
+            
+            // check program category - change shape
+            if (c == "program"){
+                delete b.output;
+                b.previousStatement = "program"
+                b.nextStatement = "program"
+            }
         }
+
+
     }
 }
 
@@ -144,6 +157,11 @@ function generatorFunction(type, message, args, prec=0){
         
           
           code = code.concat(` ${valueString}`);
+        
+        if (block.nextConnection && block.nextConnection.getCheck()[0] == 'program'){
+            let next = generator.blockToCode(block.getNextBlock());
+            return code + "\n" + next;
+        }
         return [code, prec];
     }
 }
