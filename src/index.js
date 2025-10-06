@@ -29,6 +29,23 @@ const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 
+// resize workspaces
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    if (entry.target == blocklyDiv) {
+      Blockly.svgResize(ws);
+    } else if (entry.target == dataDiv) {
+      Blockly.svgResize(dataWS);
+    } else{
+      Blockly.svgResize(blockOut);
+    }
+  }
+})
+
+resizeObserver.observe(dataDiv);
+resizeObserver.observe(blocklyDiv);
+resizeObserver.observe(outputDiv);
+
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
@@ -190,6 +207,7 @@ ws.addChangeListener((e) => {
     ws.isDragging()) {
     return;
   }
+  //ws.resize();
   runCode();
 });
 

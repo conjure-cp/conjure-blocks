@@ -17,28 +17,40 @@ pre, code {
 }
 
 #blocklyDiv {
-    flex-basis: 100%;
+    resize: horizontal;
+    flex-basis: auto;
     height: 100%;
-    min-width: 600px;
+    min-width: 20px;
+    /*position: absolute;*/
+    overflow: auto;
+
 }
 
 #blocklyDiv2 {
-    flex-basis: 100%;
+    resize: horizontal;
+    flex-basis: auto;
     height: 100%;
-    min-width: 600px;
+    min-width: 20px;
+    /*position: absolute;*/
+    overflow: auto;
 }
 
 #dataInputDiv {
-    flex-basis: 100%;
+    resize: horizontal;
+    flex-basis: auto;
     height: 100%;
-    min-width: 600px;    
+    min-width: 20px; 
+    /*position: absolute;*/  
+    overflow: auto; 
 }
 
 #outputPane {
+    resize: horizontal;
+    flex-basis: auto;
     display: flex;
     flex-direction: column;
-    width: 400px;
-    flex: 0 0 400px;
+    /*width: 400px;
+    flex: 0 0 400px;*/
     overflow: auto;
     margin: 1rem;
 }
