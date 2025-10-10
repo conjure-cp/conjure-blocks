@@ -14,7 +14,7 @@ export const grammar = {
         $.dominance_relation
     ),
 
-    // TODO: Do we want comments later -- yes
+    // TODO: Implement comment blocks
     // single_line_comment: $ => token(seq('$', /.*/)),
 
     // language_declaration: $ => token(seq("language", /.*/)),
@@ -33,14 +33,12 @@ export const grammar = {
     FALSE: $ => "false",
 
     //need to replace soon
-    variable: $ => {
-    },
+    variable: $ => {},
 
     variable_list: $ => repeat(seq(
         ",",
         $.variable
-    ))
-    ,
+    )),
 
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),
@@ -120,7 +118,6 @@ export const grammar = {
 
     expression: $ => choice(
         $.bracket_expr,
-        // $.metavar, // she doesnt even go here
         $.not_expr,
         $.abs_value,
         $.exponent,
