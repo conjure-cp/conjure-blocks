@@ -18,7 +18,7 @@ pre, code {
 }
 
 #blocklyDiv {
-    resize: horizontal;
+    /*resize: horizontal;*/
     flex-basis: auto;
     height: 100%;
     width: 100%;
@@ -28,7 +28,7 @@ pre, code {
 }
 
 #blocklyDiv2 {
-    resize: horizontal;
+    /*resize: horizontal;*/
     flex: auto;
     height: 100%;
     width: 100%;
@@ -37,7 +37,7 @@ pre, code {
 }
 
 #dataInputDiv {
-    resize: horizontal;
+    /*resize: horizontal;*/
     flex: auto;
     height: 100%;
     width: 100%; 
@@ -46,7 +46,7 @@ pre, code {
 }
 
 #outputPane {
-    resize: horizontal;
+    /*resize: horizontal;*/
     flex: auto;
     display: flex;
     flex-direction: column;
@@ -63,4 +63,30 @@ pre, code {
 
 #output {
     height: 50%;
+}
+
+.split {
+    height: 300px;
+     -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.split > div {
+    float: left;
+    height: 100%;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+     float: left;
+      height: 100%;
+
 }

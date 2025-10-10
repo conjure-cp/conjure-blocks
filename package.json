@@ -26,6 +26,7 @@
   "dependencies": {
     "@blockly/plugin-typed-variable-modal": "^8.0.12",
     "blockly": "^11.2.2",
+    "split.js": "^1.6.5",
     "tree-sitter": "^0.22.4"
   }
 }

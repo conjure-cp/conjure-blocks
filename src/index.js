@@ -6,7 +6,7 @@
 /**
  * EDITED by N-J-Martin
  */
-
+import Split from 'split.js'
 import * as Blockly from 'blockly';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
@@ -28,9 +28,11 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
+var split = Split(['#outputPane','#blocklyDiv', '#dataInputDiv', '#blocklyDiv2'], {gutterSize: 20})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
+  console.log(split.getSizes())
   for (const entry of entries) {
     if (entry.target == blocklyDiv) {
       Blockly.svgResize(ws);
