@@ -23,7 +23,7 @@ pre, code {
     height: 100%;
     width: 100%;
     /*position: absolute;*/
-    overflow: auto;
+    overflow-y: hidden;
 
 }
 
@@ -33,7 +33,7 @@ pre, code {
     height: 100%;
     width: 100%;
     /*position: absolute;*/
-    overflow: auto;
+    overflow-y: hidden;
 }
 
 #dataInputDiv {
@@ -42,7 +42,7 @@ pre, code {
     height: 100%;
     width: 100%; 
     /*position: absolute;*/  
-    overflow: auto; 
+    overflow-y: hidden; 
 }
 
 #outputPane {

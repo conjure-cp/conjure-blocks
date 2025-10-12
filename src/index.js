@@ -28,7 +28,7 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
-var split = Split(['#outputPane','#blocklyDiv', '#dataInputDiv', '#blocklyDiv2'], {gutterSize: 20})
+var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
@@ -47,6 +47,7 @@ const resizeObserver = new ResizeObserver((entries) => {
 resizeObserver.observe(dataDiv);
 resizeObserver.observe(blocklyDiv);
 resizeObserver.observe(outputDiv);
+resizeObserver.observe(document.getElementById('blocklyDiv2'));
 
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
