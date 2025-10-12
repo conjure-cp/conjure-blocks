@@ -24,6 +24,7 @@ function addMutator(inputType, connector) {
           // This is a helper function which adds or removes inputs from the block.
           this.updateShape_();
         },
+
         saveExtraState: function (itemCount) {
           return {
             'itemCount': this.itemCount_,
@@ -223,6 +224,7 @@ export const repeat = function(arg) {
 };
 
 export const choice = function(...args) {
+    console.log(args);
     // drop down only if all strings
     const options = [];
     const contents = [];
@@ -231,6 +233,7 @@ export const choice = function(...args) {
             options.push([a, a]);
         } else{
             // is a block, so a tool box category
+            console.log(a);
             contents.push(a.name);
         }
     }
