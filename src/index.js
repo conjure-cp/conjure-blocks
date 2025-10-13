@@ -28,11 +28,10 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
-var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20})
+var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
-  console.log(split.getSizes())
   for (const entry of entries) {
     if (entry.target == blocklyDiv) {
       Blockly.svgResize(ws);
@@ -42,6 +41,7 @@ const resizeObserver = new ResizeObserver((entries) => {
       Blockly.svgResize(blockOut);
     }
   }
+
 })
 
 resizeObserver.observe(dataDiv);
@@ -54,7 +54,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true, scrollbars:true});
 
 // add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
 // and a variable_list block

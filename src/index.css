@@ -9,6 +9,10 @@ pre, code {
     overflow: auto;
 }
 
+h3{
+    overflow: hidden;
+}
+
 #pageContainer {
     display: flex;
     flex-direction: row;
