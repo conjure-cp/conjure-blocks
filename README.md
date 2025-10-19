@@ -6,6 +6,8 @@ built on Blockly - a library from Google for building beginner-friendly block-ba
 
 README.md adapted from the README from the sample app.
 
+Uses [Split.js](https://github.com/nathancahill/split)
+
 See [wiki](https://github.com/conjure-cp/conjure-oxide/wiki/Conjure%E2%80%90blocks) for helpful links, suggestions and further documentation.
 
 ## Structure

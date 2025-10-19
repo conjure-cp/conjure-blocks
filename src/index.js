@@ -6,7 +6,7 @@
 /**
  * EDITED by N-J-Martin
  */
-
+import Split from 'split.js'
 import * as Blockly from 'blockly';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
@@ -28,6 +28,26 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
+var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
+
+// resize workspaces
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    if (entry.target == blocklyDiv) {
+      Blockly.svgResize(ws);
+    } else if (entry.target == dataDiv) {
+      Blockly.svgResize(dataWS);
+    } else{
+      Blockly.svgResize(blockOut);
+    }
+  }
+
+})
+
+resizeObserver.observe(dataDiv);
+resizeObserver.observe(blocklyDiv);
+resizeObserver.observe(outputDiv);
+resizeObserver.observe(document.getElementById('blocklyDiv2'));
 
 // testing adding blocks to input
 /*let find = ws.newBlock("find_statement_list");
@@ -43,7 +63,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true, scrollbars:true});
 
 // add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
 // and a variable_list block
@@ -199,6 +219,7 @@ ws.addChangeListener((e) => {
     ws.isDragging()) {
     return;
   }
+  //ws.resize();
   runCode();
 });
 
