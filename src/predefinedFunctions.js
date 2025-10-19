@@ -1,6 +1,6 @@
 import * as Blockly from 'blockly';
-
 let mutatorCount = 0;
+export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
   // list helper and mutator - adapted from "list_create_with" block
@@ -24,6 +24,7 @@ function addMutator(inputType, connector) {
           // This is a helper function which adds or removes inputs from the block.
           this.updateShape_();
         },
+
         saveExtraState: function (itemCount) {
           return {
             'itemCount': this.itemCount_,
@@ -109,6 +110,7 @@ function addMutator(inputType, connector) {
             );
           }
           // Add new inputs.
+          let ws = Blockly.getMainWorkspace()
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
@@ -117,16 +119,31 @@ function addMutator(inputType, connector) {
               } else {
                 input.appendField(connector, 'ADD' + i);
               }
+              
+              // adds corresponding block in gap, if a block is possible
+              if (inputType != "variable" & isBlock(inputType)){
+                    
+                let blocks = ws.getAllBlocks();
+                if (blocks.includes(this)){
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD"+ i)
+                  ws.render();
+                }
+              }
+            
             }
           }
           // Remove deleted inputs.
           for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+
             this.removeInput('ADD' + i);
           }
         }},
       helper
         ,
-      ["lists_create_with_item"]
+      ["lists_create_with_item"] 
       );
 
   }
@@ -207,6 +224,7 @@ export const repeat = function(arg) {
 };
 
 export const choice = function(...args) {
+    console.log(args);
     // drop down only if all strings
     const options = [];
     const contents = [];
@@ -215,6 +233,7 @@ export const choice = function(...args) {
             options.push([a, a]);
         } else{
             // is a block, so a tool box category
+            console.log(a);
             contents.push(a.name);
         }
     }
@@ -255,6 +274,16 @@ prec.right = function (rule, number=0) {
     };
 
 export {prec};
+
+let isBlock = function (block) {
+  for (let b of autoBlocks){
+    if (b.type == block) {
+      return true
+    }
+  }
+  return false
+
+}
     
 
 

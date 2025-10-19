@@ -49,6 +49,15 @@ resizeObserver.observe(blocklyDiv);
 resizeObserver.observe(outputDiv);
 resizeObserver.observe(document.getElementById('blocklyDiv2'));
 
+// testing adding blocks to input
+/*let find = ws.newBlock("find_statement_list");
+let stmt = ws.newBlock("find_statement");
+find.initSvg();
+stmt.initSvg();
+let out = stmt.outputConnection
+out.reconnect(find, "ADD0")
+ws.render();
+*/
 // adds start block to data input section
 let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
