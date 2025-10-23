@@ -52,7 +52,7 @@ function addMutator(inputType, connector) {
 
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
-          // First we get the first sub-block (which represents an input on our main block).
+              // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
           // Then we collect up all of the connections of on our main block that are
@@ -86,23 +86,32 @@ function addMutator(inputType, connector) {
             }
           }
         },
-        saveConnections: function (containerBlock) {
-          let itemBlock = containerBlock.getInputTargetBlock(
-            'STACK',
-          );
-          let i = 0;
-          while (itemBlock) {
-            if (itemBlock.isInsertionMarker()) {
-              itemBlock = itemBlock.getNextBlock();
-              continue;
+
+        saveConnections: function (topBlock) {
+          // First we get the first sub-block (which represents an input on our main block).
+            var itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // Then we go through and assign references to connections on our main block
+            // (input.connection.targetConnection) to properties on our sub blocks
+            // (itemBlock.valueConnection_).
+            var i = 0;
+            while (itemBlock) {
+              // `this` refers to the main block (which is being "mutated").
+              var input = this.getInput('ADD' + i);
+              // This is the important line of this function!
+              itemBlock.valueConnection_ = input && input.connection.targetConnection;
+              i++;
+              itemBlock = itemBlock.nextConnection &&
+                  itemBlock.nextConnection.targetBlock();
             }
-            const input = this.getInput('ADD' + i);
-            itemBlock.valueConnection_ = input.connection.targetConnection;
-            itemBlock = itemBlock.getNextBlock();
-          }
         },
         updateShape_: function () {
+          console.log(this)
+          let ws = Blockly.getMainWorkspace()
+
           if (this.itemCount_ && this.getInput('EMPTY')) {
+            //out_block = this.getInputTargetBlock('EMPTY');
+            //ws.removeTopBlock(out_block);
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
             this.appendDummyInput('EMPTY').appendField(
@@ -110,7 +119,8 @@ function addMutator(inputType, connector) {
             );
           }
           // Add new inputs.
-          let ws = Blockly.getMainWorkspace()
+         
+          console.log(this.getInputTargetBlock("ADD0")); // reconnect this block to input, delete ones removed above
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
@@ -121,8 +131,7 @@ function addMutator(inputType, connector) {
               }
               
               // adds corresponding block in gap, if a block is possible
-              if (inputType != "variable" & isBlock(inputType)){
-                    
+              /*if (inputType != "variable" & isBlock(inputType)){    
                 let blocks = ws.getAllBlocks();
                 if (blocks.includes(this)){
                   let stmt = ws.newBlock(inputType);
@@ -131,7 +140,7 @@ function addMutator(inputType, connector) {
                   out.reconnect(this, "ADD"+ i)
                   ws.render();
                 }
-              }
+              }*/
             
             }
           }
