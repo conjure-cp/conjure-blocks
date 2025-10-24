@@ -52,6 +52,7 @@ function addMutator(inputType, connector) {
 
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
+          console.log("compose")
               // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -79,10 +80,22 @@ function addMutator(inputType, connector) {
           this.itemCount_ = connections.length;
           this.updateShape_();
 
+          let ws = Blockly.getMainWorkspace()
           // And finally we reconnect any child blocks.
           for (var i = 0; i < this.itemCount_; i++) {
             if (connections[i]){
               connections[i].reconnect(this, 'ADD' + i);
+            } else {
+              if (inputType != "variable" & isBlock(inputType)){    
+                //let blocks = ws.getAllBlocks();
+                //if (blocks.includes(this)){
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD"+ i)
+                  ws.render();
+                //}
+              }
             }
           }
         },
@@ -106,26 +119,34 @@ function addMutator(inputType, connector) {
             }
         },
         updateShape_: function () {
-          console.log(this)
-          let ws = Blockly.getMainWorkspace()
-
+          console.log("updateShape");
           if (this.itemCount_ && this.getInput('EMPTY')) {
-            //out_block = this.getInputTargetBlock('EMPTY');
-            //ws.removeTopBlock(out_block);
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
             this.appendDummyInput('EMPTY').appendField(
               '',
             );
           }
+          
+          let ws = Blockly.getMainWorkspace();
           // Add new inputs.
-         
-          console.log(this.getInputTargetBlock("ADD0")); // reconnect this block to input, delete ones removed above
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
                 input.appendField('');
+                console.log("add block")
+                if (inputType != "variable" & isBlock(inputType)){    
+                  let blocks = ws.getAllBlocks();
+                  if (blocks.includes(this)){
+                    let stmt = ws.newBlock(inputType);
+                    stmt.initSvg();
+                    let out = stmt.outputConnection
+                    out.reconnect(this, "ADD"+ i)
+                    ws.render();
+                  }
+                }
+
               } else {
                 input.appendField(connector, 'ADD' + i);
               }
