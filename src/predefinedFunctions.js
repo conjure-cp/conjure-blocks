@@ -3,10 +3,52 @@ let mutatorCount = 0;
 export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
+
+  const inTrash = function (ws, blockId) {
+      if (ws.trashcan) {
+        for (let b of ws.trashcan.flyout.contents) {
+            console.log(b)
+            if (b.block.id == blockId) {
+              return true;
+            }
+        }
+      }
+      return false;
+  }
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
+      console.log(this)
+      console.log("helper")
       this.itemCount_ = 1;
-      this.updateShape_();
+      //this.updateShape_();
+      console.log(this.childBlocks_)
+      let ws = Blockly.getMainWorkspace();
+      if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
+           const input = this.appendValueInput('ADD0').setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
+            input.appendField(''); 
+          let blocks = ws.getAllBlocks();
+          if (blocks.includes(this)){ 
+            console.log("ADD BLOCK")  
+            let stmt = ws.newBlock(inputType);
+            stmt.initSvg();
+            input.connection.connect(stmt.outputConnection);
+            ws.render();           
+        }
+      }
+
+      /*
+      if (ws.trashcan) {
+        console.log("trashcan flyout")
+        console.log(ws.trashcan.flyout.contents)
+        console.log(this.id)
+        console.log(ws.trashcan.flyout.contents[0]);
+
+        if (ws.trashcan.flyout.contents[0]){
+          console.log(ws.trashcan.flyout.contents[0].block.id);
+        }
+        
+        console.log(ws.trashcan.flyout.contents.includes({"type": "block", "block": this}));
+      }*/
     }
 
   const name = 'list_mutator'+mutatorCount
@@ -101,6 +143,7 @@ function addMutator(inputType, connector) {
         },
 
         saveConnections: function (topBlock) {
+          console.log("SaveConnections")
           // First we get the first sub-block (which represents an input on our main block).
             var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -119,7 +162,9 @@ function addMutator(inputType, connector) {
             }
         },
         updateShape_: function () {
+          
           console.log("updateShape");
+          console.log(this.childBlocks_)
           if (this.itemCount_ && this.getInput('EMPTY')) {
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -128,24 +173,15 @@ function addMutator(inputType, connector) {
             );
           }
           
-          let ws = Blockly.getMainWorkspace();
+          //let ws = Blockly.getMainWorkspace();
           // Add new inputs.
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
                 input.appendField('');
-                console.log("add block")
-                if (inputType != "variable" & isBlock(inputType)){    
-                  let blocks = ws.getAllBlocks();
-                  if (blocks.includes(this)){
-                    let stmt = ws.newBlock(inputType);
-                    stmt.initSvg();
-                    let out = stmt.outputConnection
-                    out.reconnect(this, "ADD"+ i)
-                    ws.render();
-                  }
-                }
+                //console.log("add block")
+                
 
               } else {
                 input.appendField(connector, 'ADD' + i);
@@ -170,6 +206,8 @@ function addMutator(inputType, connector) {
 
             this.removeInput('ADD' + i);
           }
+
+          console.log(this.childBlocks_);
         }},
       helper
         ,
