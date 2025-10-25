@@ -4,10 +4,10 @@ export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
 
+  // checks block is in trash, by comparing ids of blocks in trash contents.
   const inTrash = function (ws, blockId) {
       if (ws.trashcan) {
         for (let b of ws.trashcan.flyout.contents) {
-            console.log(b)
             if (b.block.id == blockId) {
               return true;
             }
@@ -17,18 +17,15 @@ function addMutator(inputType, connector) {
   }
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
-      console.log(this)
-      console.log("helper")
       this.itemCount_ = 1;
-      //this.updateShape_();
-      console.log(this.childBlocks_)
+      
+      // add first block when first created. 
       let ws = Blockly.getMainWorkspace();
       if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
            const input = this.appendValueInput('ADD0').setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
             input.appendField(''); 
           let blocks = ws.getAllBlocks();
-          if (blocks.includes(this)){ 
-            console.log("ADD BLOCK")  
+          if (blocks.includes(this)){   
             let stmt = ws.newBlock(inputType);
             stmt.initSvg();
             input.connection.connect(stmt.outputConnection);
@@ -36,19 +33,6 @@ function addMutator(inputType, connector) {
         }
       }
 
-      /*
-      if (ws.trashcan) {
-        console.log("trashcan flyout")
-        console.log(ws.trashcan.flyout.contents)
-        console.log(this.id)
-        console.log(ws.trashcan.flyout.contents[0]);
-
-        if (ws.trashcan.flyout.contents[0]){
-          console.log(ws.trashcan.flyout.contents[0].block.id);
-        }
-        
-        console.log(ws.trashcan.flyout.contents.includes({"type": "block", "block": this}));
-      }*/
     }
 
   const name = 'list_mutator'+mutatorCount
@@ -94,7 +78,6 @@ function addMutator(inputType, connector) {
 
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
-          console.log("compose")
               // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -121,29 +104,27 @@ function addMutator(inputType, connector) {
           // `this` refers to the main block.
           this.itemCount_ = connections.length;
           this.updateShape_();
-
-          let ws = Blockly.getMainWorkspace()
+          
+          let ws = Blockly.getMainWorkspace();
           // And finally we reconnect any child blocks.
           for (var i = 0; i < this.itemCount_; i++) {
             if (connections[i]){
               connections[i].reconnect(this, 'ADD' + i);
             } else {
+              // add inner block if possible, if children not already there
               if (inputType != "variable" & isBlock(inputType)){    
-                //let blocks = ws.getAllBlocks();
-                //if (blocks.includes(this)){
                   let stmt = ws.newBlock(inputType);
                   stmt.initSvg();
                   let out = stmt.outputConnection
                   out.reconnect(this, "ADD"+ i)
                   ws.render();
-                //}
+                
               }
             }
           }
         },
 
         saveConnections: function (topBlock) {
-          console.log("SaveConnections")
           // First we get the first sub-block (which represents an input on our main block).
             var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -163,8 +144,6 @@ function addMutator(inputType, connector) {
         },
         updateShape_: function () {
           
-          console.log("updateShape");
-          console.log(this.childBlocks_)
           if (this.itemCount_ && this.getInput('EMPTY')) {
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -173,32 +152,18 @@ function addMutator(inputType, connector) {
             );
           }
           
-          //let ws = Blockly.getMainWorkspace();
+      
           // Add new inputs.
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
-                input.appendField('');
-                //console.log("add block")
-                
+                input.appendField('');             
 
               } else {
                 input.appendField(connector, 'ADD' + i);
               }
-              
-              // adds corresponding block in gap, if a block is possible
-              /*if (inputType != "variable" & isBlock(inputType)){    
-                let blocks = ws.getAllBlocks();
-                if (blocks.includes(this)){
-                  let stmt = ws.newBlock(inputType);
-                  stmt.initSvg();
-                  let out = stmt.outputConnection
-                  out.reconnect(this, "ADD"+ i)
-                  ws.render();
-                }
-              }*/
-            
+                          
             }
           }
           // Remove deleted inputs.
@@ -207,7 +172,6 @@ function addMutator(inputType, connector) {
             this.removeInput('ADD' + i);
           }
 
-          console.log(this.childBlocks_);
         }},
       helper
         ,
@@ -292,7 +256,6 @@ export const repeat = function(arg) {
 };
 
 export const choice = function(...args) {
-    console.log(args);
     // drop down only if all strings
     const options = [];
     const contents = [];
@@ -301,7 +264,6 @@ export const choice = function(...args) {
             options.push([a, a]);
         } else{
             // is a block, so a tool box category
-            console.log(a);
             contents.push(a.name);
         }
     }
