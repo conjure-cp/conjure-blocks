@@ -359,3 +359,19 @@ function downloadEssenceCode() {
   
   document.body.appendChild(a)
 }
+
+
+// help alert window
+const dialog = document.getElementById("dialog")
+const help = document.getElementById("help");
+const close = document.getElementById("close");
+help.addEventListener("click", helpPopUp);
+close.addEventListener("click", closePopUp);
+
+function helpPopUp() {
+  dialog.showModal();
+} 
+
+function closePopUp() {
+  dialog.close();
+}
