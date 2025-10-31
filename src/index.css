@@ -13,6 +13,19 @@ h3{
     overflow: hidden;
 }
 
+video{
+    width: 100%;
+}
+
+dialog{
+    flex: auto;
+    width: 75%;
+    overflow-wrap: anywhere;
+    resize: both;
+
+}
+
+
 #pageContainer {
     display: flex;
     flex-direction: row;
