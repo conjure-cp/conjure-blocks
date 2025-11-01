@@ -7,7 +7,7 @@
  * EDITED by N-J-Martin
  */
 import Split from 'split.js'
-import vid from './conjure-blocks-example.mp4';
+//import vid from './conjure-blocks-example.mp4';
 import * as Blockly from 'blockly';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
