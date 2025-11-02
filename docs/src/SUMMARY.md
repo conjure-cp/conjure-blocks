@@ -1,47 +1,73 @@
 [Introduction](intro.md)
 
 # Grammar
+<!-- DONE -->
 - [program]()
-- [constant]()
-- [integer]()
-- [TRUE]()
-- [FALSE]()
+    - [find_statement_list]()
+    - [constraint_list]()
+    - [letting_statement_list]()
+    - [given_list]()
+    - [dominance_relation]()
+
+<!-- DONE -->
+- [domain]() 
+    - [bool_domain]()
+    - [int_domain]()
+
+<!-- DONE -->
+- [expression]()
+    - [bracket_expr]()
+    - [not_expr]()
+    - [abs_value]()
+    - [exponent]()
+    - [and_expr]()
+    - [or_expr]()
+    - [implication]()
+    - [quantifier_expr]()
+    <!-- constant? -->
+    - [TRUE]()
+    - [FALSE]()
+    - [comparison]()
+    - [comp_op]()
+    - [additive_op]()
+    - [sum_expr]()
+    - [product_expr]()
+    - [multiplicative_op]()
+    - [negative_expr]()
+
+<!-- DONE -->
+- [find]()
+    - [find_statement]()
+    <!-- repeated -->
+    - [find_statement_list]()
+    - [given_list]()
+
+<!-- DONE -->
+- [letting]()
+    - [letting_statement]()
+    <!-- repeated -->
+    - [letting_statement_list]()
+
+
+<!-- DONE -->
+- [range]()
+    - [int_range]()
+    - [range_list]()
+
+<!-- DONE -->
+- [misc]()
+    - [domain_expr]()
+    - [toInt_expr]()
+    - [from_solution]()
+
+# The strays
+<!-- not yet organised -->
 - [variable]()
 - [variable_list]()
-- [find_statement_list]()
-- [find_statement]()
 - [domain]()
-- [bool_domain]()
-- [int_domain]()
-- [range_list]()
-- [int_range]()
-- [letting_statement_list]()
-- [letting_statement]()
-- [given_list]()
-- [constraint_list]()
-- [bracket_expr]()
-- [domain_expr]()
-- [expression]()
-- [not_expr]()
-- [abs_value]()
-- [exponent]()
-- [negative_expr]()
-- [product_expr]()
-- [multiplicative_op]()
-- [sum_expr]()
-- [additive_op]()
-- [comparison]()
-- [comp_op]()
-- [and_expr]()
-- [or_expr]()
-- [implication]()
-- [toInt_expr]()
-- [quantifier_expr]()
 - [expr_list]()
 - [muliplicative]()
 - [additive]()
-- [from_solution]()
-- [dominance_relation]()
 - [comparing]()
 - [find]()
 - [letting]()
