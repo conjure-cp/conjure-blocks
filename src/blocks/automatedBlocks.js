@@ -16,6 +16,7 @@ for (let r in rules){
     block.output = [r]; 
     block.inputsInline = true
     // tooltips entry
+    console.log('rule ' + r);
     block.tooltip = `Hello, I am a tool tip`;
     // check not variable/empty function essentially,skip
     if (!(out)){}
