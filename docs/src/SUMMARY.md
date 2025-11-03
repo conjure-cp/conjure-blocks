@@ -1,10 +1,12 @@
 [Introduction](intro.md)
 
-# Grammar
+# Blocks
 <!-- DONE -->
 - [program]()
+    - [find_statement]()
     - [find_statement_list]()
     - [constraint_list]()
+    - [letting_statement]()
     - [letting_statement_list]()
     - [given_list]()
     - [dominance_relation]()
@@ -34,20 +36,6 @@
     - [product_expr]()
     - [multiplicative_op]()
     - [negative_expr]()
-
-<!-- DONE -->
-- [find]()
-    - [find_statement]()
-    <!-- repeated -->
-    - [find_statement_list]()
-    - [given_list]()
-
-<!-- DONE -->
-- [letting]()
-    - [letting_statement]()
-    <!-- repeated -->
-    - [letting_statement_list]()
-
 
 <!-- DONE -->
 - [range]()
