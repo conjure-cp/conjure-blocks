@@ -8,7 +8,7 @@ function addMutator(inputType, connector) {
   const inTrash = function (ws, blockId) {
       if (ws.trashcan) {
         for (let b of ws.trashcan.flyout.contents) {
-            if (b.block.id == blockId) {
+            if (b.element.id == blockId) {
               return true;
             }
         }
