@@ -244,7 +244,6 @@ export const repeat = function(arg) {
         'message': "",
         "args": [
         ],
-        'tooltip': '%{BKY_LISTS_CREATE_WITH_TOOLTIP}',
         'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
         "extraState": {
         "itemCount": 1// or whatever the count is
