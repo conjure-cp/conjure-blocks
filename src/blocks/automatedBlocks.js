@@ -14,7 +14,10 @@ for (let r in rules){
     const block = {};
     block.type = r;
     block.output = [r]; 
-    block.inputsInline = true;
+    block.inputsInline = true
+    // tooltips entry
+    console.log('rule ' + r);
+    block.tooltip = `Hello, I am a tool tip`;
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
