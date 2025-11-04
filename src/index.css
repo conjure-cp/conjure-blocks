@@ -16,7 +16,6 @@ h3{
 iframe {
     width: 400px;
     height: 210px;
-    display: block;
 }
 
 dialog{
@@ -108,4 +107,11 @@ dialog{
      float: left;
       height: 100%;
 
+}
+
+#frame{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
