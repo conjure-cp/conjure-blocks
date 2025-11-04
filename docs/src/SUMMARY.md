@@ -3,7 +3,7 @@
 # Blocks
 <!-- DONE -->
 - [program]()
-    - [find_statement]()
+    - [find_statement](./blocks/find_statement.md)
     - [find_statement_list]()
     - [constraint_list]()
     - [letting_statement]()
@@ -26,6 +26,7 @@
     - [or_expr]()
     - [implication]()
     - [quantifier_expr]()
+    - [expr_list]()
     <!-- constant? -->
     - [TRUE]()
     - [FALSE]()
@@ -47,16 +48,4 @@
     - [domain_expr]()
     - [toInt_expr]()
     - [from_solution]()
-
-# The strays
-<!-- not yet organised -->
-- [variable]()
-- [variable_list]()
-- [domain]()
-- [expr_list]()
-- [muliplicative]()
-- [additive]()
-- [comparing]()
-- [find]()
-- [letting]()
-- [range]()
+    - [variable_list]()
