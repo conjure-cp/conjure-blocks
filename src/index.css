@@ -13,8 +13,10 @@ h3{
     overflow: hidden;
 }
 
-iframe{
-    width: 100%;
+iframe {
+    width: 400px;
+    height: 210px;
+    display: block;
 }
 
 dialog{
