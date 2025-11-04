@@ -17,6 +17,11 @@ import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 
+/*console.log(essenceBlocks);
+for (let b of essenceBlocks){
+  console.log(b);
+}*/
+
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
@@ -222,6 +227,24 @@ ws.addChangeListener((e) => {
   //ws.resize();
   runCode();
 });
+
+ws.addChangeListener((e) => {
+  if (e.type == Blockly.Events.BLOCK_CREATE) {
+    for (let b of e.ids){
+      let block = ws.getBlockById(b);
+      console.log(block.inputList);
+      let types = "";
+      for (let i in block.inputList) {
+        console.log(i);
+        if (block.inputList[i].connection){
+          types = types + i +":" + block.inputList[i].connection.getCheck() +",";
+        }
+        
+      }
+      block.setCommentText(types);
+    }
+  }
+})
 
 function printGeneratedCode(){
   console.log(essenceGenerator.workspaceToCode(ws));
