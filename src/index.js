@@ -7,6 +7,7 @@
  * EDITED by N-J-Martin
  */
 import Split from 'split.js'
+//import vid from './conjure-blocks-example.mp4';
 import * as Blockly from 'blockly';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
@@ -358,4 +359,20 @@ function downloadEssenceCode() {
   a.click();
   
   document.body.appendChild(a)
+}
+
+
+// help alert window
+const dialog = document.getElementById("dialog")
+const help = document.getElementById("help");
+const close = document.getElementById("close");
+help.addEventListener("click", helpPopUp);
+close.addEventListener("click", closePopUp);
+
+function helpPopUp() {
+  dialog.showModal();
+} 
+
+function closePopUp() {
+  dialog.close();
 }

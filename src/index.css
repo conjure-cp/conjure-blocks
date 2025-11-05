@@ -13,6 +13,20 @@ h3{
     overflow: hidden;
 }
 
+iframe {
+    width: 400px;
+    height: 210px;
+}
+
+dialog{
+    flex: auto;
+    width: 75%;
+    overflow-wrap: anywhere;
+    resize: both;
+
+}
+
+
 #pageContainer {
     display: flex;
     flex-direction: row;
@@ -93,4 +107,11 @@ h3{
      float: left;
       height: 100%;
 
+}
+
+#frame{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
