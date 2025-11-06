@@ -189,11 +189,21 @@ export const seq = function(...args) {
         // builds message and args list
         if (typeof(a) === "function") {
             message = message.concat("%"+argCount+" ");
-            argOut.push({
+            console.log(a.name)
+            if (a.name.endsWith("_list")){
+              //console.log(a.name.substring(0, a.name.length-5));
+              argOut.push({
                 "type": "input_value",
                 "name":"TEMP"+argCount,
-                "check": a.name
-            })
+                "check": [a.name, a.name.substring(0,a.name.length-5)]
+              })
+            } else {
+                argOut.push({
+                    "type": "input_value",
+                    "name":"TEMP"+argCount,
+                    "check": a.name
+                })
+            }
             argCount ++;
         } else if (a.constructor.name === "Array") {
             message = message.concat("%"+argCount+" ");
