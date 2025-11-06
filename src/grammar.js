@@ -104,8 +104,9 @@ export const grammar = {
     letting_statement: $ => seq(
         $.variable_list,
         "be",
-        choice($.expression, seq("domain", $.domain))
+        choice($.expression, $.domain_expr)
     ),
+
 
     // adding given so can demonstrate data entry
     given_list: $ => seq("given", repeat(seq($.find_statement))),
@@ -216,7 +217,8 @@ export const grammar = {
 
     letting: $ => choice(
         $.letting_statement,
-        $.letting_statement_list
+        $.letting_statement_list,
+        $.domain_expr
     ),
 
     range: $ => choice(
