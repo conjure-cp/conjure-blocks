@@ -4,10 +4,11 @@
 <!-- DONE -->
 - [program]()
     - [find_statement](./blocks/find_statement.md)
-    - [find_statement_list]()
-    - [constraint_list]()
-    - [letting_statement]()
-    - [letting_statement_list]()
+    - [find_statement_list](./blocks/find_statement_list.md)
+    - [constraint_list](./blocks/constraint_list.md)
+    - [letting_statement](./blocks/letting_statement.md)
+    - [domain_expr]()
+    - [letting_statement_list](./blocks/letting_statement_list.md)
     - [given_list]()
     - [dominance_relation]()
 
@@ -45,7 +46,6 @@
 
 <!-- DONE -->
 - [misc]()
-    - [domain_expr]()
     - [toInt_expr]()
     - [from_solution]()
     - [variable_list]()

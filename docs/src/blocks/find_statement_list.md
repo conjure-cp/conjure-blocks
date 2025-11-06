@@ -1,0 +1,19 @@
+<!-- Note: this cannot be called a find statement list -- given also uses this block -->
+
+# Find/Given Statement List
+
+[Find/given Statement list object](../images/find_statement_list.png)
+
+<!-- Tooltips -->
+Stores a list of decision vriables.
+<!-- Tooltips -->
+
+For example, it can be used like this:
+
+[Example of a find statement](../images/find_statement_example.png)
+
+Which would produce the following Conjure Output:
+
+```essence
+find  x : int (  0 .. 10  ) 
+```
