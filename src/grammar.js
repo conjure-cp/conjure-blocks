@@ -128,6 +128,7 @@ export const grammar = {
         $.and_expr,
         $.or_expr,
         $.implication,
+        $.quantifier_op,
         $.quantifier_expr,
         $.expr_list,
         $.constant,
@@ -166,8 +167,11 @@ export const grammar = {
 
     toInt_expr: $ => seq("toInt", "(", $.expression, ")"),
 
+    //separate operation so can fix block
+    quantifier_op: $ =>  choice("and", "or", "min", "max", "sum", "allDiff"),
+
     quantifier_expr: $ => prec(-10, seq(
-        choice("and", "or", "min", "max", "sum", "allDiff"),
+        $.quantifier_op,
         "([",
         $.expr_list,
         "])"

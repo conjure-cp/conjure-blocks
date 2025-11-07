@@ -239,7 +239,7 @@ ws.addChangeListener((e) => {
       let slot = 1;
       
       // if has a mutator - i.e a list block, individual description for all inputs
-      if (block.mutator){
+      if (block.mutator & block.inputList[1]){
         types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
       } 
       else {
