@@ -256,7 +256,6 @@ ws.addChangeListener((e) => {
       // no comment if no inputs.
       if (types.length > 0){
         block.setCommentText(types);
-        block.setEditable(false);
       }
       
 
