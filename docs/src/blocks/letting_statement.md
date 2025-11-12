@@ -1,9 +1,13 @@
 # Letting Statement
 
-[A letting statement list block](../images/letting_statement.png)
+Used to define a variables' domain. This must be nested in a 'letting' block.
 
-<!-- Tooltip -->
-Used to define a variables domain. This must be nested in a 'letting' block.
-<!-- Tooltip -->
+For example, it can be used like this:
 
-<!-- TODO: Example -->
+![Example of a letting statement](../images/letting_statement_example.png)
+
+Which would produce the following Essence output:
+
+```essence
+letting x be domain int ( 0 .. 5  )
+```

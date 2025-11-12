@@ -2,15 +2,11 @@
 
 # Find/Given Statement List
 
-[Find/given Statement list object](../images/find_statement_list.png)
-
-<!-- Tooltips -->
-Stores a list of decision vriables.
-<!-- Tooltips -->
+Stores a list of decision variables.
 
 For example, it can be used like this:
 
-[Example of a find statement](../images/find_statement_example.png)
+![Example of a find statement](../images/find_statement_example.png)
 
 Which would produce the following Conjure Output:
 

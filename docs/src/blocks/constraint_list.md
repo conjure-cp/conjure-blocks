@@ -1,7 +1,13 @@
 # Constraint list
 
-[Constriants list block](../images/constraints_list.png)
-
-<!-- Tooltips -->
 Used to define constraints.
-<!-- Tooltips -->
+
+For example, it can be used like this:
+
+![Example of a constraint list block](../images/constraint_list_example.png)
+
+Which would produce the following Conjure Output:
+
+```essence
+such that a != b
+```
