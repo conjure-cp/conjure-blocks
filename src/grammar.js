@@ -167,6 +167,8 @@ export const grammar = {
 
     toInt_expr: $ => seq("toInt", "(", $.expression, ")"),
 
+    //separate operation so can fix block
+
     quantifier_expr: $ => prec(-10, seq(
         choice("and", "or", "min", "max", "sum", "allDiff"),
         "([",
