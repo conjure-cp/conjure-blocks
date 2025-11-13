@@ -255,7 +255,7 @@ ws.addChangeListener((e) => {
      
       
       // no comment if no inputs.
-      if (types.length > 0){
+      if (types.length > 0 && !block.getCommentText()){
         block.setCommentText(types);
       }
       
