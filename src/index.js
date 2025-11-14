@@ -280,7 +280,7 @@ async function getSolution() {
     const client = new ConjureClient("conjure-blocks");
     client.solve(code, {data : data})
       .then(result => outputSolution(result));   
-};
+}
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
