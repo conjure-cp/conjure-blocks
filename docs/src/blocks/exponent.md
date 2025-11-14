@@ -8,7 +8,7 @@ For example, `2^5` is defined in Conjure Blocks as follows:
 
 Where the top value is the base, and the bottom is the exponent. 
 
-This would produce the following Conjure Output:
+This would produce the following Essence Output:
 
 ```essence
 2 ** 5 

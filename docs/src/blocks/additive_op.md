@@ -8,7 +8,7 @@ For example, it can be used like this:
 
 ![Example of additive operation](../images/additive_op_example.png)
 
-and would produce the following Conjure Output:
+and would produce the following Essence Output:
 
 ```essence
 5 + 10

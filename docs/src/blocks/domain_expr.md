@@ -10,7 +10,7 @@ For example, it can be used like this:
 
 ![Example of a domain expression](../images/domain_expr_example.png)
 
-Which would produce the following Conjure Output:
+Which would produce the following Essence Output:
 
 ```essence
 domain int ( 0 .. 5  )

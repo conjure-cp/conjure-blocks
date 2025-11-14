@@ -18,7 +18,7 @@ The statement `x and y` would be represented in Conjure Blocks as follows:
 
 ![Example of an and expression](../images/and_expr_example.png)
 
-and would produce the following Conjure Output:
+and would produce the following Essence Output:
 
 ```essence
 x /\ y

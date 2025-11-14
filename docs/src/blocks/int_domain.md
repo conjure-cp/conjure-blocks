@@ -12,7 +12,7 @@ For example, it can be used like this:
 
 ![Example of a defined integer domain](../images/int_domain_example.png)
 
-Which would produce the following Conjure Output:
+Which would produce the following Essence Output:
 
 ```essence
 int ( 0 .. 100  )

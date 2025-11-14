@@ -8,7 +8,7 @@ The statement `x is not equal to y` would be represented in Conjure Blocks as fo
 
 ![Example of comparison](../images/comparison_example.png)
 
-and would produce the following Conjure Output:
+and would produce the following Essence Output:
 
 ```essence
 x !=  y 

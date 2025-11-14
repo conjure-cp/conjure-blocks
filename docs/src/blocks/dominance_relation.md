@@ -1,7 +1,5 @@
 [//]: # (SOMEONE PLEASE CHECK THIS)
 # Dominance Relation
 
-Defines a dominance relation
-
-[//]: # (TODO: get an example)
+Defines a dominance relation.
 

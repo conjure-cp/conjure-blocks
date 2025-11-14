@@ -17,7 +17,7 @@ The statement `x implies y` would be represented in Conjure Blocks as follows:
 
 ![Example of an implication expression](../images/implication_example.png)
 
-and would produce the following Conjure Output:
+and would produce the following Essence Output:
 
 ```essence
 x /\ y

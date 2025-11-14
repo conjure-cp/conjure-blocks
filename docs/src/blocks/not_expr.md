@@ -13,7 +13,7 @@ We could use the following blocks:
 
 ![Example of a not expression](../images/not_expr_example.png)
 
-Which would produce the following Conjure Output:
+Which would produce the following Essence Output:
 
 ```essence
 ! ( x /\ y  )
