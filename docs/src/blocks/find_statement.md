@@ -6,7 +6,7 @@ For example, it can be used like this:
 
 ![Example of a find statement](../images/find_statement_example.png)
 
-Which would produce the following Conjure Output:
+Which would produce the following Essence Output:
 
 ```essence
 find  x : int (  0 .. 10  ) 
