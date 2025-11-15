@@ -17,13 +17,16 @@ function addMutator(inputType, connector) {
   }
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
+      console.log("helper");
+      console.log(this);
+      console.log(this.id);
       this.itemCount_ = 1;
-      
-      // add first block when first created. 
-      let ws = Blockly.getMainWorkspace();
+      this.updateShape_();
+      // add first block when first created, check not filled already. 
+      /*let ws = Blockly.getMainWorkspace();
       if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
-           const input = this.appendValueInput('ADD0').setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
-            input.appendField(''); 
+          const input = this.getInput("ADD0");
+          console.log(input);
           let blocks = ws.getAllBlocks();
           if (blocks.includes(this)){   
             let stmt = ws.newBlock(inputType);
@@ -31,7 +34,7 @@ function addMutator(inputType, connector) {
             input.connection.connect(stmt.outputConnection);
             ws.render();           
         }
-      }
+      }*/
 
     }
 
@@ -58,6 +61,7 @@ function addMutator(inputType, connector) {
         },
               // These are the decompose and compose functions for the lists_create_with block.
         decompose: function(workspace) {
+          console.log("decompose");
           // This is a special sub-block that only gets created in the mutator UI.
           // It acts as our "top block"
           var topBlock = workspace.newBlock('lists_create_with_container');
@@ -78,6 +82,7 @@ function addMutator(inputType, connector) {
 
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
+          console.log("compose")
               // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -125,6 +130,7 @@ function addMutator(inputType, connector) {
         },
 
         saveConnections: function (topBlock) {
+            console.log("save_connections")
           // First we get the first sub-block (which represents an input on our main block).
             var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -143,7 +149,7 @@ function addMutator(inputType, connector) {
             }
         },
         updateShape_: function () {
-          
+          console.log("update shape");
           if (this.itemCount_ && this.getInput('EMPTY')) {
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -239,7 +245,7 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-   
+   console.log(ws.getMainWorkspace());
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
       addMutator(arg.name, "")
