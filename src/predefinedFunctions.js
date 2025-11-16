@@ -21,7 +21,8 @@ function addMutator(inputType, connector) {
       console.log(this);
       console.log(this.id);
       this.itemCount_ = 1;
-      this.updateShape_();
+      this.firstAdded = false;
+
       // add first block when first created, check not filled already. 
       /*let ws = Blockly.getMainWorkspace();
       if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
@@ -42,21 +43,21 @@ function addMutator(inputType, connector) {
 
   Blockly.Extensions.registerMutator(
       name,
-      {saveExtraState: function() {
-          return {
-            'itemCount': this.itemCount_,
-          };
-        },
+      {
         
           loadExtraState: function(state) {
+          console.log("load");
           this.itemCount_ = state['itemCount'];
+          this.firstAdded = state.firstAdded;
           // This is a helper function which adds or removes inputs from the block.
           this.updateShape_();
         },
 
         saveExtraState: function (itemCount) {
+          console.log("save");
           return {
             'itemCount': this.itemCount_,
+            'firstAdded': this.firstAdded,
           };
         },
               // These are the decompose and compose functions for the lists_create_with block.
@@ -83,6 +84,7 @@ function addMutator(inputType, connector) {
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
           console.log("compose")
+          this.childCount_ = 3;
               // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -123,7 +125,7 @@ function addMutator(inputType, connector) {
                   let out = stmt.outputConnection
                   out.reconnect(this, "ADD"+ i)
                   ws.render();
-                
+                  this.firstAdded = true;
               }
             }
           }
@@ -162,6 +164,7 @@ function addMutator(inputType, connector) {
           // Add new inputs.
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
+              console.log("add")
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
                 input.appendField('');             
@@ -176,6 +179,18 @@ function addMutator(inputType, connector) {
           for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
 
             this.removeInput('ADD' + i);
+          }
+
+          if (!this.firstAdded){
+              let ws = Blockly.getMainWorkspace();
+              if (inputType != "variable" & isBlock(inputType)){    
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD0")
+                  ws.render();
+                  this.firstAdded = true;
+              }
           }
 
         }},
@@ -245,7 +260,6 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-   console.log(ws.getMainWorkspace());
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
       addMutator(arg.name, "")
