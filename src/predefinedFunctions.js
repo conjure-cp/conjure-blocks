@@ -4,39 +4,11 @@ export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
 
-  // checks block is in trash, by comparing ids of blocks in trash contents.
-  const inTrash = function (ws, blockId) {
-      if (ws.trashcan) {
-        for (let b of ws.trashcan.flyout.contents) {
-            if (b.element.id == blockId) {
-              return true;
-            }
-        }
-      }
-      return false;
-  }
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
-      console.log("helper");
-      console.log(this);
-      console.log(this.id);
       this.itemCount_ = 1;
+      // checks if first inner block has been added, prevnts duplicate inner blocks. 
       this.firstAdded = false;
-
-      // add first block when first created, check not filled already. 
-      /*let ws = Blockly.getMainWorkspace();
-      if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
-          const input = this.getInput("ADD0");
-          console.log(input);
-          let blocks = ws.getAllBlocks();
-          if (blocks.includes(this)){   
-            let stmt = ws.newBlock(inputType);
-            stmt.initSvg();
-            input.connection.connect(stmt.outputConnection);
-            ws.render();           
-        }
-      }*/
-
     }
 
   const name = 'list_mutator'+mutatorCount
@@ -46,7 +18,6 @@ function addMutator(inputType, connector) {
       {
         
           loadExtraState: function(state) {
-          console.log("load");
           this.itemCount_ = state['itemCount'];
           this.firstAdded = state.firstAdded;
           // This is a helper function which adds or removes inputs from the block.
@@ -54,7 +25,6 @@ function addMutator(inputType, connector) {
         },
 
         saveExtraState: function (itemCount) {
-          console.log("save");
           return {
             'itemCount': this.itemCount_,
             'firstAdded': this.firstAdded,
@@ -62,7 +32,6 @@ function addMutator(inputType, connector) {
         },
               // These are the decompose and compose functions for the lists_create_with block.
         decompose: function(workspace) {
-          console.log("decompose");
           // This is a special sub-block that only gets created in the mutator UI.
           // It acts as our "top block"
           var topBlock = workspace.newBlock('lists_create_with_container');
@@ -83,8 +52,6 @@ function addMutator(inputType, connector) {
 
         // The container block is the top-block returned by decompose.
         compose: function(topBlock) {
-          console.log("compose")
-          this.childCount_ = 3;
               // First we get the first sub-block (which represents an input on our main block).
           var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -132,7 +99,6 @@ function addMutator(inputType, connector) {
         },
 
         saveConnections: function (topBlock) {
-            console.log("save_connections")
           // First we get the first sub-block (which represents an input on our main block).
             var itemBlock = topBlock.getInputTargetBlock('STACK');
 
@@ -151,7 +117,6 @@ function addMutator(inputType, connector) {
             }
         },
         updateShape_: function () {
-          console.log("update shape");
           if (this.itemCount_ && this.getInput('EMPTY')) {
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -164,7 +129,6 @@ function addMutator(inputType, connector) {
           // Add new inputs.
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
-              console.log("add")
               const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
               if (i === 0) {
                 input.appendField('');             
@@ -181,6 +145,7 @@ function addMutator(inputType, connector) {
             this.removeInput('ADD' + i);
           }
 
+          // only add extra first inner block if not already added.
           if (!this.firstAdded){
               let ws = Blockly.getMainWorkspace();
               if (inputType != "variable" & isBlock(inputType)){    
@@ -210,9 +175,7 @@ export const seq = function(...args) {
         // builds message and args list
         if (typeof(a) === "function") {
             message = message.concat("%"+argCount+" ");
-            console.log(a.name)
             if (a.name.endsWith("_list")){
-              //console.log(a.name.substring(0, a.name.length-5));
               argOut.push({
                 "type": "input_value",
                 "name":"TEMP"+argCount,
