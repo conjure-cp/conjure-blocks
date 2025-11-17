@@ -4,49 +4,22 @@ export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
 
-  // checks block is in trash, by comparing ids of blocks in trash contents.
-  const inTrash = function (ws, blockId) {
-      if (ws.trashcan) {
-        for (let b of ws.trashcan.flyout.contents) {
-            if (b.element.id == blockId) {
-              return true;
-            }
-        }
-      }
-      return false;
-  }
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
       this.itemCount_ = 1;
-      
-      // add first block when first created. 
-      let ws = Blockly.getMainWorkspace();
-      if (inputType != "variable" & isBlock(inputType) & !inTrash(ws, this.id)){   
-           const input = this.appendValueInput('ADD0').setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
-            input.appendField(''); 
-          let blocks = ws.getAllBlocks();
-          if (blocks.includes(this)){   
-            let stmt = ws.newBlock(inputType);
-            stmt.initSvg();
-            input.connection.connect(stmt.outputConnection);
-            ws.render();           
-        }
-      }
-
+      // checks if first inner block has been added, prevnts duplicate inner blocks. 
+      this.firstAdded = false;
     }
 
   const name = 'list_mutator'+mutatorCount
 
   Blockly.Extensions.registerMutator(
       name,
-      {saveExtraState: function() {
-          return {
-            'itemCount': this.itemCount_,
-          };
-        },
+      {
         
           loadExtraState: function(state) {
           this.itemCount_ = state['itemCount'];
+          this.firstAdded = state.firstAdded;
           // This is a helper function which adds or removes inputs from the block.
           this.updateShape_();
         },
@@ -54,6 +27,7 @@ function addMutator(inputType, connector) {
         saveExtraState: function (itemCount) {
           return {
             'itemCount': this.itemCount_,
+            'firstAdded': this.firstAdded,
           };
         },
               // These are the decompose and compose functions for the lists_create_with block.
@@ -118,7 +92,7 @@ function addMutator(inputType, connector) {
                   let out = stmt.outputConnection
                   out.reconnect(this, "ADD"+ i)
                   ws.render();
-                
+                  this.firstAdded = true;
               }
             }
           }
@@ -143,7 +117,6 @@ function addMutator(inputType, connector) {
             }
         },
         updateShape_: function () {
-          
           if (this.itemCount_ && this.getInput('EMPTY')) {
             this.removeInput('EMPTY');
           } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -172,6 +145,19 @@ function addMutator(inputType, connector) {
             this.removeInput('ADD' + i);
           }
 
+          // only add extra first inner block if not already added.
+          if (!this.firstAdded){
+              let ws = Blockly.getMainWorkspace();
+              if (inputType != "variable" & isBlock(inputType)){    
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD0")
+                  ws.render();
+                  this.firstAdded = true;
+              }
+          }
+
         }},
       helper
         ,
@@ -189,9 +175,7 @@ export const seq = function(...args) {
         // builds message and args list
         if (typeof(a) === "function") {
             message = message.concat("%"+argCount+" ");
-            console.log(a.name)
             if (a.name.endsWith("_list")){
-              //console.log(a.name.substring(0, a.name.length-5));
               argOut.push({
                 "type": "input_value",
                 "name":"TEMP"+argCount,
@@ -239,7 +223,6 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-   
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list.
       addMutator(arg.name, "")
