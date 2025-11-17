@@ -17,6 +17,12 @@ import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
+import { blocks } from 'blockly/blocks';
+
+/*console.log(essenceBlocks);
+for (let b of essenceBlocks){
+  console.log(b);
+}*/
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
@@ -225,6 +231,40 @@ ws.addChangeListener((e) => {
   runCode();
 });
 
+// change listener to add comment to describe the required input types on block creation.
+ws.addChangeListener((e) => {
+
+  if (e.type == Blockly.Events.BLOCK_CREATE) {
+    for (let b of e.ids){
+      let block = ws.getBlockById(b);
+      let types = "";
+      let slot = 1;
+      
+      // if has a mutator - i.e a list block, individual description for all inputs
+      if (block.mutator & block.inputList[1]){
+        types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
+      } 
+      else {
+        // build description labelling input with types
+         for (let i in block.inputList) {
+            if (block.inputList[i].connection){
+              types = types + "input " + slot +": " + block.inputList[i].connection.getCheck() +"\n";
+              slot += 1;
+            }
+        
+        }
+      }
+     
+      
+      // no comment if no inputs.
+      if (types.length > 0 && !block.getCommentText()){
+        block.setCommentText(types);
+      }
+      
+
+    }
+  }
+})
 
 function printGeneratedCode(){
   console.log(essenceGenerator.workspaceToCode(ws));
