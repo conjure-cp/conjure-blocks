@@ -11,7 +11,19 @@ pre, code {
 }
 
 button{
-    font-family: system-ui
+    font-family: system-ui;
+    background-color: #DEDEDE;
+    cursor: pointer;
+    padding:auto;
+    border-radius: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+
+button:hover{
+    background-color: #4D4D4D; color: white;
 }
 
 h3{
@@ -116,6 +128,9 @@ dialog{
 
 #output {
     height: 50%;
+    display: grid;
+    grid-template-rows: 1fr 4fr;
+    grid-template-columns: 1fr 1fr;
 }
 
 .split {
