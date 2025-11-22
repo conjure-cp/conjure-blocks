@@ -3,14 +3,33 @@
 body {
     margin: 0;
     max-width: 100vw;
+    font-family: system-ui;
+    background-color: #B3B3B3;
 }
 
 pre, code {
     overflow: auto;
 }
 
+button{
+    font-family: system-ui;
+    background-color: #DEDEDE;
+    cursor: pointer;
+    padding:4px;
+    border-radius: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+
+button:hover{
+    background-color: #4D4D4D; color: white;
+}
+
 h3{
     overflow: hidden;
+    text-align: center;
 }
 
 iframe {
@@ -35,7 +54,7 @@ dialog{
     height: 100vh;
 }
 
-#blocklyDiv {
+#blocklyDivOut {
     /*resize: horizontal;*/
     flex-basis: auto;
     height: 100%;
@@ -45,7 +64,7 @@ dialog{
 
 }
 
-#blocklyDiv2 {
+#blocklyDiv2Out {
     /*resize: horizontal;*/
     flex: auto;
     height: 100%;
@@ -54,10 +73,39 @@ dialog{
     overflow-y: hidden;
 }
 
-#dataInputDiv {
+#dataInputDivOut {
     /*resize: horizontal;*/
     flex: auto;
     height: 100%;
+    width: 100%; 
+    /*position: absolute;*/  
+    overflow-y: hidden; 
+}
+
+
+#blocklyDiv {
+    /*resize: horizontal;*/
+    flex-basis: auto;
+    height: 90%;
+    width: 100%;
+    /*position: absolute;*/
+    overflow-y: hidden;
+
+}
+
+#blocklyDiv2 {
+    /*resize: horizontal;*/
+    flex: auto;
+    height: 90%;
+    width: 100%;
+    /*position: absolute;*/
+    overflow-y: hidden;
+}
+
+#dataInputDiv{
+    /*resize: horizontal;*/
+    flex: auto;
+    height: 90%;
     width: 100%; 
     /*position: absolute;*/  
     overflow-y: hidden; 
@@ -76,11 +124,15 @@ dialog{
 
 #generatedCode {
     height: 50%;
-    background-color: rgb(247, 240, 228);
+    background-color: #DEDEDE;
+    font-size: large;
 }
 
 #output {
     height: 50%;
+    display: grid;
+    /*grid-template-rows: 1fr 4fr;
+    grid-template-columns: 1fr 1fr;*/
 }
 
 .split {
@@ -96,7 +148,7 @@ dialog{
 }
 
 .gutter {
-    background-color: #eee;
+    background-color: #919191;
     background-repeat: no-repeat;
     background-position: 50%;
 }
@@ -105,7 +157,7 @@ dialog{
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
     cursor: col-resize;
      float: left;
-      height: 100%;
+    height: 100%;
 
 }
 

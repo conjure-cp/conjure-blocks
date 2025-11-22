@@ -173,17 +173,11 @@ jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   return [code, 0];
 }
 //add output button
-var outputButton = document.createElement("BUTTON");
-var outputButtonText = document.createTextNode("SOLVE");
-outputButton.appendChild(outputButtonText);
-outputDiv.append(outputButton);
+var outputButton = document.getElementById("solve");
 outputButton.addEventListener("click", getSolution);
 
 // add download button
-var downloadButton = document.createElement("BUTTON");
-var downloadButtonText = document.createTextNode("DOWNLOAD");
-downloadButton.appendChild(downloadButtonText);
-outputDiv.append(downloadButton);
+var downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
