@@ -14,7 +14,7 @@ button{
     font-family: system-ui;
     background-color: #DEDEDE;
     cursor: pointer;
-    padding:auto;
+    padding:4px;
     border-radius: 4px;
     margin-left: 4px;
     margin-right: 4px;

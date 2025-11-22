@@ -12,10 +12,17 @@
     <button id="help">Help</button>
     <dialog id="dialog">
     <h2 style="text-align: center;">Help!</h2>
-    <form method="dialog">
+    <form method="dialog" style="display: grid; place-items: center;">
       <h4 >Instructions</h4>
       <ol>
-        <li>Drag blocks into <b>Block Essence</b> panel to build constraint program. </li>
+        <li>Drag blocks into <b>Block Essence</b> panel to build constraint program. 
+              <ol>
+                <li>Click the cogs to add more inputs</li>
+                <li>Click the question marks to see helpful comments about block input</li>
+                <li>Hover on the blocks to see tooltips linked to documentation for that block</li>
+              </ol>
+        </li>
+        
         <li>Textual Essence is generated automatically in <b>Generated Essence Code</b> panel. </li>
         <li>Specify value for parameters in JSON blocks in <b>Block Data Input</b> panel. </li>
         <li>Solver constaint problem with <b>SOLVE</b> button, JSON solution displayed beneath <b>JSON solution</b> panel, and block solution in <b>Block Solution</b>.</li>
@@ -29,7 +36,7 @@
 
       <h4>Report Bugs</h4>
       <p>Please report bugs to our GitHub repository <a href="https://github.com/conjure-cp/conjure-blocks/issues">here</a>.</p>
-      <button id="close">Got it!</button>
+      <button style="width: 10%" id="close">Got it!</button>
     </form>
     </dialog>
     </div>
