@@ -61,6 +61,7 @@ dialog{
     width: 100%;
     /*position: absolute;*/
     overflow-y: hidden;
+    background-color: #919191;
 
 }
 
@@ -71,6 +72,7 @@ dialog{
     width: 100%;
     /*position: absolute;*/
     overflow-y: hidden;
+    background-color: #919191;
 }
 
 #dataInputDivOut {
@@ -80,6 +82,7 @@ dialog{
     width: 100%; 
     /*position: absolute;*/  
     overflow-y: hidden; 
+    background-color: #919191;
 }
 
 
@@ -90,7 +93,6 @@ dialog{
     width: 100%;
     /*position: absolute;*/
     overflow-y: hidden;
-
 }
 
 #blocklyDiv2 {
