@@ -118,6 +118,8 @@ dialog{
 #generatedCode {
     height: 50%;
     background-color: #DEDEDE;
+    padding: .5rem;
+    color: black;
     font-size: large;
     border-radius: 16px;
     box-shadow: -5px 5px #beb8b8;
