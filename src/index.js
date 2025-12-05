@@ -17,8 +17,7 @@ import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
-import { blocks } from 'blockly/blocks';
-
+import './customRenderer';
 /*console.log(essenceBlocks);
 for (let b of essenceBlocks){
   console.log(b);
@@ -33,7 +32,7 @@ const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
-const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
+const ws = Blockly.inject(blocklyDiv, {renderer: 'custom_renderer', toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
