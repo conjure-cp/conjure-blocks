@@ -81,14 +81,48 @@ h3{
 iframe {
     width: 400px;
     height: 210px;
+    border-radius: 16px;
+    /*box-shadow: -5px 5px rgba(104, 74, 130, 0.5);*/
+    border: solid 3px rgba(0, 0, 0, .5);
 }
 
 dialog{
+    border-radius: 16px;
+    box-shadow: -5px 5px #beb8b8;
     flex: auto;
     width: 75%;
     overflow-wrap: anywhere;
     resize: both;
+    border: none;
+}
 
+dialog h4 {
+    width: 100%;
+    text-align: center;
+    background-color: #DEDEDE;
+    box-shadow: -5px 5px #beb8b8;
+    border-radius: 16px;
+    padding: 3px;
+}
+
+dialog h2 {
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 20px;
+    color: #684A82;
+}
+
+dialog a, dialog b {
+    color: #684A82;
+    font-weight: 900;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4); /* darkens background */
+    backdrop-filter: blur(1px);
 }
 
 #help {
