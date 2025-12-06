@@ -1,7 +1,14 @@
-[//]: # (NADINE YOU ACTUALLY NEEED TO CHECK THIS. THIS IS NOT A DRILL)
 # Quantifier Expression
 
-Iterates through given domains to find an instance where its conditions are met.
+Iterates over the given domains to find an instance whose conditions are met.
+
+Multiple functions are available for this block:
+- `and`
+- `or`
+- `min`
+- `max`
+- `sum`
+- `allDiff`
 
 For example, it can be used like this:
 
@@ -10,5 +17,5 @@ For example, it can be used like this:
 Which would produce the following Essence Output:
 
 ```essence
-such that and  ([ x >= y, y <= x ])
+and  ([ x >= y, y <= x ])
 ```

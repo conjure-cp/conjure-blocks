@@ -4,7 +4,7 @@ A logical operator which abides by the following truth table:
 
 Let x and y be some boolean variables.
 
-| x     | y     | x /\ y |
+| x     | y     | x \/ y |
 |-------|-------|--------|
 | true  | false | true   |
 | false | true  | true   |
