@@ -1,7 +1,7 @@
 [Introduction](intro.md)
 
 # Blocks
-- [Program]()
+- [Program](./blocks/headers/program.md)
     - [Find Statement Assignment](./blocks/find_statement.md)
     - [Find/Given Statement List](./blocks/find_statement_list.md)
     - [Constraint list](./blocks/constraint_list.md)
@@ -11,11 +11,11 @@
     - [Given List](./blocks/given_list.md)
     - [Dominance Relation](./blocks/dominance_relation.md)
 
-- [Domain]() 
+- [Domain](./blocks/headers/domain.md) 
     - [Boolean domain](./blocks/bool_domain.md)
     - [Integer Domain](./blocks/int_domain.md)
 
-- [Expression]()
+- [Expression](./blocks/headers/expression.md)
     - [Bracket Expression](./blocks/bracket_expr.md)
     - [Not Expression](./blocks/not_expr.md)
     - [Absolute Value](./blocks/abs_value.md)
@@ -36,12 +36,12 @@
     - [product_expr](./blocks/product_expr.md)
     - [Multiplicative Operators](./blocks/multiplicative_op.md)
 
-- [Range]()
+- [Range](./blocks/headers/range.md)
     - [Integer Range](./blocks/int_range.md)
     - [range_list](./blocks/range_list.md)
 
-- [Variables]()
+- [Variables](./blocks/headers/variables.md)
   - [variable_list](./blocks/variable_list.md)
 
-- [Misc]()
+- [Misc](./blocks/headers/misc.md)
     - [toInt Expression](./blocks/toInt_expr.md)
