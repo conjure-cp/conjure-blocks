@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Implication
 
 A logical expression. where the following truth table holds.

@@ -1,5 +1,4 @@
-<!-- Note: this cannot be called a find statement list -- given also uses this block -->
-
+[//]: # (author: Jamie Melton)
 # Find/Given Statement List
 
 Stores a list of decision variables.

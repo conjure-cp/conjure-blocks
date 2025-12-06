@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Given List 
 
 Used to declare a parameter and its domain.

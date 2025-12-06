@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Letting Statement List
 
 Assigns a variable to some domain.

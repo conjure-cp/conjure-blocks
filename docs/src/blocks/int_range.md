@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Integer Range
 
 Used to define a group of integers.

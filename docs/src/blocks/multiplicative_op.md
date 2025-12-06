@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Multiplicative Operators
 
 Selects the operator for a multiplicative expression.

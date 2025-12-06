@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Sum Expression
 
 Used to create `+` or `-` arithmetic expression.

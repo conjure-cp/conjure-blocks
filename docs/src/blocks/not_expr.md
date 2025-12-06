@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Not Expression
 
 This is a logical operation applied to a boolean expressions. Using this block inverts the truth value. 

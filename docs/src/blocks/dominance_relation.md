@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Dominance Relation
 
 Identifies when one solution is guaranteed to be at least as good as another.

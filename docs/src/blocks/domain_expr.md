@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Domain Expression
 
 Defines the domain.

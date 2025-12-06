@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Find Statement Assignment
 
 This block is used to declare decision variables. It must be nested in a `find` block.

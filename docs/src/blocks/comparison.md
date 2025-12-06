@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Comparison
 
 Used to compare two expressions. Returns a binary result.

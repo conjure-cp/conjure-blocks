@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Additive Operators
 
 Selects the operator for a sum expression.

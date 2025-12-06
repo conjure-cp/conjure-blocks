@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 [//]: # (From the conjure documentation)
 # Absolute Value
 

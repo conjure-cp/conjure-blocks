@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Quantifier Expression
 
 Iterates over the given domains to find an instance whose conditions are met.

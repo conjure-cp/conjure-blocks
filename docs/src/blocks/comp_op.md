@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Comparison Operators
 
 Selects the operator for a boolean comparison.

@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Letting Statement
 
 Used to define a variables' domain. This must be nested in a 'letting' block.

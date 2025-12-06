@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Exponent
 
 Defines the exponent of an integer.

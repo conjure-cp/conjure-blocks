@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Product Expressions
 
 Used to create `*`, `/` or `%` arithmetic expression.

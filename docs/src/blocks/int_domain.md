@@ -1,5 +1,5 @@
+[//]: # (author: Jamie Melton)
 [//]: # (Adapted from conjure documentation)
-
 # Integer Domain
 
 Defines the values an integer variable can take.

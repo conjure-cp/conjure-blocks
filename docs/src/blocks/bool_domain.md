@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 [//]: # (From conjure documenation)
 # Boolean domain
 

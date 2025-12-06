@@ -1,3 +1,4 @@
+[//]: # (author: Jamie Melton)
 # Or Expression
 
 A logical operator which abides by the following truth table:
