@@ -15,6 +15,7 @@ for (let r in rules){
     block.type = r;
     block.output = [r]; 
     block.inputsInline = true;
+    block.tooltip = r;
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
