@@ -16,6 +16,9 @@
  */
 
 import * as Blockly from "blockly";
+import { marked } from "marked";
+
+const docsContext = require.context(`../docs/src/blocks`, false, /\.md$/);
 
 /**
  * Create and register the custom tooltip rendering function.
@@ -30,7 +33,9 @@ export function initTooltips() {
         if (element instanceof Blockly.BlockSvg) {
             // You can access the block being moused over.
             // Here we get the color of the block to set the background color.
-            div.style.backgroundColor = element.getColour();
+            const blockColour = element.getColour();
+            div.style.backgroundColor = blockColour;
+            div.classList.add("toolTip");
         }
 
         // grab the tooltip for the object
@@ -44,7 +49,7 @@ export function initTooltips() {
         // create the div that will hold the information
         const text = document.createElement('div');
 
-        text.textContent = tip;
+        text.innerHTML = tip;
         const container = document.createElement('div');
         container.style.display = 'flex';
 
@@ -62,4 +67,18 @@ export function initTooltips() {
     // Register the function in the Blockly.Tooltip so that Blockly calls it
     // when needed.
     Blockly.Tooltip.setCustomTooltip(customTooltip);
+}
+
+/**
+ * Finds the corresponding documentation for a block and assigns this to its tooltip
+ */
+export function getContent(blockName) {
+    try {
+        const markdown = docsContext(`./${blockName}.md`);
+        return marked.parse(markdown);
+    }
+    catch {
+        console.error(`No documentation was found for ${blockName}`);
+        return 'No Content Found';
+    }
 }

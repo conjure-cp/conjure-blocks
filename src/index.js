@@ -18,7 +18,7 @@ import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
-import {initTooltips} from './tooltips';
+import {initTooltips } from './tooltips';
 import { blocks } from 'blockly/blocks';
 
 /*console.log(essenceBlocks);

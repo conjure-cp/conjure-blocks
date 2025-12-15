@@ -180,6 +180,23 @@ dialog::backdrop {
     background-color: #dddddd;
 }
 
+.toolTip {
+    color: white;
+    text-align: center;
+    max-width: 50%;
+    border-radius: 16px;
+    padding: 15px;
+    font-size: 13px;
+}
+
+.toolTip h1, .toolTip h2 {
+    font-size: 17px;
+}
+
+.toolTip li {
+    text-align: left;
+}
+
 .blocklyDiv {
     /*resize: horizontal;*/
     flex-basis: auto;
@@ -211,7 +228,7 @@ dialog::backdrop {
 .gutter.gutter-horizontal {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
     cursor: col-resize;
-     float: left;
+    float: left;
     height: 100%;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;

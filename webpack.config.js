@@ -32,6 +32,10 @@ const config = {
       }
         ],
       },
+      {
+        test: /\.md$/,
+        type: 'asset/source',
+      },
     ],
   },
   plugins: [
