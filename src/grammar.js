@@ -104,8 +104,9 @@ export const grammar = {
     letting_statement: $ => seq(
         $.variable_list,
         "be",
-        choice($.expression, seq("domain", $.domain))
+        choice($.expression, $.domain_expr)
     ),
+
 
     // adding given so can demonstrate data entry
     given_list: $ => seq("given", repeat(seq($.find_statement))),
@@ -166,6 +167,8 @@ export const grammar = {
 
     toInt_expr: $ => seq("toInt", "(", $.expression, ")"),
 
+    //separate operation so can fix block
+
     quantifier_expr: $ => prec(-10, seq(
         choice("and", "or", "min", "max", "sum", "allDiff"),
         "([",
@@ -216,7 +219,8 @@ export const grammar = {
 
     letting: $ => choice(
         $.letting_statement,
-        $.letting_statement_list
+        $.letting_statement_list,
+        $.domain_expr
     ),
 
     range: $ => choice(
