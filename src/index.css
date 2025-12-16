@@ -197,6 +197,11 @@ dialog::backdrop {
     text-align: left;
 }
 
+.toolTip a, .toolTip a:visited {
+    color: white;
+    font-weight: 900;
+}
+
 .blocklyDiv {
     /*resize: horizontal;*/
     flex-basis: auto;

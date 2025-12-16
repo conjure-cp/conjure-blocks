@@ -20,7 +20,6 @@ for (let r in rules){
 
 
     // tooltips entry
-    console.log('rule ' + r);
     block.tooltip = getContent(r);
 
 

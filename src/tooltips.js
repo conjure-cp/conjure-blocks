@@ -19,6 +19,7 @@ import * as Blockly from "blockly";
 import { marked } from "marked";
 
 const docsContext = require.context(`../docs/src/blocks`, false, /\.md$/);
+const ignoredDocs = ["program", "constant", "integer", "variable", "domain", "expression", "muliplicative", "additive", "comparing", "find", "letting", "range"];
 
 /**
  * Create and register the custom tooltip rendering function.
@@ -53,6 +54,20 @@ export function initTooltips() {
         const container = document.createElement('div');
         container.style.display = 'flex';
 
+        // get all paragraph tags
+        const pElements = text.querySelectorAll('p');
+
+        pElements.forEach(el => {
+            console.log("got here");
+            const image = el.querySelector('img');
+
+            if (image) {
+                let src = image.getAttribute('src');
+                src = src.replace("../../src/", "./");
+                image.setAttribute("src", src);
+            }
+        }) 
+
         // Check to see if the custom property we added in the block definition is
         // present.
         // TODO: use this! its cool
@@ -75,9 +90,12 @@ export function initTooltips() {
 export function getContent(blockName) {
     try {
         const markdown = docsContext(`./${blockName}.md`);
+        console.log(marked.parse(markdown))
         return marked.parse(markdown);
     }
     catch {
+        if (ignoredDocs.includes(blockName)) return "";
+
         console.error(`No documentation was found for ${blockName}`);
         return 'No Content Found';
     }
