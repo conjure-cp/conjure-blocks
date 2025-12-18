@@ -202,6 +202,12 @@ dialog::backdrop {
     font-weight: 900;
 }
 
+.toolTip img {
+    border: solid 1px #313131;
+    height: 60px;
+    border-radius: 10px;
+}
+
 .blocklyDiv {
     /*resize: horizontal;*/
     flex-basis: auto;

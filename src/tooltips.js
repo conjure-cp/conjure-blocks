@@ -63,7 +63,7 @@ export function initTooltips() {
 
             if (image) {
                 let src = image.getAttribute('src');
-                src = src.replace("../../src/", "./");
+                src = src.replace("../images/", "./images/");
                 image.setAttribute("src", src);
             }
         }) 
