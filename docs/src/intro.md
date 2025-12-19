@@ -1,5 +1,8 @@
-[//]: # (author: Jamie Melton)
+[//]: # (author: Jamie Melton,  Nadine Martin)
 # Introduction
+A block-editor web app for essence built using [blockly](https://developers.google.com/blockly)
+* [Live Site](https://conjure-cp.github.io/conjure-blocks/)
+* [Repo](https://github.com/conjure-cp/conjure-blocks)
 
 [//]: # (TODO)
 
