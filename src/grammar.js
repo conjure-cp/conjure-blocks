@@ -8,8 +8,10 @@ export const grammar = {
     //top-level statements
     program: $ => choice(
         $.find_statement_list,
+        $.find_statement,
         $.constraint_list,
         $.letting_statement_list,
+        $.letting_statement,
         $.given_list,
         $.dominance_relation
     ),
