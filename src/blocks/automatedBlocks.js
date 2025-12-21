@@ -1,6 +1,7 @@
 import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
 import { autoBlocks } from '../predefinedFunctions';
+import { getContent } from '../tooltips';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
@@ -14,8 +15,15 @@ for (let r in rules){
     const block = {};
     block.type = r;
     block.output = [r]; 
-    block.inputsInline = true;
-    block.tooltip = r;
+    block.inputsInline = true
+
+
+
+    // tooltips entry
+    block.tooltip = getContent(r);
+
+
+
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
