@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // Base config that applies to either development or production mode.
 const config = {
@@ -32,6 +33,10 @@ const config = {
       }
         ],
       },
+      {
+        test: /\.md$/,
+        type: 'asset/source',
+      },
     ],
   },
   plugins: [
@@ -40,6 +45,11 @@ const config = {
     // created above added in a script tag.
     new HtmlWebpackPlugin({
       template: 'src/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'assets/images', to: 'images' },
+      ],
     }),
   ],
 };

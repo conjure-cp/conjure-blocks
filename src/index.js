@@ -17,6 +17,8 @@ import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
+// temp added bit
+import {initTooltips } from './tooltips';
 import { blocks } from 'blockly/blocks';
 
 /*console.log(essenceBlocks);
@@ -98,7 +100,7 @@ const createFlyout = function (ws) {
           "name": v.name,
           "type": "int_domain"
         }
-      }
+      },
     })
   }
 
@@ -119,6 +121,7 @@ const createFlyout = function (ws) {
     'kind':'block',
     'type': 'variable_list'
   })
+
   return blockList;
 
 };
@@ -397,6 +400,8 @@ function downloadEssenceCode() {
   document.body.appendChild(a)
 }
 
+// initialise the tooltips
+initTooltips();
 
 // help alert window
 const dialog = document.getElementById("dialog")

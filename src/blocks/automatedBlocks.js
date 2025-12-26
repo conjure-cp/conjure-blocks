@@ -1,11 +1,13 @@
 import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
 import { autoBlocks } from '../predefinedFunctions';
+import { getContent } from '../tooltips';
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
 
 const toolboxContents = [];
+const ignoredCategories = new Set(["find", "letting"]);
 
 //defining blocks
 let categories = {};
@@ -14,8 +16,15 @@ for (let r in rules){
     const block = {};
     block.type = r;
     block.output = [r]; 
-    block.inputsInline = true;
-    block.tooltip = r;
+    block.inputsInline = true
+
+
+
+    // tooltips entry
+    block.tooltip = getContent(r);
+
+
+
     // check not variable/empty function essentially,skip
     if (!(out)){}
     else if (out.constructor.name === "Object"){
@@ -59,7 +68,9 @@ let subcategories = []
 // put blocks into categories - currently just merges subcategories, but should include as subcategory later
 // also need to later remove blocks from all category that is in a category
 for (let c in categories) {
-    const def = {}
+    if (ignoredCategories.has(c)) continue;
+
+    const def = {};
     def.kind = 'category';
     def.name = c;
     def.contents = getContents(categories[c]);
