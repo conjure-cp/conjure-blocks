@@ -21,12 +21,12 @@
     "html-webpack-plugin": "^5.6.5",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "webpack": "^5.103.0",
+    "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   },
   "dependencies": {
-    "@blockly/plugin-typed-variable-modal": "^9.0.3",
+    "@blockly/plugin-typed-variable-modal": "^9.0.5",
     "blockly": "^12.3.1",
     "fs": "^0.0.1-security",
     "marked": "^17.0.1",
