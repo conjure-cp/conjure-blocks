@@ -150,6 +150,7 @@ function addMutator(inputType, connector) {
               let ws = Blockly.getMainWorkspace();
               if (inputType != "variable" & isBlock(inputType)){    
                   let stmt = ws.newBlock(inputType);
+                  console.log(stmt)
                   stmt.initSvg();
                   let out = stmt.outputConnection
                   out.reconnect(this, "ADD0")
