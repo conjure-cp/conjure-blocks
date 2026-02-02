@@ -449,3 +449,33 @@ function saveBlocks() {
 var saveButton = document.getElementById("save");
 saveButton.addEventListener("click", saveBlocks);
 
+
+// load button
+// adapted from https://developer.mozilla.org/en-US/docs/Web/API/FileReader, 
+// https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications,
+// and serialisation.js
+var file = document.getElementById("Blockfile");
+var loadButton = document.getElementById("load")
+
+loadButton.addEventListener("click", (e) => {
+  if (file) {
+    file.click();
+  }
+})
+
+file.addEventListener("change", () => {
+ 
+  for (const f of file.files) {
+    const reader = new FileReader();
+    reader.onload = () => {
+    Blockly.Events.disable();
+      Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
+      Blockly.Events.enable();
+    };
+    reader.onerror = () => {
+      showMessage("Error reading the file. Please try again.", "error");
+    };
+    reader.readAsText(f);
+    
+  }
+});
