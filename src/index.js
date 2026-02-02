@@ -417,3 +417,35 @@ function helpPopUp() {
 function closePopUp() {
   dialog.close();
 }
+
+// save and load blocks, adapted from downloadEssenceCode code above 
+function saveBlocks() {
+  const data = Blockly.serialization.workspaces.save(ws);
+  let filename = prompt("Please enter file name", "test");
+  filename = filename + ".block"
+  let file = new File([JSON.stringify(data)], filename);
+  let url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  //sets download URL and download name.
+  a.href = url;
+  a.download = filename;
+
+  // release URL when clicked
+  const clickHandler = () => {
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      removeEventListener('click', clickHandler);
+    }, 150);
+  };
+
+  a.addEventListener('click', clickHandler, false);
+
+  //automatic download
+  a.click();
+  
+  document.body.appendChild(a)
+}
+
+var saveButton = document.getElementById("save");
+saveButton.addEventListener("click", saveBlocks);
+
