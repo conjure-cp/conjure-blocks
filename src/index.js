@@ -466,16 +466,26 @@ loadButton.addEventListener("click", (e) => {
 file.addEventListener("change", () => {
  
   for (const f of file.files) {
-    const reader = new FileReader();
-    reader.onload = () => {
-    Blockly.Events.disable();
-      Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
-      Blockly.Events.enable();
-    };
-    reader.onerror = () => {
-      showMessage("Error reading the file. Please try again.", "error");
-    };
-    reader.readAsText(f);
+    if (f.name.endsWith(".block")){ 
+      const reader = new FileReader();
+      reader.onload = () => {
+        
+        Blockly.Events.disable();
+        try{
+          Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
+        } catch {
+          alert("Error reading the file. Please try again.");
+        }
+        Blockly.Events.enable();
+      
+      };
+      reader.onerror = () => {
+        alert("Error reading the file. Please try again.");
+      };
+      reader.readAsText(f);
+    } else {
+      alert("Incorrect file type. Please try again with a .block file.");
+    }
     
   }
 });
