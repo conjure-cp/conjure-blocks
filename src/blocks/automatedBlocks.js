@@ -133,7 +133,7 @@ for (let b of autoBlocks){
 
             
             // check program category - change shape
-            if (c == "program"){
+            if (c == "program" & !b.type.endsWith("statement")){
                 delete b.output;
                 b.previousStatement = "program"
                 b.nextStatement = "program"
