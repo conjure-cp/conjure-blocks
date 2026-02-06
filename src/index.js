@@ -185,6 +185,7 @@ downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
 var solutionText = document.createElement("Solution");
+solutionText.style.scrollBehavior="auto";
 outputDiv.append(solutionText);
 
 
