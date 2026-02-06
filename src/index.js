@@ -468,23 +468,29 @@ file.addEventListener("change", () => {
   for (const f of file.files) {
     if (f.name.endsWith(".block")){ 
       const reader = new FileReader();
+      const errorPopUp = document.getElementById("errorM");
+      const errorClose = document.getElementById("closel");
+      errorClose.addEventListener("click", () => {errorPopUp.close()});
       reader.onload = () => {
         
         Blockly.Events.disable();
         try{
           Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
         } catch {
-          alert("Error reading the file. Please try again.");
+          errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+          errorPopUp.showModal();
         }
         Blockly.Events.enable();
       
       };
       reader.onerror = () => {
-        alert("Error reading the file. Please try again.");
+         errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+         errorPopUp.showModal();
       };
       reader.readAsText(f);
     } else {
-      alert("Incorrect file type. Please try again with a .block file.");
+      errorPopUp.insertAdjacentText("afterbegin", "Incorrect file type. Please try again with a .block file.");
+      errorPopUp.showModal();
     }
     
   }
