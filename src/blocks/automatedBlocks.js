@@ -170,7 +170,7 @@ function generatorFunction(type, message, args, prec=0){
           
         let valueString = values.join(`${block.getFieldValue("ADD1")}`);
         
-          
+          console.log(valueString);
           code = code.concat(` ${valueString}`);
         
         if (block.nextConnection && block.nextConnection.getCheck()[0] == 'program'){
