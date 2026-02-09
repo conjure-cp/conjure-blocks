@@ -3,8 +3,6 @@ let mutatorCount = 0;
 export const autoBlocks = [];
 
 function addMutator(inputType, connector) {
-  console.log(inputType)
-  console.log(connector)
 
   // list helper and mutator - adapted from "list_create_with" block
   var helper = function() {
@@ -136,9 +134,9 @@ function addMutator(inputType, connector) {
                 input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);             
 
               } else {
-                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT).appendField(new Blockly.FieldLabelSerializable(","), 'ADD' + i);
+                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT).appendField(connector, 'ADD' + i);
               }
-               console.log(input)
+               console.log(connector)
             }
           }
           // Remove deleted inputs.
@@ -226,11 +224,11 @@ export const seq = function(...args) {
 
 export const repeat = function(arg) {
     if (typeof(arg) == "function"){
-      // add mutator to add extra slots to list.
-      addMutator(arg.name, "")
+      // add mutator to add extra slots to list- always , anyway - try to not to rely on hardcode.
+      addMutator(arg.name, ",")
+    
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
-      arg.message = arg.message.replace(text,"" );
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
       addMutator(arg.args[0].check, text);
     }

@@ -111,7 +111,7 @@ export const grammar = {
 
 
     // adding given so can demonstrate data entry
-    given_list: $ => seq("given", repeat(seq($.find_statement))),
+    given_list: $ => seq("given", repeat(seq($.find_statement, optional(",")))),
 
     //constraints
     constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
