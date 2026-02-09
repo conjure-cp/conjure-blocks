@@ -230,7 +230,7 @@ export const repeat = function(arg) {
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      addMutator(arg.args[0].check, text);
+      addMutator(arg.args[0].check);
     }
   
     mutatorCount++;
