@@ -350,6 +350,12 @@ function outputSolution(solution) {
             valueBlock.setFieldValue(sol[v], "TEXT");
             break;
           }
+          case("boolean"): {
+            console.log("bool")
+            valueBlock = blockOut.newBlock('logic_boolean');
+            valueBlock.setFieldValue(sol[v], "BOOL");
+            break;
+          }
           default:{
             console.log("idk");
             valueBlock = null;
