@@ -136,7 +136,6 @@ function addMutator(inputType, connector) {
               } else {
                 input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT).appendField(connector, 'ADD' + i);
               }
-               console.log(connector)
             }
           }
           // Remove deleted inputs.
@@ -216,7 +215,7 @@ export const seq = function(...args) {
         }
     }
     
-    out["message"] =  message.trimEnd();
+    out["message"] =  message;
     out["args"] = argOut;
 
     return out;
@@ -225,12 +224,13 @@ export const seq = function(...args) {
 export const repeat = function(arg) {
     if (typeof(arg) == "function"){
       // add mutator to add extra slots to list- always , anyway - try to not to rely on hardcode.
-      addMutator(arg.name, ",")
+      addMutator(arg.name, ", ")
     
     } else {
       const text = arg.message.replace(/%[0-9]+/, "")
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      addMutator(arg.args[0].check);
+      console.log(text)
+      addMutator(arg.args[0].check, text);
     }
   
     mutatorCount++;

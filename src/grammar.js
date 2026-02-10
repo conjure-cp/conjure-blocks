@@ -38,7 +38,7 @@ export const grammar = {
     variable: $ => {},
 
     variable_list: $ => repeat(seq(
-        ",",
+        ", ",
         $.variable
     )),
 
@@ -96,7 +96,7 @@ export const grammar = {
     // )),
 
     // remove precedence, so don't get duplicate brackets, also ensures list corrects
-    range_list: $ => repeat(seq(",", choice($.int_range, $.integer))),
+    range_list: $ => repeat(seq(", ", choice($.int_range, $.integer))),
 
     int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 
@@ -111,10 +111,10 @@ export const grammar = {
 
 
     // adding given so can demonstrate data entry
-    given_list: $ => seq("given", repeat(seq($.find_statement, optional(",")))),
+    given_list: $ => seq("given", repeat(seq($.find_statement, optional(", ")))),
 
     //constraints
-    constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
+    constraint_list: $ => seq("such that", repeat(seq($.expression, optional(", ")))),
     // separated out for
     bracket_expr: $ => seq("(", $.expression, ")"),
     domain_expr: $ => seq("domain", $.domain),
@@ -180,7 +180,7 @@ export const grammar = {
 
     expr_list: $ => repeat(seq(
         $.expression,
-        optional(",")
+        optional(", ")
     )),
 
 
