@@ -215,21 +215,23 @@ export const seq = function(...args) {
         }
     }
     
-    out["message"] =  message;
+    out["message"] =  message.trimEnd();
     out["args"] = argOut;
 
     return out;
 };
 
 export const repeat = function(arg) {
+    console.log(arg)
     if (typeof(arg) == "function"){
-      // add mutator to add extra slots to list- always , anyway - try to not to rely on hardcode.
-      addMutator(arg.name, ", ")
+      // joint not specified, presume comma
+      addMutator(arg.name, ",")
     
     } else {
-      const text = arg.message.replace(/%[0-9]+/, "")
+      let text = arg.message.replace(/%[0-9]+/, "");
+      text = text.trim();
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      console.log(text)
+      console.log(`-${text}-`)
       addMutator(arg.args[0].check, text);
     }
   
