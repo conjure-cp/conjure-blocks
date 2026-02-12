@@ -34,7 +34,9 @@ Conjure-Blocks is built using [blockly](https://developers.google.com/blockly), 
  - Block output 
  - Running generated Essence on conjure using Conjure aaS
  - Download generated Essence as a .essence file
- - Automated Block Generation (See more detail [here](./devIntro.md))
+ - Save block files as a .block file
+ - Load .block files
+ - Automated Block Generation (See more detail [here](./AutomatedBlockGeneration.md))
  - Adjustable Workspace
  - Help guide
  - Tooltips
@@ -47,11 +49,11 @@ Conjure-Blocks is built using [blockly](https://developers.google.com/blockly), 
 - Automated testing
 - Accessibility improvements
 - highlight statements that cut solution space
-- bidirectional text to block editing
 - Extending grammar
+
 ## Currently working on
 
 - Different connection shapes for each category.
-- Exporting/importing block programs
+- Text to Block 
 
 
