@@ -164,11 +164,11 @@ function generatorFunction(type, message, args, prec=0){
             const valueCode = generator.valueToCode(block, 'ADD' + i,
                 0);
             if (valueCode) {
-              values.push(valueCode);
+              values.push(valueCode.trim());
             }
           }
         
-        let valueString = values.join(`${block.getFieldValue("ADD1")} `);
+        let valueString = values.join(` ${block.getFieldValue("ADD1")} `);
         console.log(valueString); 
           code = code.concat(` ${valueString}`);
         
