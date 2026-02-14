@@ -38,7 +38,7 @@ export const grammar = {
     variable: $ => {},
 
     variable_list: $ => repeat(seq(
-        ",",
+        ", ",
         $.variable
     )),
 
@@ -49,7 +49,7 @@ export const grammar = {
         $.variable_list,
         ":",
         $.domain,
-        optional(",")
+        //optional(",")
     ),
 
     // as range list, ensure list properly
@@ -111,7 +111,7 @@ export const grammar = {
 
 
     // adding given so can demonstrate data entry
-    given_list: $ => seq("given", repeat(seq($.find_statement))),
+    given_list: $ => seq("given", repeat(seq($.find_statement, optional(",")))),
 
     //constraints
     constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
