@@ -129,14 +129,13 @@ function addMutator(inputType, connector) {
           // Add new inputs.
           for (let i = 0; i < this.itemCount_; i++) {
             if (!this.getInput('ADD' + i)) {
-              const input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);
-              if (i === 0) {
-                input.appendField('');             
+             let input = null;
+             if (i === 0) {
+                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);             
 
               } else {
-                input.appendField(connector, 'ADD' + i);
+                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT).appendField(connector, 'ADD' + i);
               }
-                          
             }
           }
           // Remove deleted inputs.
@@ -223,12 +222,16 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
+    console.log(arg)
     if (typeof(arg) == "function"){
-      // add mutator to add extra slots to list.
-      addMutator(arg.name, "")
+      // joint not specified, presume comma
+      addMutator(arg.name, ",")
+    
     } else {
-      const text = arg.message.replace(/%[0-9]+/, "")
+      let text = arg.message.replace(/%[0-9]+/, "");
+      text = text.trim();
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
+      console.log(`-${text}-`)
       addMutator(arg.args[0].check, text);
     }
   
