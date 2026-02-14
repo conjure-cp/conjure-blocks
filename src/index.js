@@ -323,8 +323,6 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  // make writable, so blocks line up nicely
-  //blockOut.options = new Blockly.Options({readOnly: false, scrollbars:true});
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
   // clear any blocks from previous runs
   blockOut.clear();
@@ -365,6 +363,7 @@ function outputSolution(solution) {
 
         };
         varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+        // stop changes blocks
         varBlock.setEditable(false);
         valueBlock.setEditable(false);
         varBlock.initSvg();
