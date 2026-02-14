@@ -72,7 +72,7 @@ let startBlock = dataWS.newBlock("object");
 startBlock.initSvg();
 dataWS.render()
 
-const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnly: true, scrollbars:true});
+const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {scrollbars:true});
 
 // add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
 // and a variable_list block
@@ -324,13 +324,14 @@ async function getSolution() {
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
   // make writable, so blocks line up nicely
-  blockOut.options = new Blockly.Options({readOnly: false});
+  //blockOut.options = new Blockly.Options({readOnly: false, scrollbars:true});
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
   // clear any blocks from previous runs
   blockOut.clear();
   // if solved, create relevant blocks and add to output workspace
   if (solution.status == "ok"){
     for (let sol of solution.solution){
+      let prev;
       for (let v in sol){
         blockOut.createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');
@@ -364,13 +365,16 @@ function outputSolution(solution) {
 
         };
         varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+        varBlock.setEditable(false);
+        valueBlock.setEditable(false);
         varBlock.initSvg();
         valueBlock.initSvg();
-        blockOut.cleanUp();
-        blockOut.render();
+       
       }
-    }    
-    blockOut.options = new Blockly.Options({readOnly: true});
+    }  
+    blockOut.render();
+    blockOut.cleanUp();
+
   }
  
 }
