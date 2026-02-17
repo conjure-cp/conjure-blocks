@@ -19,7 +19,7 @@ jobs:
     name: "Generate documentation site"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Install mdbook
@@ -31,6 +31,7 @@ jobs:
         working-directory: docs
         run: |
           mdbook build
+
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
