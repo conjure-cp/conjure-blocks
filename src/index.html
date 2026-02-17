@@ -27,6 +27,7 @@
             <li>Specify value for parameters in JSON blocks in <b>Block Data Input</b> panel. </li>
             <li>Solver constaint problem with <b>SOLVE</b> button, JSON solution displayed beneath <b>JSON solution</b> panel, and block solution in <b>Block Solution</b>.</li>
             <li>Download .essence file with <b>DOWNLOAD</b> button.</li>
+            <li>Save and Load block files using <b>SAVE</b> and <b>LOAD</b> button.</li>
           </ol>
 
           <h4>Example Video</h4>
@@ -41,14 +42,22 @@
         </dialog>
         <h3>Generated Essence Code</h3>
         <pre id="generatedCode"><code></code></pre>
+        <div id="buttons" style=" display: grid; grid-template-columns: 1fr 1fr; max-height: 25%;"><button id="solve">Solve</button><button id="download">Download</button></div>
         <h3>JSON Solution</h3>
         <div id="output">
-          <div id="buttons" style=" display: grid; grid-template-columns: 1fr 1fr; max-height: 25%;"><button id="solve">Solve</button><button id="download">Download</button></div>
         </div>
       </div>
 
       <div id="blocklyDivOut" class="blocklyDivOut">
         <h3>Block Essence</h3>
+        <button id="save">Save</button>
+        <input type="file" id="Blockfile" accept=".block"/>
+        <button id="load" type="button">Load</button>
+        <dialog id="errorM" style="text-align: center;">
+        <form method="dialog" style="display: grid; place-items: center;">
+        <button style="width: 10%" id="closel">Ok</button>
+        </form>
+        </dialog>
         <div id="blocklyDiv" class="blocklyDiv"></div>
       </div>
 
