@@ -77,6 +77,7 @@ const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {readOnl
 // add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
 // and a variable_list block
 const createFlyout = function (ws) {
+  console.log("here");
   let blockList = [];
   
   blockList.push({
@@ -91,7 +92,8 @@ const createFlyout = function (ws) {
     "callbackKey": "bool_callback"
   });
 
-  for (let v of ws.getVariablesOfType('int_domain')){
+
+  for (let v of ws.getVariableMap().getVariablesOfType('int_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_integer',
@@ -104,7 +106,7 @@ const createFlyout = function (ws) {
     })
   }
 
-  for (let v of ws.getVariablesOfType('bool_domain')){
+  for (let v of ws.getVariableMap().getVariablesOfType('bool_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_bool',
@@ -160,19 +162,19 @@ dataWS.registerToolboxCategoryCallback(
 // generators for get variable blocks
 essenceGenerator.forBlock['variables_get_integer'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
   
 essenceGenerator.forBlock['variables_get_bool'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 
 jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
-  const code = dataWS.getVariableById(vars[0]).name
+  const code = dataWS.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 //add output button
@@ -333,9 +335,9 @@ function outputSolution(solution) {
   if (solution.status == "ok"){
     for (let sol of solution.solution){
       for (let v in sol){
-        blockOut.createVariable(v);
+        blockOut.getVariableMap().createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');
-        varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
+        varBlock.setFieldValue(blockOut.getVariableMap().getVariable(v).getId(), 'VAR');
         let valueBlock;
         switch (typeof(sol[v])){
           case("bigint"): 
