@@ -17,6 +17,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CONJURE_BOT_ID }}
+          private-key: ${{ secrets.CONJURE_BOT_PRIVATE_KEY }}
+
       - name: Checkout PR
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v6
@@ -79,7 +86,7 @@ jobs:
         continue-on-error: true
         uses: actions/github-script@v8
         env:
-          REPORT_URL: https://${{ github.repository_owner }}.github.io/conjure-blocks-reports/pr/${{ github.event.pull_request.number }}
+          REPORT_URL: https://${{ github.repository_owner }}.github.io/conjure-blocks/pr/${{ github.event.pull_request.number }}
         with:
           github-token: ${{ steps.bot-token.outputs.token }}
           script: |
