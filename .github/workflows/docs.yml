@@ -43,6 +43,8 @@ jobs:
             docs/**
             coverage/**
             tools/**
+            main/**
+            pr/**
 
           # do not overwrite previous deployments, such as those made by other
           # actions
