@@ -11,6 +11,8 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   deploy:
@@ -40,6 +42,7 @@ jobs:
           # Avoid checkout's default auth header so deploy uses the app token.
           persist-credentials: false
 
+# What
       - uses: actions/setup-node@v4
         with:
           node-version: 21
@@ -73,6 +76,17 @@ jobs:
           repositories: |
             conjure-oxide-reports
 
+      - name: Deploy docs to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          commit-message: "Actions: Deploy Conjure Blocks for ${{ steps.deploy.outputs.label }}"
+          branch: gh-pages
+          folder: dist
+          target-folder: ${{ steps.deploy.outputs.folder }}
+          force: false
+          token: ${{ steps.generate-token.outputs.token }}
+
+
       - name: Create conjure-bot token
         if: ${{ github.event_name == 'pull_request_target' }}
         id: bot-token
@@ -86,7 +100,7 @@ jobs:
         continue-on-error: true
         uses: actions/github-script@v8
         env:
-          REPORT_URL: https://${{ github.repository_owner }}.github.io/conjure-blocks-reports/pr/${{ github.event.pull_request.number }}
+          REPORT_URL: https://${{ github.repository_owner }}.github.io/conjure-blocks/pr/${{ github.event.pull_request.number }}
         with:
           github-token: ${{ steps.bot-token.outputs.token }}
           script: |
