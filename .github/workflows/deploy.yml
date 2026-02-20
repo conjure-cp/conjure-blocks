@@ -76,21 +76,15 @@ jobs:
           repositories: |
             conjure-oxide-reports
 
-      - name: Deploy docs to reports repository
+      - name: Deploy docs to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
-        env:
-          GITHUB_TOKEN: ${{ steps.reports-token.outputs.token }}
         with:
           commit-message: "Actions: Deploy Conjure Blocks for ${{ steps.deploy.outputs.label }}"
-          repository-name: conjure-cp/conjure-oxide-reports
-          branch: main
-          token: ${{ steps.reports-token.outputs.token }}
-          folder: conjure-blocks
+          branch: gh-pages
+          folder: dist
           target-folder: ${{ steps.deploy.outputs.folder }}
-
-          # do not overwrite previous deployments, such as those made by other
-          # actions
           force: false
+          token: ${{ steps.generate-token.outputs.token }}
 
 
       - name: Create conjure-bot token
