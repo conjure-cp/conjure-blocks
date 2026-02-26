@@ -1,5 +1,5 @@
 const Parser = require('tree-sitter');
-const Essence = require('grammar.js');
+const Essence = require('tree-sitter-essence-parser');
 
 const parser = new Parser();
 parser.setLanguage(Essence);

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "essence_parser",
+      "camelcase": "EssenceParser",
+      "title": "EssenceParser",
+      "scope": "source.essence_parser",
+      "file-types": [
+        "essence_parser"
+      ],
+      "injection-regex": "^essence_parser$",
+      "class-name": "TreeSitterEssenceParser"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": " Parser for constraint programming language Essence, for use with block editor Conjure-Blocks",
+    "authors": [
+      {
+        "name": "Nadine Martin, Jamie Melton, Leia Young",
+        "email": "nm275@st-andrews.ac.uk",
+        "url": ""
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/conjure-cp/conjure-blocks",
+      "funding": ""
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "java": false,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
