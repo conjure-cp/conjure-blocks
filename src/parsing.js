@@ -1,8 +1,8 @@
 const Parser = require('tree-sitter');
-const Essence = require('tree-sitter-essence-parser');
+const JavaScript = require('tree-sitter-javascript');
 
 const parser = new Parser();
-parser.setLanguage(Essence);
-const sourceCode = 'find x: int( 1 .. 10)';
+parser.setLanguage(JavaScript);
+
+const sourceCode = 'let x = 1; console.log(x);';
 const tree = parser.parse(sourceCode);
-console.log(tree);

@@ -19,7 +19,7 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
-//import './parsing.js'
+import './parsing.js'
 
 
 /*console.log(essenceBlocks);

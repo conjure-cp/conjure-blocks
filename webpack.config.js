@@ -37,6 +37,9 @@ const config = {
         test: /\.md$/,
         type: 'asset/source',
       },
+      { test: /\.node$/, 
+        use: "node-loader"}
+
     ],
   },
   plugins: [
@@ -52,6 +55,15 @@ const config = {
       ],
     }),
   ],
+
+  resolve: {
+    fallback: {
+      fs: false,
+      path: false,
+      os: false,
+      util: false
+    }
+  }
 };
 
 module.exports = (env, argv) => {
