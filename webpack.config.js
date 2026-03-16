@@ -38,7 +38,12 @@ const config = {
         type: 'asset/source',
       },
       { test: /\.node$/, 
-        use: "node-loader"}
+        use: "node-loader"},
+       {
+          test: /\.wasm$/,
+          type: "asset/inline",
+        }
+
 
     ],
   },
@@ -52,8 +57,11 @@ const config = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'assets/images', to: 'images' },
+         { from: 'src/web-tree-sitter.wasm', to:'.'},
+        { from: 'src/tree-sitter-javascript.wasm', to: '.'}
       ],
     }),
+  
   ],
 
   resolve: {

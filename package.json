@@ -33,6 +33,7 @@
     "split.js": "^1.6.5",
     "tree-sitter": "^0.21.1",
     "tree-sitter-essence-parser": "file:src/tree-sitter-essence",
-    "tree-sitter-javascript": "0.23.1"
+    "tree-sitter-javascript": "0.23.1",
+    "web-tree-sitter": "^0.26.6"
   }
 }

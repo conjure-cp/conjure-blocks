@@ -19,9 +19,9 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
+//import {f} from './parsing.js'
+//f();
 import './parsing.js'
-
-
 /*console.log(essenceBlocks);
 for (let b of essenceBlocks){
   console.log(b);
