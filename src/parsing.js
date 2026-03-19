@@ -1,11 +1,12 @@
 const Parser = require('web-tree-sitter');
 
-(async () => {
+export const getParser = async () => {
  
   await Parser.Parser.init();
   const parser = new Parser.Parser();
-  const Lang = await Parser.Language.load('./tree-sitter-javascript.wasm');
+  const Lang = await Parser.Language.load('./tree-sitter-essence_parser.wasm');
   parser.setLanguage(Lang);
-  const tree = parser.parse('let x = 1;');
-  console.log(tree.rootNode.toString());
-})();
+  return parser;
+  //const tree = parser.parse('find x : int ( 10 )'); 
+  //console.log(tree.rootNode.toString());
+};
