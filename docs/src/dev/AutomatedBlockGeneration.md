@@ -3,10 +3,10 @@
 (backtrack from [this branch](https://github.com/N-J-Martin/conjure-blocks/tree/automatedBlocks), in [new branch](https://github.com/N-J-Martin/conjure-blocks/tree/tryImportGrammar)).
 
 ## Method
-- Copy tree-sitter style grammar from [here](https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js), remove outer grammar() and import.
+- Copy tree-sitter style grammar from [here](https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js), remove outer grammar() and import. Advice is to use a diff tool to compare new grammar.js with old grammar.js when updating.
 - Write definitions for other predefined functions from [tree-sitter](https://tree-sitter.github.io/tree-sitter/creating-parsers/2-the-grammar-dsl.html) as follows:
    - seq – formats arguments into message and arg list for block built from passed results.(main function for blocks)
-   - repeat – add mutator to block, so that can add slots to list, and shape will change.
+   - repeat – add mutator to block, so that can add slots to list, and shape will change. May specify joins
    - choice – if all options are strings, then makes and block with the strings in a dropdown selection menu, otherwise
 gives the list of blocks that are part of the callers type. Used to determine input connection if argument of
 another function, otherwise is used to determine type inheritance and toolbox categories.
