@@ -505,4 +505,37 @@ convertButton.addEventListener("click", (e) =>
   console.log(parser);
   const tree = parser.parse(code);
   console.log(tree.rootNode.toString());
+  ws.clear()
+  recurseTree(tree.rootNode, null)
+  ws.render();
+  
+  //console.log(tree.rootNode.child(0).toString())
+  //console.log(tree.rootNode.child(0).childCount);
+
 })
+
+const recurseTree = function (node, parent, arg) {
+    console.log("node: " + node.type)
+    if(parent){
+     console.log("parent: " + parent.type);
+    }
+    let b = null
+    try{
+      // handle variables
+      // connect blocks correctly
+      b = ws.newBlock(node.type);
+      b.initSvg();
+      if (parent){
+        console.log(parent.inputList);
+        console.log(parent.inputList[arg]);
+        let out = b.outputConnection.reconnect(parent, parent.inputList[arg].name);
+        console.log(out)
+      }
+    } catch (error) {
+      console.log(node.type);
+      console.log(error);
+    }
+    for (let i = 0; i < node.childCount; i++){
+      recurseTree(node.child(i), b, i);
+    }
+}
