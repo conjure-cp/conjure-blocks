@@ -284,3 +284,4 @@ autoBlocks.push({
 
 // creates block list form JSON definitons
 export const essenceBlocks = Blockly.common.createBlockDefinitionsFromJsonArray(autoBlocks);
+export const essenceCategories = categories;

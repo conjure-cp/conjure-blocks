@@ -15,7 +15,7 @@ import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import {essenceBlocks} from './blocks/automatedBlocks';
+import {essenceBlocks, essenceCategories} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
@@ -539,14 +539,17 @@ const recurseTree = function (node, parent, arg) {
       }
       b.initSvg();
       if (parent){
+        if (parent.type.endsWith("list")){
+          arg+=1
+        }
         console.log(parent.inputList);
         console.log(arg)
         console.log(parent.inputList[arg]);
-        b.setColour("green")
+        //b.setColour("green")
         let replace = parent.getInputTargetBlock(parent.inputList[arg].name);
         let out = b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         if (replace) {
-          replace.setColour("red");
+          //replace.setColour("red");
           replace.dispose();
         }
       }
@@ -554,12 +557,25 @@ const recurseTree = function (node, parent, arg) {
       console.log(node.type);
       console.log(error);
     }
+    let argCount = 0;
     for (let i = 0; i < node.childCount; i++){
-      let t = i
       if (!b){
         b = parent; 
-        t = arg
       }
-      recurseTree(node.child(i), b, t);
+      console.log(node.child(i).type)
+      if (!node.child(i).type.match(/([A-Za-z0-9])+/g)) {
+      } else if (node.child(i).type in essenceCategories ){
+        // a category element
+        console.log("category: " + node.child(i).type);
+        if (node.child(i).child(0)){
+          console.log("child: " + node.child(i).child(0).type);
+          recurseTree(node.child(i).child(0), b, argCount);
+          argCount += 1;
+        }
+      } else {
+        recurseTree(node.child(i), b, argCount);
+        argCount += 1;
+      }
+     
     }
 }
