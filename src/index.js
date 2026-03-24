@@ -160,19 +160,19 @@ dataWS.registerToolboxCategoryCallback(
 // generators for get variable blocks
 essenceGenerator.forBlock['variables_get_integer'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
   
 essenceGenerator.forBlock['variables_get_bool'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 
 jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
-  const code = dataWS.getVariableById(vars[0]).name
+  const code = dataWS.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 //add output button
@@ -237,28 +237,29 @@ ws.addChangeListener((e) => {
       let block = ws.getBlockById(b);
       let types = "";
       let slot = 1;
+      // check block still exists 
+      if (block) {
+        // if has a mutator - i.e a list block, individual description for all inputs
+        if ( block.mutator & block.inputList[1]){
+          types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
+        } 
+        else {
+          // build description labelling input with types
+          for (let i in block.inputList) {
+              if (block.inputList[i].connection){
+                types = types + "input " + slot +": " + block.inputList[i].connection.getCheck() +"\n";
+                slot += 1;
+              }
+          
+          }
+        }
       
-      // if has a mutator - i.e a list block, individual description for all inputs
-      if (block.mutator & block.inputList[1]){
-        types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
-      } 
-      else {
-        // build description labelling input with types
-         for (let i in block.inputList) {
-            if (block.inputList[i].connection){
-              types = types + "input " + slot +": " + block.inputList[i].connection.getCheck() +"\n";
-              slot += 1;
-            }
         
+        // no comment if no inputs.
+        if (types.length > 0 && !block.getCommentText()){
+          block.setCommentText(types);
         }
       }
-     
-      
-      // no comment if no inputs.
-      if (types.length > 0 && !block.getCommentText()){
-        block.setCommentText(types);
-      }
-      
 
     }
   }
