@@ -544,10 +544,9 @@ const recurseTree = function (node, parent, arg) {
         } else if (type == "bool_domain"){
             b = ws.newBlock("variables_get_bool")
         }
-        b.setFieldValue({
-          "name": name,
-          "type": type
-        },"VAR")
+        b.setFieldValue(ws.getVariableMap().getVariable(name, type).getId(),"VAR")
+        b.initSvg();
+        b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         return
       } 
       // connect blocks correctly
@@ -601,5 +600,10 @@ const recurseTree = function (node, parent, arg) {
 
 
 const getType = function (node) {
-  return node.parent.parent.child(2).child(0).type
+  let v = ws.getVariableMap().getVariable(node.text);
+  if (v) {
+    return v.getType()
+  } else{
+    return node.parent.parent.child(2).child(0).type
+  }
 }
