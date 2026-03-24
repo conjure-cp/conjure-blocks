@@ -531,6 +531,25 @@ const recurseTree = function (node, parent, arg) {
     let b = null
     try{
       // handle variables
+      if (node.type == "variable"){
+        let name = node.text;
+        let current_vars = ws.getVariableMap().getAllVariables();
+        let type = getType(node);
+        if (!(name in current_vars)){  
+          ws.getVariableMap().createVariable(name, type);
+        }
+        console.log(type);
+        if (type == "int_domain"){
+            b = ws.newBlock("variables_get_integer");
+        } else if (type == "bool_domain"){
+            b = ws.newBlock("variables_get_bool")
+        }
+        b.setFieldValue({
+          "name": name,
+          "type": type
+        },"VAR")
+        return
+      } 
       // connect blocks correctly
       b = ws.newBlock(node.type);
     
@@ -577,5 +596,10 @@ const recurseTree = function (node, parent, arg) {
         argCount += 1;
       }
      
-    }
+    }  
+}
+
+
+const getType = function (node) {
+  return node.parent.parent.child(2).child(0).type
 }
