@@ -15,12 +15,12 @@ import {jsonGenerator} from './generators/json';
 import {save, load} from './serialization';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
-import {essenceBlocks} from './blocks/automatedBlocks';
+import {essenceBlocks, essenceCategories} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
-import { blocks } from 'blockly/blocks';
-
+import { getParser } from './parsing.js';
+const parser = await getParser();
 /*console.log(essenceBlocks);
 for (let b of essenceBlocks){
   console.log(b);
@@ -160,19 +160,19 @@ dataWS.registerToolboxCategoryCallback(
 // generators for get variable blocks
 essenceGenerator.forBlock['variables_get_integer'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
   
 essenceGenerator.forBlock['variables_get_bool'] = function(block) {
   var vars = block.getVars()
-  const code = ws.getVariableById(vars[0]).name
+  const code = ws.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 
 jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   var vars = block.getVars()
-  const code = dataWS.getVariableById(vars[0]).name
+  const code = dataWS.getVariableMap().getVariableById(vars[0]).name
   return [code, 0];
 }
 //add output button
@@ -237,28 +237,29 @@ ws.addChangeListener((e) => {
       let block = ws.getBlockById(b);
       let types = "";
       let slot = 1;
+      // check block still exists 
+      if (block) {
+        // if has a mutator - i.e a list block, individual description for all inputs
+        if ( block.mutator & block.inputList[1]){
+          types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
+        } 
+        else {
+          // build description labelling input with types
+          for (let i in block.inputList) {
+              if (block.inputList[i].connection){
+                types = types + "input " + slot +": " + block.inputList[i].connection.getCheck() +"\n";
+                slot += 1;
+              }
+          
+          }
+        }
       
-      // if has a mutator - i.e a list block, individual description for all inputs
-      if (block.mutator & block.inputList[1]){
-        types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
-      } 
-      else {
-        // build description labelling input with types
-         for (let i in block.inputList) {
-            if (block.inputList[i].connection){
-              types = types + "input " + slot +": " + block.inputList[i].connection.getCheck() +"\n";
-              slot += 1;
-            }
         
+        // no comment if no inputs.
+        if (types.length > 0 && !block.getCommentText()){
+          block.setCommentText(types);
         }
       }
-     
-      
-      // no comment if no inputs.
-      if (types.length > 0 && !block.getCommentText()){
-        block.setCommentText(types);
-      }
-      
 
     }
   }
@@ -505,3 +506,114 @@ file.addEventListener("change", () => {
     
   }
 });
+
+var convertButton = document.getElementById("convertToBlocks");
+convertButton.addEventListener("click", (e) =>
+{
+  const code = codeDiv.innerText;
+  console.log(code);
+  console.log(parser);
+  const tree = parser.parse(code);
+  console.log(tree.rootNode.toString());
+  ws.clear()
+  recurseTree(tree.rootNode, null, 0)
+  ws.render();
+  
+  //console.log(tree.rootNode.child(0).toString())
+  //console.log(tree.rootNode.child(0).childCount);
+
+})
+
+const recurseTree = function (node, parent, arg) {
+    console.log("node: " + node.type)
+    if(parent){
+     console.log("parent: " + parent.type);
+    }
+    let b = null
+    try{
+      // handle variables
+      if (node.type == "variable"){
+        let name = node.text;
+        let current_vars = ws.getVariableMap().getAllVariables();
+        let type = getType(node);
+        if (!(name in current_vars)){  
+          ws.getVariableMap().createVariable(name, type);
+        }
+        console.log(type);
+        if (type == "int_domain"){
+            b = ws.newBlock("variables_get_integer");
+        } else if (type == "bool_domain"){
+            b = ws.newBlock("variables_get_bool")
+        }
+        b.setFieldValue(ws.getVariableMap().getVariable(name, type).getId(),"VAR")
+        b.initSvg();
+        if (arg >= 1) {
+          parent.itemCount_+=1;
+        }
+        parent.updateShape_();
+        b.outputConnection.reconnect(parent, parent.inputList[arg].name);
+        return
+      } 
+      // connect blocks correctly
+      b = ws.newBlock(node.type);
+    
+      /*if (node.type.endsWith("list")){
+        b.updateShape_();
+        console.log("item count"+ b.itemCount_ )
+      }*/
+      b.initSvg();
+      if (parent){
+        if (parent.type.endsWith("list")){
+          arg+=1
+          if (arg > 1){
+            parent.itemCount_+=1;
+          }
+          parent.updateShape_();
+        }
+        console.log(parent.inputList);
+        console.log(arg)
+        console.log(parent.inputList[arg]);
+        //b.setColour("green")
+        let replace = parent.getInputTargetBlock(parent.inputList[arg].name);
+        let out = b.outputConnection.reconnect(parent, parent.inputList[arg].name);
+        if (replace) {
+          //replace.setColour("red");
+          replace.dispose();
+        }
+      }
+    } catch (error) {
+      console.log(node.type);
+      console.log(error);
+    }
+    let argCount = 0;
+    for (let i = 0; i < node.childCount; i++){
+      if (!b){
+        b = parent; 
+      }
+      console.log(node.child(i).type)
+      if (!node.child(i).type.match(/([A-Za-z0-9])+/g)) {
+      } else if (node.child(i).type in essenceCategories ){
+        // a category element
+        console.log("category: " + node.child(i).type);
+        if (node.child(i).child(0)){
+          console.log("child: " + node.child(i).child(0).type);
+          recurseTree(node.child(i).child(0), b, argCount);
+          argCount += 1;
+        }
+      } else {
+        recurseTree(node.child(i), b, argCount);
+        argCount += 1;
+      }
+     
+    }  
+}
+
+
+const getType = function (node) {
+  let v = ws.getVariableMap().getVariable(node.text);
+  if (v) {
+    return v.getType()
+  } else{
+    return node.parent.parent.child(2).child(0).type
+  }
+}
