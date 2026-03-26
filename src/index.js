@@ -547,19 +547,28 @@ const recurseTree = function (node, parent, arg) {
         }
         b.setFieldValue(ws.getVariableMap().getVariable(name, type).getId(),"VAR")
         b.initSvg();
+        if (arg >= 1) {
+          parent.itemCount_+=1;
+        }
+        parent.updateShape_();
         b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         return
       } 
       // connect blocks correctly
       b = ws.newBlock(node.type);
     
-      if (node.type.endsWith("list")){
+      /*if (node.type.endsWith("list")){
         b.updateShape_();
-      }
+        console.log("item count"+ b.itemCount_ )
+      }*/
       b.initSvg();
       if (parent){
         if (parent.type.endsWith("list")){
           arg+=1
+          if (arg > 1){
+            parent.itemCount_+=1;
+          }
+          parent.updateShape_();
         }
         console.log(parent.inputList);
         console.log(arg)
