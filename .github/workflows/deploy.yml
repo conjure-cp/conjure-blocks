@@ -30,7 +30,6 @@ jobs:
         if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v6
         with:
-          # Avoid checkout's default auth header so deploy uses the app token.
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
@@ -39,9 +38,8 @@ jobs:
         if: ${{ github.event_name != 'pull_request_target' }}
         uses: actions/checkout@v6
         with:
-          # Avoid checkout's default auth header so deploy uses the app token.
           persist-credentials: false
-          
+
       - uses: actions/setup-node@v4
         with:
           node-version: 21
@@ -51,9 +49,8 @@ jobs:
         run: |
           npm ci
           npm run build
-          # creates a .nojekyll file in the out directory to tell GitHub Pages not to treat the site as a Jekyll project.
           touch dist/.nojekyll
-          
+
       - name: Set deploy target
         id: deploy
         run: |
@@ -65,19 +62,6 @@ jobs:
             echo "label=main" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create reports app token
-        id: reports-token
-        uses: actions/create-github-app-token@v2
-
-      - name: Deploy to the gh-pages branch
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
-        with:
-          app-id: ${{ secrets.CONJURE_BOT_ID }}
-          private-key: ${{ secrets.CONJURE_BOT_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: |
-            conjure-oxide-reports
-
       - name: Deploy docs to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -87,7 +71,6 @@ jobs:
           target-folder: ${{ steps.deploy.outputs.folder }}
           force: false
           token: ${{ steps.generate-token.outputs.token }}
-
 
       - name: Create conjure-bot token
         if: ${{ github.event_name == 'pull_request_target' }}
@@ -125,7 +108,6 @@ jobs:
                 per_page: 100
               });
 
-              // Keep a single docs preview comment per PR: update newest, delete older duplicates.
               const matching = comments
                 .filter(c => c.body?.includes(marker))
                 .sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
