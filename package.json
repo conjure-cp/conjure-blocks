@@ -15,21 +15,21 @@
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "copy-webpack-plugin": "^13.0.1",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.6",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "webpack": "^5.105.3",
-    "webpack-cli": "^6.0.1",
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"
   },
   "dependencies": {
     "@blockly/plugin-typed-variable-modal": "^9.0.8",
-    "blockly": "^12.4.1",
+    "blockly": "^12.5.1",
     "fs": "^0.0.1-security",
-    "marked": "^17.0.3",
+    "marked": "^17.0.5",
     "split.js": "^1.6.5"
   }
 }
