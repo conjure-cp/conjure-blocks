@@ -59,7 +59,7 @@ const config = {
         { from: 'assets/images', to: 'images' },
          { from: 'src/web-tree-sitter.wasm', to:'.'},
        // { from: 'src/tree-sitter-javascript.wasm', to: '.'},
-        { from: 'src/tree-sitter-essence_parser.wasm', to: '.'}
+        { from: 'src/tree-sitter-essence.wasm', to: '.'}
       ],
     }),
   

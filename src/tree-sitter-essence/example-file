@@ -1,1 +1,1 @@
-﻿find x : int (1..10)
+﻿find x : int(1, 3)
