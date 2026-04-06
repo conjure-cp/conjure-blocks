@@ -516,7 +516,9 @@ convertButton.addEventListener("click", (e) =>
   const tree = parser.parse(code);
   console.log(tree.rootNode.toString());
   ws.clear()
-  recurseTree(tree.rootNode, null, 0)
+  for (let i = 0; i < tree.rootNode.childCount; i++){
+    recurseTree(tree.rootNode.child(i), null, 0);
+  }
   ws.render();
   
   //console.log(tree.rootNode.child(0).toString())
@@ -554,6 +556,15 @@ const recurseTree = function (node, parent, arg) {
         b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         return
       } 
+      // handle constants
+      else if (node.type == "constant") {
+          b = ws.newBlock(node.child(0).type);
+          if (node.child(0).type == "integer"){
+            b.setFieldValue(node.child(0).text, "INPUT")
+          }
+          b.initSvg()
+      } else {
+
       // connect blocks correctly
       b = ws.newBlock(node.type);
     
@@ -562,14 +573,21 @@ const recurseTree = function (node, parent, arg) {
         console.log("item count"+ b.itemCount_ )
       }*/
       b.initSvg();
+      }
       if (parent){
         if (parent.type.endsWith("list")){
-          arg+=1
+          console.log(parent.inputList);
+          // if have input - have dummy?
+          if (parent.inputList.length > 0){
+            arg+=1
+          } 
+          
           if (arg > 1){
             parent.itemCount_+=1;
           }
           parent.updateShape_();
         }
+      
         console.log(parent.inputList);
         console.log(arg)
         console.log(parent.inputList[arg]);
@@ -584,6 +602,11 @@ const recurseTree = function (node, parent, arg) {
     } catch (error) {
       console.log(node.type);
       console.log(error);
+      return true;
+    }
+
+    if (node.type == "constant"){
+      return
     }
     let argCount = 0;
     for (let i = 0; i < node.childCount; i++){
@@ -597,12 +620,17 @@ const recurseTree = function (node, parent, arg) {
         console.log("category: " + node.child(i).type);
         if (node.child(i).child(0)){
           console.log("child: " + node.child(i).child(0).type);
-          recurseTree(node.child(i).child(0), b, argCount);
-          argCount += 1;
+          let fail = recurseTree(node.child(i).child(0), b, argCount);
+          if (!fail) {
+            argCount += 1;
+           
+          } 
         }
       } else {
-        recurseTree(node.child(i), b, argCount);
-        argCount += 1;
+        let fail = recurseTree(node.child(i), b, argCount);
+        if (!fail) {
+            argCount += 1;  
+        } 
       }
      
     }  
