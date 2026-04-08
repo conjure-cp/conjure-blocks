@@ -28,11 +28,18 @@ Before merging a new branch (particularly if it is a new feature), ensure curren
     find x: int(1..10)
     such that x > y
     ```
-    letting
+    \- letting
 
 5.  ```
     given y: int
     find x: int(1..10)
     such that x > y
     ```
-    given
+    \- given
+
+6. ```
+    find x, y, z: int(1..10)
+    such that x < y /\ y < z /\ x + y = z
+    ```
+    \- multiple variables, arithmetic
+
