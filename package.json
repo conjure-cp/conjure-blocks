@@ -22,18 +22,15 @@
     "node-loader": "^2.1.0",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "webpack": "^5.104.1",
-    "webpack-cli": "^6.0.1",
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"
   },
   "dependencies": {
     "@blockly/plugin-typed-variable-modal": "^9.0.8",
-    "blockly": "^12.4.1",
-    "marked": "^17.0.1",
-    "split.js": "^1.6.5",
-    "tree-sitter": "^0.21.1",
-    "tree-sitter-essence-parser": "file:src/tree-sitter-essence",
-    "tree-sitter-javascript": "0.23.1",
-    "web-tree-sitter": "^0.26.6"
+    "blockly": "^12.5.1",
+    "fs": "^0.0.1-security",
+    "marked": "^17.0.5",
+    "split.js": "^1.6.5"
   }
 }

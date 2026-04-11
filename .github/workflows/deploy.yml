@@ -1,6 +1,9 @@
 name: Deploy to the gh-pages branch
 
 on:
+  pull_request_target:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -8,14 +11,34 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.CONJURE_BOT_ID }}
+          private-key: ${{ secrets.CONJURE_BOT_PRIVATE_KEY }}
+
+      - name: Checkout PR
+        if: ${{ github.event_name == 'pull_request_target' }}
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Checkout repository
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
@@ -26,17 +49,18 @@ jobs:
         run: |
           npm ci
           npm run build
-          # creates a .nojekyll file in the out directory to tell GitHub Pages not to treat the site as a Jekyll project.
           touch dist/.nojekyll
 
-      - name: Deploy to the gh-pages branch
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
-        with:
-          app-id: ${{ secrets.CONJURE_BOT_ID }}
-          private-key: ${{ secrets.CONJURE_BOT_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: |
-            conjure-oxide-reports
+      - name: Set deploy target
+        id: deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request_target" ]]; then
+            echo "folder=pr/${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "label=pr-${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "folder=main" >> "$GITHUB_OUTPUT"
+            echo "label=main" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Deploy docs to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -47,7 +71,6 @@ jobs:
           target-folder: ${{ steps.deploy.outputs.folder }}
           force: false
           token: ${{ steps.generate-token.outputs.token }}
-
 
       - name: Create conjure-bot token
         if: ${{ github.event_name == 'pull_request_target' }}
@@ -85,7 +108,6 @@ jobs:
                 per_page: 100
               });
 
-              // Keep a single docs preview comment per PR: update newest, delete older duplicates.
               const matching = comments
                 .filter(c => c.body?.includes(marker))
                 .sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at));
