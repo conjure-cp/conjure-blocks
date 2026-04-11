@@ -158,19 +158,57 @@ function generatorFunction(type, message, args, prec=0){
             }
         }
 
+        // does the block have mutliple args?
+        const isMulti = block.getInput('ADD0_0') !== null;
+
         // as repeat at end, lists after args 
         const values = [];
-        for (let i = 0; i < block.itemCount_; i++) {
-            const valueCode = generator.valueToCode(block, 'ADD' + i,
-                0);
-            if (valueCode) {
-              values.push(valueCode.trim());
+
+        if (isMulti) {
+            // get the number of extra inner bits
+            let count = 0;
+
+            while(block.getInput('ADD0_' + count) !== null) {
+                count++;
             }
-          }
+
+            for (let i = 0; i < block.itemCount_; i++) {
+                const parts = [];
+
+                // iterate over every item
+                for (let j = 0; j < count; j++) {
+                    const inp = block.getInput('ADD' + i + '_' + j);
+
+                    // is there a dropdown
+                    if (inp && inp.connection === null) {
+                        const dropField = inp.fieldRow.find(
+                            f => f instanceof Blockly.FieldDropdown
+                        );
+                        if(dropField) parts.push(dropField.getValue);
+                    } else {
+                        const valueCode = generator.valueToCode(block, 'ADD' + i + '_' + j, 0);
+                        if (valueCode) {
+                            values.push(valueCode.trim());
+                        }
+                    }
+                }
+
+                if(parts.length) {
+                    values.push(parts.join(' '));
+                }
+            }
+        } else {
+            for (let i = 0; i < block.itemCount_; i++) {
+                const valueCode = generator.valueToCode(block, 'ADD' + i, 0);
+                if (valueCode) {
+                values.push(valueCode.trim());
+                }
+            }
+        }
         
-        let valueString = values.join(` ${block.getFieldValue("ADD1")} `);
-        console.log(valueString); 
-          code = code.concat(` ${valueString}`);
+        const connector = block.getField('ADD1') ? block.getFieldValue('ADD1') : ',';
+        let valueString = values.join(` ${connector} `);
+        code = code.concat(` ${valueString}`);
         
         if (block.nextConnection && block.nextConnection.getCheck()[0] == 'program'){
             let next = generator.blockToCode(block.getNextBlock());
