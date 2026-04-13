@@ -519,12 +519,18 @@ convertButton.addEventListener("click", (e) =>
   for (let i = 0; i < tree.rootNode.childCount; i++){
     recurseTree(tree.rootNode.child(i), null, 0);
   }
+ 
   ws.render();
-  
-  //console.log(tree.rootNode.child(0).toString())
-  //console.log(tree.rootNode.child(0).childCount);
+  // don't know why must wait for this function to work
+  setTimeout(test, 100);
+
 
 })
+
+const test = function (){
+  ws.cleanUp()
+  console.log("Done")
+}
 
 const recurseTree = function (node, parent, arg) {
     console.log("node: " + node.type)
@@ -549,10 +555,12 @@ const recurseTree = function (node, parent, arg) {
         }
         b.setFieldValue(ws.getVariableMap().getVariable(name, type).getId(),"VAR")
         b.initSvg();
-        if (arg >= 1) {
-          parent.itemCount_+=1;
+        if (parent.type.endsWith("list")){
+          if (arg >= 1) {
+            parent.itemCount_+=1;
+          }
+          parent.updateShape_();
         }
-        parent.updateShape_();
         b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         return
       } 
@@ -565,13 +573,16 @@ const recurseTree = function (node, parent, arg) {
           b.initSvg()
       } else {
 
-      // connect blocks correctly
+      // set field value correctly
       b = ws.newBlock(node.type);
+      if (b.getField("OPTION")){
+        b.setFieldValue(node.text, "OPTION");
+      }
     
       /*if (node.type.endsWith("list")){
         b.updateShape_();
         console.log("item count"+ b.itemCount_ )
-      }*/
+      }*/    // connect blocks correctly
       b.initSvg();
       }
       if (parent){
@@ -638,9 +649,9 @@ const recurseTree = function (node, parent, arg) {
 
 
 const getType = function (node) {
-  let v = ws.getVariableMap().getVariable(node.text);
+  let v = Blockly.Variables.nameUsedWithAnyType(node.text, ws);
   if (v) {
-    return v.getType()
+    return v.getType();
   } else{
     return node.parent.parent.child(2).child(0).type
   }
