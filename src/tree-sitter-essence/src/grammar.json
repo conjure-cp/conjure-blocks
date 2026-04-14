@@ -364,19 +364,23 @@
               "name": "expression"
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "domain"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "domain"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "domain_expr"
             }
           ]
+        }
+      ]
+    },
+    "domain_expr": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "domain"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "domain"
         }
       ]
     },

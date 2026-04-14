@@ -105,8 +105,10 @@ export default grammar({
     letting_statement: $ => seq(
       $.variable_list,
       "be",
-      choice($.expression, seq("domain", $.domain))
+      choice($.expression, $.domain_expr)
     ),
+
+    domain_expr: $ => seq("domain", $.domain),
 
     //constraints
     constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),

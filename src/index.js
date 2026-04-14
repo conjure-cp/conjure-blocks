@@ -649,10 +649,44 @@ const recurseTree = function (node, parent, arg) {
 
 
 const getType = function (node) {
+  
   let v = Blockly.Variables.nameUsedWithAnyType(node.text, ws);
   if (v) {
     return v.getType();
-  } else{
-    return node.parent.parent.child(2).child(0).type
+  } if (node.parent.parent.type == "letting_statement"){
+      console.log(node.parent.parent.child(2).type)
+      if (node.parent.parent.child(2).type == "expression"){
+        // compare different expression types
+         switch(node.parent.parent.child(2).child(0).type){
+          case "not_expr": return "bool_domain";
+          case "abs_value": return "int_domain";
+          case "exponent": return "int_domain";
+          case "negative_expr": return "int_domain";
+          case "product_expr": return "int_domain";
+          case "sum_expr": return "int_domain";
+          case "comparison": return "bool_domain";
+          case "and_expr": return "bool_domain";
+          case "or_expr": return "bool_domain";
+          case "implication": return "bool_domain";
+          case "constant": switch(node.parent.parent.child(2).child(0).child(0).type){
+            case "integer": return "int_domain";
+            case "TRUE": return "bool_domain";
+            case "FALSE": return "bool_domain";
+            default: console.log("unknown expression type");
+          } 
+          break;
+          case "variable": return Blockly.Variables.nameUsedWithAnyType(node.parent.parent.child(2).child(0).text, ws).getType();
+          default:
+            console.log("unknown expression type");
+
+         } 
+      }else if (node.parent.parent.child(2).type == "domain_expr"){
+            console.log(node.parent.parent.child(2).child(1).child(0).type)
+            return node.parent.parent.child(2).child(1).child(0).type;
+         }
+     
+  }
+  else{
+    return node.parent.parent.child(2).child(0).type;
   }
 }
