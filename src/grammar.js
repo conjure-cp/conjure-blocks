@@ -1,5 +1,5 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), also consider installing treesitter, might be more readable
-import { seq, choice, repeat, optional, prec} from "./predefinedFunctions";
+import { seq, choice, repeat, optional, prec, categories} from "./predefinedFunctions";
 
 export const grammar = {
   name: 'essence',
@@ -18,27 +18,24 @@ export const grammar = {
         $.dominance_relation,
     ),
 
-    find_statement_list: $ => seq("find", repeat(seq(
-        $.variable_list,
-        ":",
-        $.domain
-    ))),
+    find_statement_list: $ => seq("find", repeat(
+        seq($.variable_list, ":", $.domain), 
+        categories.PROGRAM
+    )),
 
     given_list: $ => seq(
         "given",
-        repeat(seq(
-        $.variable_list,
-        ":",
-        $.domain
-    ))
-    ),
+        repeat(
+            seq($.variable_list, ":", $.domain), 
+            categories.PROGRAM
+        )),
 
-    letting_statement_list: $ => seq("letting", repeat(seq(
-        $.variable,
-        "be",
-        choice("", "domain"),
-        $.expression
-    ))),
+    letting_statement_list: $ => seq("letting", 
+        repeat(
+            seq($.variable, "be", choice("", "domain"), $.expression), 
+            categories.PROGRAM
+        )
+    ),
 
     maximising: $ => seq(
         "maximising",
@@ -52,7 +49,10 @@ export const grammar = {
 
     such_that: $ => seq(
         "such that", 
-        repeat(seq($.expression, optional(",")))
+        repeat(
+            seq($.expression, optional(",")), // TODO: can we remove the comma?
+            categories.PROGRAM
+        )
     ),
 
     dominance_relation: $ => seq(
@@ -80,10 +80,10 @@ export const grammar = {
     */
     variable: $ => {},
 
-    variable_list: $ => repeat(seq(
-        ", ",
-        $.variable
-    )),
+    variable_list: $ => repeat(
+        seq($.variable, optional(",")),
+        categories.LIST
+    ),
 
     /*
     * DOMAIN SECTION
@@ -117,7 +117,7 @@ export const grammar = {
     matrix: $ => seq(
         "matrix indexed by",
         "[",
-        repeat($.domain),
+        repeat(seq($.domain), categories.LIST),
         "]",
         "of",
         $.domain
@@ -134,7 +134,10 @@ export const grammar = {
     ),
 
     // remove precedence, so don't get duplicate brackets, also ensures list corrects
-    range_list: $ => repeat(seq(",", choice($.int_range, $.integer))),
+    range_list: $ => repeat(
+        seq(choice($.int_range, $.integer), optional(",")),
+        categories.LIST
+    ),
 
     int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 
@@ -174,11 +177,13 @@ export const grammar = {
     exponent: $ => prec(14, prec.right(seq($.expression, "**", $.expression))),
 
     product_expr: $ => prec(13, prec.left(repeat(
-        seq($.expression, choice("*", "/", "%"), $.expression)
+        seq($.expression, choice("*", "/", "%"), $.expression),
+        categories.OPERATION
     ))),
 
     sum_expr: $ => prec(12, prec.left(repeat(
-        seq($.expression, choice("+", "-"), $.expression)
+        seq($.expression, choice("+", "-"), $.expression),
+        categories.OPERATION
     ))),
 
     comparison: $ => prec(10, prec.left(
@@ -208,10 +213,10 @@ export const grammar = {
         $.expression
     ),
 
-    expr_list: $ => repeat(seq(
-        $.expression,
-        optional(",")
-    )),
+    expr_list: $ => repeat(
+        seq($.expression, optional(",")),
+        categories.LIST
+    ),
 
     flatten: $ => seq(
         "flatten (",
