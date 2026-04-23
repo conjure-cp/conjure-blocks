@@ -2,6 +2,8 @@ import * as Blockly from 'blockly';
 import {grammar} from '../grammar';
 import { autoBlocks } from '../predefinedFunctions';
 import { getContent } from '../tooltips';
+import { generatorRegistry } from "../generators/blockGenerators";
+
 export const essenceGenerator = new Blockly.Generator('essence');
 
 const rules = grammar.rules;
@@ -148,6 +150,11 @@ for (let b of autoBlocks){
 
 // define generator function for blocks
 function generatorFunction(type, message, args, prec=0){
+    // is there a custom generator available?
+    if (generatorRegistry.consume(type, essenceGenerator)) {
+        return;
+    }
+
     essenceGenerator.forBlock[type] = function (block, generator) {
         let code = message;
         for (let i = 1; i <= args.length; i++) {
@@ -184,7 +191,7 @@ function generatorFunction(type, message, args, prec=0){
                         const dropField = inp.fieldRow.find(
                             f => f instanceof Blockly.FieldDropdown
                         );
-                        if(dropField) parts.push(dropField.getValue);
+                        if(dropField) parts.push(dropField.getValue());
                     } else {
                         const valueCode = generator.valueToCode(block, 'ADD' + i + '_' + j, 0);
                         if (valueCode) {

@@ -1,45 +1,51 @@
 import * as Blockly from 'blockly';
+import {essenceGenerator} from "./blocks/automatedBlocks";
+import { generatorRegistry } from "./generators/blockGenerators";
+
 let mutatorCount = 0;
 let autoBlockCount = 0;
 export const autoBlocks = [];
 
 
-function addMutator(arg, connector) { // TODO: change this
-  console.log(arg.args)
+function addMutator(inputType, connector) {
 
   // list helper and mutator - adapted from "list_create_with" block
-  var helper = function() {
-      this.itemCount_ = 1; // default length depends on the number of args provided.
-      this.partCount_ = arg.args.length;
-  }
+  let helper = function() {
+      this.itemCount_ = 1;
+      // checks if first inner block has been added, prevnts duplicate inner blocks. 
+      this.firstAdded = false;
+    }
 
-  const name = 'list_mutator'+mutatorCount // creates a unique name for the mutator
+  const name = 'list_mutator'+mutatorCount
 
   Blockly.Extensions.registerMutator(
       name,
       {
+        
           loadExtraState: function(state) {
           this.itemCount_ = state['itemCount'];
-          this.updateShape_(); // Helper function. Adds or removes inputs from the block.
+          this.firstAdded = state.firstAdded;
+          // This is a helper function which adds or removes inputs from the block.
+          this.updateShape_();
         },
 
-        saveExtraState: function (itemCount) {
+        saveExtraState: function () {
           return {
             'itemCount': this.itemCount_,
+            'firstAdded': this.firstAdded,
           };
         },
               // These are the decompose and compose functions for the lists_create_with block.
         decompose: function(workspace) {
           // This is a special sub-block that only gets created in the mutator UI.
           // It acts as our "top block"
-          const topBlock = workspace.newBlock('lists_create_with_container');
+          let topBlock = workspace.newBlock('lists_create_with_container');
           topBlock.initSvg();
 
           // Then we add one sub-block for each item in the list.
           let connection = topBlock.getInput('STACK').connection;
-
           for (let i = 0; i < this.itemCount_; i++) {
-            const itemBlock = workspace.newBlock('lists_create_with_item');
+            let itemBlock = workspace.newBlock('lists_create_with_item');
             itemBlock.initSvg();
             connection.connect(itemBlock.previousConnection);
             connection = itemBlock.nextConnection;
@@ -53,72 +59,318 @@ function addMutator(arg, connector) { // TODO: change this
         compose: function(topBlock) {
               // First we get the first sub-block (which represents an input on our main block).
           let itemBlock = topBlock.getInputTargetBlock('STACK');
-          let count = 0;
 
+          // Then we collect up all of the connections of on our main block that are
+          // referenced by our sub-blocks.
+          // This relates to the saveConnections hook (explained below).
+          let connections = [];
           while (itemBlock && !itemBlock.isInsertionMarker()) {  // Ignore insertion markers!
-            count++;
-
+            connections.push(itemBlock.valueConnection_);
             itemBlock = itemBlock.nextConnection &&
                 itemBlock.nextConnection.targetBlock();
           }
 
-          this.itemCount_ = count;
-          this.updateShape_();
-        },
-
-        updateShape_: function () {
-          let i = 0;
-
-          while (this.getInput('ADD0_' + i)) {
-            for (let j = 0; j < this.partCount_; j++) {
-              if (this.getInput(`ADD${i}_${j}`)) {
-                this.removeInput(`ADD${i}_${j}`);
-              }
-            }
-            i++;
-          }
-
-          // Rebuild structure
+          // Then we disconnect any children where the sub-block associated with that
+          // child has been deleted/removed from the stack.
           for (let i = 0; i < this.itemCount_; i++) {
-
-            for (let j = 0; j < this.partCount_; j++) {
-
-              const argDef = arg.args[j];
-
-              let input = this.appendValueInput(`ADD${i}_${j}`)
-                .setAlign(Blockly.inputs.Align.RIGHT)
-                .setCheck(argDef.check || null);
-
-              // Add text between inputs (like ":")
-              if (j > 0) {
-                const text = arg.message
-                  .split(/%\d+/)[j]
-                  ?.trim();
-
-                if (text) {
-                  input.appendField(text);
-                }
-              }
+            let connection = this.getInput('ADD' + i).connection.targetConnection;
+            if (connection && connections.indexOf(connection) === -1) {
+              connection.disconnect();
             }
+          }
 
-            // Add connector between items
-            if (i > 0) {
-              const firstInput = this.getInput(`ADD${i}_0`);
-              if (firstInput) {
-                firstInput.appendField(connector);
+          // Then we update the shape of our block (removing or adding iputs as necessary).
+          // `this` refers to the main block.
+          this.itemCount_ = connections.length;
+          this.updateShape_();
+          
+          let ws = Blockly.getMainWorkspace();
+          // And finally we reconnect any child blocks.
+          for (let i = 0; i < this.itemCount_; i++) {
+            if (connections[i]){
+              connections[i].reconnect(this, 'ADD' + i);
+            } else {
+              // add inner block if possible, if children not already there
+              if (inputType !== "variable" && isBlock(inputType)){
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD"+ i)
+                  ws.render();
+                  this.firstAdded = true;
               }
             }
           }
         },
 
-        saveConnections: function() {}
-      },
+        saveConnections: function (topBlock) {
+          // First we get the first sub-block (which represents an input on our main block).
+            var itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // Then we go through and assign references to connections on our main block
+            // (input.connection.targetConnection) to properties on our sub blocks
+            // (itemBlock.valueConnection_).
+            var i = 0;
+            while (itemBlock) {
+              // `this` refers to the main block (which is being "mutated").
+              var input = this.getInput('ADD' + i);
+              // This is the important line of this function!
+              itemBlock.valueConnection_ = input && input.connection.targetConnection;
+              i++;
+              itemBlock = itemBlock.nextConnection &&
+                  itemBlock.nextConnection.targetBlock();
+            }
+        },
+        updateShape_: function () {
+          if (this.itemCount_ && this.getInput('EMPTY')) {
+            this.removeInput('EMPTY');
+          } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
+            this.appendDummyInput('EMPTY').appendField(
+              '',
+            );
+          }
+          
+      
+          // Add new inputs.
+          for (let i = 0; i < this.itemCount_; i++) {
+            if (!this.getInput('ADD' + i)) {
+             let input = null;
+             if (i === 0) {
+                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT);             
+
+              } else {
+                input = this.appendValueInput('ADD' + i).setCheck(inputType).setAlign(Blockly.inputs.Align.RIGHT).appendField(connector, 'ADD' + i);
+              }
+            }
+          }
+          // Remove deleted inputs.
+          for (let i = this.itemCount_; this.getInput('ADD' + i); i++) {
+
+            this.removeInput('ADD' + i);
+          }
+
+          // only add extra first inner block if not already added.
+          if (!this.firstAdded){
+              let ws = Blockly.getMainWorkspace();
+              if (inputType !== "variable" && isBlock(inputType)){
+                  let stmt = ws.newBlock(inputType);
+                  stmt.initSvg();
+                  let out = stmt.outputConnection
+                  out.reconnect(this, "ADD0")
+                  ws.render();
+                  this.firstAdded = true;
+              }
+          }
+
+        }},
       helper
         ,
       ["lists_create_with_item"] 
       );
 
   }
+
+function findMutator(arg) {
+
+    // sets up the initial number of items
+    let helper = function() {
+        this.itemCount_ = 1; // this is the initial number. I.e. 'find [] : []'
+    }
+
+    /**
+     * Mutators are a special mixin so must be first registered. This is the function signature
+     */
+    Blockly.Extensions.registerMutator(
+        `list_mutator${mutatorCount}`, // string associated with the mutator
+        { // these are the mutator methods
+
+            // These are the serialization hooks for the lists_create_with block.
+            saveExtraState: function() {
+                return { 'itemCount': this.itemCount_ };
+            },
+
+            // updates the shape when we extend/reduce the list
+            loadExtraState: function(state) {
+                this.itemCount_ = state['itemCount'];
+                this.updateShape();
+            },
+
+            /**
+             * 'Explodes' the block into smaller sub blocks that can be moved around, added, and deleted
+             * @return topBlock
+             */
+            decompose: function(workspace) {
+                // special sub block that gets created in the mutator UI
+                let topBlock = workspace.newBlock('lists_create_with_container');
+                topBlock.initSvg() // create SVG representation of the block
+
+                // add a sub block for each item in the list
+                let connection = topBlock.getInput('STACK').connection;
+
+                for (let i = 0; i < this.itemCount_; i++) {
+                    let itemBlock = workspace.newBlock('lists_create_with_item');
+                    itemBlock.initSvg();
+                    connection.connect(itemBlock.previousConnection);
+                    connection = itemBlock.nextConnection;
+                }
+
+                // return the top block
+                return topBlock;
+            },
+
+            /**
+             * Interprets the configuration of the sub-blocks and uses them to modify the main block.
+             * @param topBlock
+             */
+            compose: function(topBlock) {
+                // get the first sub block -- this is an input for the main block
+                let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+                // create an array of connections -- this will store the connections to the main block from the sub-blocks
+                let connections = [];
+                while (itemBlock && !itemBlock.isInsertionMarker()) {
+                    // add the connection to the array
+                    connections.push({
+                        varConn: itemBlock.varConnection_, // variable connection
+                        domConn: itemBlock.domConnection_, // domain connection
+                    });
+
+                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+                }
+
+                // disconnect children from the sub block that have been deleted/removed
+                for (let i = 0; i < this.itemCount_; i++) {
+                    // get the variable and domain connections
+                    let varInput = this.getInput('VAR' + i);
+                    let domInput = this.getInput('DOM' + i);
+
+                    // is the variable input not null?
+                    if (varInput) {
+                        let conn = varInput.connection.targetConnection;
+
+                        // if we can find the connection then disconnect it
+                        if (conn && !connections.find((c, idx) => idx === i && c.varConn === conn)) {
+                            conn.disconnect();
+                        }
+                    }
+
+                    // is the domain input not null?
+                    if (domInput) {
+                        let conn = domInput.connection.targetConnection;
+
+                        // if we can find the connection, then disconnect it
+                        if (conn && !connections.find((c, idx) => idx === i && c.domConn === conn)) {
+                            conn.disconnect();
+                        }
+                    }
+                }
+
+                // update the block shape
+                this.itemCount_ = connections.length;
+                this.updateShape();
+
+
+
+                // reconnect any child blocks (both variable and domain)
+                for (let i = 0; i < this.itemCount_; i++) {
+                    if (connections[i].varConn) connections[i].varConn.reconnect(this, 'VAR' + i);
+                    if (connections[i].domConn) connections[i].domConn.reconnect(this, 'DOM' + i);
+                }
+            },
+
+            /**
+             * Lets you associate children of your main block with sub-blocks that exist in your mutator workspace
+             * @param topBlock
+             */
+            saveConnections: function(topBlock) {
+                // get the first sub-block (i.e. an input on our main block)
+                let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+                // Assign references to connections on the main block
+                let i = 0; // counter
+
+                while (itemBlock) {
+                    let varInput = this.getInput('VAR' + i);
+                    let domInput = this.getInput('DOM' + i);
+
+                    itemBlock.varConnection_ = varInput && varInput.connection.targetConnection;
+                    itemBlock.domConnection_ = domInput && domInput.connection.targetConnection;
+                    i++;
+
+                    // move to the next connection
+                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+                }
+            },
+
+            /**
+             * Updates the shape of the block
+             */
+            updateShape: function() {
+                // empty case
+                if (this.itemCount_ && this.getInput('EMPTY')) {
+                    // remove the empty input block
+                    this.removeInput('EMPTY');
+                } // is the itemCount 0 and input block not empty?
+                else if (!this.itemCount_ && !this.getInput('EMPTY')) {
+                    this.appendDummyInput('EMPTY').appendField('');
+                }
+
+                // Makes 'find [] : [], [] : []'
+                for  (let i = 0; i < this.itemCount_; i++) {
+                    if (!this.getInput('VAR' + i)) {
+                        // first instance will be 'find'
+                        if (i === 0) {
+                            this.appendValueInput('VAR' + i)
+                                .setCheck(['variable_list', 'variable'])
+                        }
+                        else {
+                            this.appendValueInput('VAR' + i)
+                                .setCheck(['variable_list', 'variable'])
+                                .appendField(',');
+                        }
+                    }
+
+                    if (!this.getInput('DOM' + i)) {
+                        this.appendValueInput('DOM' + i)
+                            .setCheck('domain')
+                            .appendField(':');               // ': [DOM0]'
+                    }
+                }
+
+                for (let i = this.itemCount_; this.getInput('VAR' + i); i++) {
+                    this.removeInput('VAR' + i);
+                    this.removeInput('DOM' + i);
+                }
+            }
+        },
+        helper
+    );
+
+    // overridden generator
+    generatorRegistry.register(function(type) {
+        essenceGenerator.forBlock[type] = function(block, generator) {
+            // stores the domain, variable pairs
+            const pairs = [];
+
+            // iterate through every item
+            for(let i = 0; i < block.itemCount_; i++) {
+                const varCode = generator.valueToCode(block, 'VAR' + i, 0) || '';
+                const domCode = generator.valueToCode(block, 'DOM' + i, 0) || '';
+                pairs.push(`${varCode} : ${domCode}`);
+            }
+
+            const code = 'find ' + pairs.join(', ');
+
+            // allows the chaining with the next program block
+            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
+                const next = generator.blockToCode(block.getNextBlock());
+                return code + '\n' + next;
+            }
+
+            return [code, 0];
+        }
+    })
+}
 
 function registerAutoBlock(def) {
   const type = "auto_block_" + autoBlockCount++;
@@ -171,7 +423,7 @@ export const seq = function(...args) {
             })
             argCount ++;
         
-        } else if (typeof(a) === "object" && a.constructor.name != "RegExp" && a.constructor.name != "Array") {
+        } else if (typeof(a) === "object" && a.constructor.name !== "RegExp" && a.constructor.name !== "Array") {
             // merge 2 block JSON together.
             const addedArgs = a.args;
             let addedMessage = a.message;
@@ -202,9 +454,12 @@ export const categories = Object.freeze({
       PROGRAM: 0,
       LIST: 1,
       OPERATION: 2,
+      FIND: 3,
 });
 
 export const repeat = function(arg, category) {
+    console.log(arg);
+
     if (typeof arg === "function") {
       arg = arg(rules); // evaluate it
     }
@@ -219,39 +474,23 @@ export const repeat = function(arg, category) {
         break;
       case categories.OPERATION:
         addMutator(arg, "");
-        break
+        break;
+      case categories.FIND:
+        findMutator(arg);
+        break;
       default: 
         console.error(`The category '${category}' does not exist in categories.`);
     }
 
-
-
-    
-    // if (typeof(arg) == "function"){
-    //   // joint not specified, presume comma
-    //   addMutator(arg.name, ",")
-    
-    // } else {
-    //   // Get text between block inputs
-    //   let divider = arg.message
-    //             .replace(/%\d+/g, "")
-    //             .trim();
-                
-    //   console.log(`-${divider}-`)
-
-    //   addMutator(arg.args[0].check, divider);
-    // }
-  
     mutatorCount++;
 
     return {
         'message': "",
-        "args": [
-        ],
+        "args": [],
         'helpUrl': '%{BKY_LISTS_CREATE_WITH_HELPURL}',
         "extraState": {
-        "itemCount": 1// or whatever the count is
-      },
+            "itemCount": 1// or whatever the count is
+          },
         // These are the serialization hooks for the lists_create_with block.
         'mutator': 'list_mutator'+ (mutatorCount-1)
       }
@@ -270,7 +509,7 @@ export const choice = function(...args) {
             contents.push(a.name);
         }
     }
-    if (options.length != 0){
+    if (options.length !== 0){
         return {
             "message": "%1 ",
             "args": [{
@@ -310,7 +549,7 @@ export {prec};
 
 let isBlock = function (block) {
   for (let b of autoBlocks){
-    if (b.type == block) {
+    if (b.type === block) {
       return true
     }
   }

@@ -20,7 +20,7 @@ export const grammar = {
 
     find_statement_list: $ => seq("find", repeat(
         seq($.variable_list, ":", $.domain), 
-        categories.PROGRAM
+        categories.FIND
     )),
 
     given_list: $ => seq(
@@ -176,15 +176,13 @@ export const grammar = {
 
     exponent: $ => prec(14, prec.right(seq($.expression, "**", $.expression))),
 
-    product_expr: $ => prec(13, prec.left(repeat(
-        seq($.expression, choice("*", "/", "%"), $.expression),
-        categories.OPERATION
-    ))),
+    product_expr: $ => prec(13, prec.left(
+        seq($.expression, choice("*", "/", "%"), $.expression)
+    )),
 
-    sum_expr: $ => prec(12, prec.left(repeat(
-        seq($.expression, choice("+", "-"), $.expression),
-        categories.OPERATION
-    ))),
+    sum_expr: $ => prec(12, prec.left(
+        seq($.expression, choice("+", "-"), $.expression)
+    )),
 
     comparison: $ => prec(10, prec.left(
         seq($.expression, choice("=", "!=", "<=", ">=", "<", ">"), $.expression)
