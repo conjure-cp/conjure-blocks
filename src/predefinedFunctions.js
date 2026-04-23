@@ -170,7 +170,7 @@ function addMutator(inputType, connector) {
 
   }
 
-function findMutator(arg) {
+function findMutator() {
 
     // sets up the initial number of items
     let helper = function() {
@@ -269,8 +269,6 @@ function findMutator(arg) {
                 this.itemCount_ = connections.length;
                 this.updateShape();
 
-
-
                 // reconnect any child blocks (both variable and domain)
                 for (let i = 0; i < this.itemCount_; i++) {
                     if (connections[i].varConn) connections[i].varConn.reconnect(this, 'VAR' + i);
@@ -343,7 +341,8 @@ function findMutator(arg) {
                 }
             }
         },
-        helper
+        helper,
+        ["lists_create_with_item"]
     );
 
     // overridden generator
@@ -476,7 +475,7 @@ export const repeat = function(arg, category) {
         addMutator(arg, "");
         break;
       case categories.FIND:
-        findMutator(arg);
+        findMutator();
         break;
       default: 
         console.error(`The category '${category}' does not exist in categories.`);
