@@ -20,20 +20,20 @@ export const grammar = {
 
     find_statement_list: $ => seq("find", repeat(
         seq($.variable_list, ":", $.domain), 
-        categories.FIND
+        'find'
     )),
 
     given_list: $ => seq(
         "given",
         repeat(
             seq($.variable_list, ":", $.domain), 
-            categories.PROGRAM
+            'given'
         )),
 
     letting_statement_list: $ => seq("letting", 
         repeat(
-            seq($.variable, "be", choice("", "domain"), $.expression), 
-            categories.PROGRAM
+            seq($.variable, "be", $.expression),
+            'letting'
         )
     ),
 
@@ -50,8 +50,8 @@ export const grammar = {
     such_that: $ => seq(
         "such that", 
         repeat(
-            seq($.expression, optional(",")), // TODO: can we remove the comma?
-            categories.PROGRAM
+            seq($.expression), // TODO: can we remove the comma?
+            'such that'
         )
     ),
 
@@ -60,10 +60,12 @@ export const grammar = {
         $.expression
     ),
 
+      domain_expr: $ => seq("domain", $.domain),
+
     /* 
     * Constants Section
     */
-   constant: $ => choice(
+   constants: $ => choice(
         $.integer,
         $.TRUE,
         $.FALSE
@@ -81,8 +83,8 @@ export const grammar = {
     variable: $ => {},
 
     variable_list: $ => repeat(
-        seq($.variable, optional(",")),
-        categories.LIST
+        seq($.variable),
+        ''
     ),
 
     /*
@@ -94,6 +96,7 @@ export const grammar = {
         $.int_expression,
         $.variable,
         $.matrix,
+        $.domain_expr,
     ),
 
     bool_domain: $ => "bool",
@@ -117,35 +120,40 @@ export const grammar = {
     matrix: $ => seq(
         "matrix indexed by",
         "[",
-        repeat(seq($.domain), categories.LIST),
+        repeat(seq($.domain), 'matrix indexed by'),
         "]",
         "of",
         $.domain
     ),
 
     /*
-    * RANGE SECTION
-    *
-    * TODO: is this still needed
+    * RANGE SECTION - Has been commented out due to having no current use.
     */
-    range: $ => choice(
-        $.int_range,
-        $.range_list
-    ),
-
-    // remove precedence, so don't get duplicate brackets, also ensures list corrects
-    range_list: $ => repeat(
-        seq(choice($.int_range, $.integer), optional(",")),
-        categories.LIST
-    ),
-
-    int_range: $ => seq(optional($.expression), "..", optional($.expression)),
+    // range: $ => choice(
+    //     $.int_range,
+    //     $.range_list
+    // ),
+    //
+    // // remove precedence, so don't get duplicate brackets, also ensures list corrects
+    // range_list: $ => repeat(
+    //     seq(choice($.int_range, $.integer), optional(",")),
+    //     categories.LIST
+    // ),
+    //
+    // int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 
 
     /*
     * EXPRESSION SECTION
     */
     expression: $ => choice(
+        // categories of expressions
+        $.constants,
+        $.arithmetic,
+        $.boolean,
+        $.misc,
+
+        // non-categories
         $.bracket_expr,
         $.not_expr,
         $.abs_value,
@@ -162,9 +170,36 @@ export const grammar = {
         $.flatten,
         $.from_solution,
         $.toInt_expr,
-        $.constant,
         $.variable,
+        $.domain_expr,
     ),
+
+      arithmetic: $ => choice(
+          $.product_expr,
+          $.sum_expr,
+          $.abs_value,
+          $.negative_expr,
+          $.exponent,
+      ),
+
+      boolean: $ => choice(
+          $.comparison,
+          $.not_expr,
+          $.and_expr,
+          $.or_expr,
+          $.implication,
+      ),
+
+      misc: $ => choice(
+          $.bracket_expr,
+          $.quantifier_expr,
+          $.expr_list,
+          $.flatten,
+          $.from_solution,
+          $.toInt_expr,
+          $.variable,
+          $.domain_expr,
+      ),
 
     bracket_expr: $ => seq("(", $.expression, ")"),
 
@@ -212,8 +247,8 @@ export const grammar = {
     ),
 
     expr_list: $ => repeat(
-        seq($.expression, optional(",")),
-        categories.LIST
+        seq($.expression),
+        ''
     ),
 
     flatten: $ => seq(
@@ -251,18 +286,6 @@ export const grammar = {
     objective_statement: $ => choice(
         $.maximising,
         $.minimising
-    ),
-
-    muliplicative: $ => choice(
-        $.product_expr,
-    ),
-
-    additive: $ => choice(
-        $.sum_expr
-    ),
-
-    comparing: $ => choice(
-        $.comparison,
     ),
   }
 };

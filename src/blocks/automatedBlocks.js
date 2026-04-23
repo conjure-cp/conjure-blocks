@@ -9,7 +9,7 @@ export const essenceGenerator = new Blockly.Generator('essence');
 const rules = grammar.rules;
 
 const toolboxContents = [];
-const ignoredCategories = new Set(["find", "letting"]);
+const ignoredCategories = new Set(["find", "letting", "objective_statement"]);
 
 //defining blocks
 let categories = {};
