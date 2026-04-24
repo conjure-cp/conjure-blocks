@@ -18,84 +18,13 @@ import {essenceGenerator} from "../blocks/automatedBlocks";
  *
  * STRUCTURE:
  * {
- *     compose: (mutator, topBlock) => {},
- *     saveConnections: (mutator, topBlock) => {},
  *     updateShape: (mutator, arg) => {}.
  *     generator: (block, generator, grammarName, arg) => {},
- * }
+ * },
  * @type {Readonly<{}>}
  */
 export const mutatorType = Object.freeze({
     DEFAULT: { // if no mutatorType is specified on an applyMutator call, this will be assumed
-        compose: (mutator, topBlock) => {
-            // get the first sub block -- this is an input for the main block
-            let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-            // array of connections
-            const connections = [];
-
-            // Store the connections to the main block from the sub-blocks
-            while (itemBlock && !itemBlock.isInsertionMarker()) {
-                // assume that inputConnections is an array of however many inputs the block will have
-                connections.push(itemBlock.inputConnections_ || []);
-                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-            }
-
-            // disconnect children from the sub block that have been deleted/removed
-            for (let i = 0; i < mutator.itemCount_; i++) {
-                // get all the connections
-                for (let j = 0; j < mutator.numArgs_; j++) {
-                    let input = mutator.getInput(`ARG${j}_${i}`);
-
-                    if (input) {
-                        let conn = input.connection.targetConnection;
-                        if (conn && !connections[i]?.includes(conn)) {
-                            conn.disconnect();
-                        }
-                    }
-                }
-            }
-
-            // update the block shape
-            mutator.itemCount_ = connections.length;
-            mutator.updateShape();
-
-            // reconnect remaining child blocks
-            for (let i = 0; i < mutator.itemCount_; i++) {
-                for (let j = 0; j < mutator.numArgs_; j++) {
-                    let conn = connections[i]?.[j];
-                    if (conn) {
-                        conn.reconnect(this,`ARG${j}_${i}`);
-                    }
-                }
-            }
-        },
-
-        saveConnections: (mutator, topBlock) => {
-            // get the first sub-block (i.e. an input on our main block)
-            let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-            // Assign references to connections on the main block
-            let i = 0; // counter
-
-            while (itemBlock) {
-                const inputConns = [];
-
-                for (let j = 0; j < mutator.numArgs_; j++) {
-                    let input = mutator.getInput(`ARG${j}_${i}`);
-                    inputConns.push(
-                        input && input.connection.targetConnection
-                    );
-                }
-
-                itemBlock.inputConnections_ = inputConns;
-                i++;
-
-                // move to the next connection
-                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-            }
-        },
-
         updateShape: (mutator, arg) => {
             // empty case
             if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
@@ -206,65 +135,6 @@ export const mutatorType = Object.freeze({
         }
     },
     MATRIX: { // for `matrix indexed by [{domain}] of {domain}` blocks
-        compose: (mutator, topBlock) => {
-            // get the first sub block -- this is an input for the main block
-            let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-            // array of connections
-            const connections = [];
-
-            // Store the connections to the main block from the sub-blocks
-            while (itemBlock && !itemBlock.isInsertionMarker()) {
-                // assume that inputConnections is an array of however many inputs the block will have
-                connections.push({
-                    byConn: itemBlock.byConnection_, // should be repeated
-                });
-
-                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-            }
-
-            // disconnect children from the sub block that have been deleted/removed
-            for (let i = 0; i < mutator.itemCount_; i++) {
-                // get the variable and domain connections
-                let byInput = mutator.getInput(`BY${i}`);
-
-                // is the variable input not null?
-                if (byInput) {
-                    let conn = byInput.connection.targetConnection;
-
-                    // if we can find the connection then disconnect it
-                    if (conn && !connections.find((c, idx) => idx === i && c.byConn === conn)) {
-                        conn.disconnect();
-                    }
-                }
-            }
-
-            // update the block shape
-            mutator.itemCount_ = connections.length;
-            mutator.updateShape();
-
-            // reconnect remaining child blocks
-            for (let i = 0; i < mutator.itemCount_; i++) {
-                if (connections[i].byConn) connections[i].byConn.reconnect(mutator, `BY${i}`);
-            }
-        },
-        saveConnections: (mutator, topBlock) => {
-            // get the first sub-block (i.e. an input on our main block)
-            let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-            // Assign references to connections on the main block
-            let i = 0; // counter
-
-            while (itemBlock) {
-                let byInput = mutator.getInput(`BY${i}`);
-
-                itemBlock.byConnection_ = byInput && byInput.connection.targetConnection;
-                i++;
-
-                // move to the next connection
-                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-            }
-        },
         updateShape: (mutator, arg) => {
             // empty case
             if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
@@ -276,16 +146,16 @@ export const mutatorType = Object.freeze({
                 return;
             }
 
-            // remove 'of' so that it the extra by domains dont get appended at the end of the block
+            // remove 'of' so that it the extra by domains don't get appended at the end of the block
             if (mutator.getInput('OF')) {
                 mutator.removeInput('OF');
             }
 
-            // Makes 'find [] : [], [] : []'
+            // Makes 'matrix indexed by [ , , ] of {}'
             for  (let i = 0; i < mutator.itemCount_; i++) {
-                if (!mutator.getInput(`BY${i}`)) {
+                if (!mutator.getInput(`ARG0_${i}`)) {
                     let input = mutator
-                        .appendValueInput(`BY${i}`)
+                        .appendValueInput(`ARG0_${i}`)
                         .setCheck('domain');
 
                     // Initially there is no list
@@ -298,8 +168,8 @@ export const mutatorType = Object.freeze({
                 }
             }
 
-            for (let i = mutator.itemCount_; mutator.getInput(`BY${i}`); i++) {
-                mutator.removeInput(`BY${i}`);
+            for (let i = mutator.itemCount_; mutator.getInput(`ARG0_${i}`); i++) {
+                mutator.removeInput(`ARG0_${i}`);
             }
 
             // Add the singular instance of, ironically, 'of'
@@ -315,7 +185,7 @@ export const mutatorType = Object.freeze({
 
             // iterate through every item
             for(let i = 0; i < block.itemCount_; i++) {
-                byParts.push(generator.valueToCode(block, `BY${i}`, 0) || '');
+                byParts.push(generator.valueToCode(block, `ARG0_${i}`, 0) || '');
             }
 
             const ofCode = generator.valueToCode(block, 'OF', 0) || '';
@@ -331,7 +201,8 @@ export const mutatorType = Object.freeze({
             return [code, 0];
         },
     },
-    MATRIX_ACCESS: 2, // for `{variable} [{index}]` blocks. (accessing indexes of a matrix)
+    MATRIX_ACCESS: {
+    }, // for `{variable} [{index}]` blocks. (accessing indexes of a matrix)
     // OPERATION: 3, // for operations. TODO
 })
 
@@ -343,7 +214,7 @@ export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutat
      */
     let helper = function() {
         this.itemCount_ = 1;
-        this.numArgs_ = arg.args?.length || 0;
+        this.numArgs_ =  typeOfMutator === mutatorType.DEFAULT ? arg.args?.length : 1; // probably will cause errors for future Jamie :(
 
         this.updateShape();
     }
@@ -404,7 +275,47 @@ export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutat
              * @param topBlock
              */
             compose:  function(topBlock) {
-                typeOfMutator.compose(this, topBlock);
+                // get the first sub block -- this is an input for the main block
+                let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+                // array of connections
+                const connections = [];
+
+                // Store the connections to the main block from the sub-blocks
+                while (itemBlock && !itemBlock.isInsertionMarker()) {
+                    // assume that inputConnections is an array of however many inputs the block will have
+                    connections.push(itemBlock.inputConnections_ || []);
+                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+                }
+
+                // disconnect children from the sub block that have been deleted/removed
+                for (let i = 0; i < this.itemCount_; i++) {
+                    // get all the connections
+                    for (let j = 0; j < this.numArgs_; j++) {
+                        let input = this.getInput(`ARG${j}_${i}`);
+
+                        if (input) {
+                            let conn = input.connection.targetConnection;
+                            if (conn && !connections[i]?.includes(conn)) {
+                                conn.disconnect();
+                            }
+                        }
+                    }
+                }
+
+                // update the block shape
+                this.itemCount_ = connections.length;
+                this.updateShape();
+
+                // reconnect remaining child blocks
+                for (let i = 0; i < this.itemCount_; i++) {
+                    for (let j = 0; j < this.numArgs_; j++) {
+                        let conn = connections[i]?.[j];
+                        if (conn) {
+                            conn.reconnect(this,`ARG${j}_${i}`);
+                        }
+                    }
+                }
             },
 
             /**
@@ -412,7 +323,28 @@ export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutat
              * @param topBlock
              */
             saveConnections: function(topBlock) {
-                typeOfMutator.saveConnections(this, topBlock);
+                // get the first sub-block (i.e. an input on our main block)
+                let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+                // Assign references to connections on the main block
+                let i = 0; // counter
+
+                while (itemBlock) {
+                    const inputConns = [];
+
+                    for (let j = 0; j < this.numArgs_; j++) {
+                        let input = this.getInput(`ARG${j}_${i}`);
+                        inputConns.push(
+                            input && input.connection.targetConnection
+                        );
+                    }
+
+                    itemBlock.inputConnections_ = inputConns;
+                    i++;
+
+                    // move to the next connection
+                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+                }
             },
 
             /**
