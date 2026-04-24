@@ -26,15 +26,7 @@ import {essenceGenerator} from "../blocks/automatedBlocks";
 export const mutatorType = Object.freeze({
     DEFAULT: { // if no mutatorType is specified on an applyMutator call, this will be assumed
         updateShape: (mutator, arg) => {
-            // empty case
-            if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
-                // remove the empty input block
-                mutator.removeInput('EMPTY');
-            } // is the itemCount 0 and input block not empty?
-            else if (!mutator.itemCount_ && !mutator.getInput('EMPTY')) {
-                mutator.appendDummyInput('EMPTY').appendField('');
-                return;
-            }
+            if (emptyCheck(mutator)) return;
 
             // Implement the list functionality (i.e. 'find [] : [], [] : []')
 
@@ -136,15 +128,7 @@ export const mutatorType = Object.freeze({
     },
     MATRIX: { // for `matrix indexed by [{domain}] of {domain}` blocks
         updateShape: (mutator, arg) => {
-            // empty case
-            if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
-                // remove the empty input block
-                mutator.removeInput('EMPTY');
-            } // is the itemCount 0 and input block not empty?
-            else if (!mutator.itemCount_ && !mutator.getInput('EMPTY')) {
-                mutator.appendDummyInput('EMPTY').appendField('');
-                return;
-            }
+            if (emptyCheck(mutator)) return;
 
             // remove 'of' so that it the extra by domains don't get appended at the end of the block
             if (mutator.getInput('OF')) {
@@ -377,4 +361,21 @@ export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutat
     }
 }
 
+/**
+ * Checks the base case of updateShape. i.e. is the block empty.
+ * @param mutator The mutator object.
+ * @returns {boolean} True if updateShape can continue and false otherwise.
+ */
+function emptyCheck(mutator) {
+    // empty case
+    if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
+        // remove the empty input block
+        mutator.removeInput('EMPTY');
+        return false;
+    } // is the itemCount 0 and input block not empty?
+    else if (!mutator.itemCount_ && !mutator.getInput('EMPTY')) {
+        mutator.appendDummyInput('EMPTY').appendField('');
+        return true;
+    }
+}
 
