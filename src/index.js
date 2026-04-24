@@ -36,6 +36,7 @@ const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
+Blockly.common.setMainWorkspace(ws);
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
 var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
@@ -73,7 +74,7 @@ startBlock.initSvg();
 dataWS.render()
 
 const blockOut = Blockly.inject(document.getElementById('blocklyDiv2'), {scrollbars:true});
-
+console.log(blockOut.id)
 // add variable category to toolbox, by adding create int/bool buttons, each getter block for each variable 
 // and a variable_list block
 const createFlyout = function (ws) {
@@ -214,7 +215,11 @@ ws.addChangeListener((e) => {
   save(ws);
 });
 
-
+blockOut.addChangeListener((e) => {
+  if (e.type == Blockly.Events.BLOCK_CREATE){
+    console.log(e)
+  }
+})
 
 // Whenever the workspace changes meaningfully, run the code again.
 ws.addChangeListener((e) => {
@@ -510,6 +515,7 @@ file.addEventListener("change", () => {
 var convertButton = document.getElementById("convertToBlocks");
 convertButton.addEventListener("click", (e) =>
 {
+  Blockly.common.setMainWorkspace(ws);
   const code = codeDiv.innerText;
   console.log(code);
   console.log(parser);
@@ -587,6 +593,7 @@ const recurseTree = function (node, parent, arg) {
       }
       if (parent){
         if (parent.type.endsWith("list")){
+          console.log("INSIDELIST")
           console.log(parent.inputList);
           // if have input - have dummy?
           if (parent.inputList.length > 0){
