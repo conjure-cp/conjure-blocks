@@ -1,6 +1,6 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), also consider installing treesitter, might be more readable
 import { seq, choice, repeat, optional, prec, categories} from "./predefinedFunctions";
-import {mutateMatrix} from "./generators/mutators";
+import {applyMutator, mutateMatrix, mutatorType} from "./generators/mutators";
 
 export const grammar = {
   name: 'essence',
@@ -97,6 +97,7 @@ export const grammar = {
         $.int_expression,
         $.variable,
         $.matrix,
+        $.matrix_accessor,
         $.domain_expr,
     ),
 
@@ -119,7 +120,21 @@ export const grammar = {
     ),
 
       // one of those 'trust me bro' instances. mutateMatrix will make this look correct.
-    matrix: $ => mutateMatrix(seq($.domain), 'matrixMutator', $.domain),
+    matrix: $ => applyMutator('matrixMutator', '', seq($.domain), mutatorType.MATRIX),
+
+      // matrix: $ => mutateMatrix(seq($.domain), 'matrixMutator', $.domain),
+
+      matrix_accessor: $ => seq(
+          $.variable,
+          '[',
+          repeat(seq(
+              choice(
+                  $.integer,
+                  $.boolean,
+                  $.variable,
+          )), '['),
+          ']',
+      ),
 
     /*
     * RANGE SECTION - Has been commented out due to having no current use.

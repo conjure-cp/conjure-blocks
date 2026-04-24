@@ -11,7 +11,331 @@ import * as Blockly from "blockly";
 import {generatorRegistry} from "./blockGenerators";
 import {essenceGenerator} from "../blocks/automatedBlocks";
 
-export const applyMutator = function (mutatorName, grammarName, arg) {
+/**
+ * JSON object that holds mutator specific functions
+ *
+ * TODO: reduce more repetition.
+ *
+ * STRUCTURE:
+ * {
+ *     compose: (mutator, topBlock) => {},
+ *     saveConnections: (mutator, topBlock) => {},
+ *     updateShape: (mutator, arg) => {}.
+ *     generator: (block, generator, grammarName, arg) => {},
+ * }
+ * @type {Readonly<{}>}
+ */
+export const mutatorType = Object.freeze({
+    DEFAULT: { // if no mutatorType is specified on an applyMutator call, this will be assumed
+        compose: (mutator, topBlock) => {
+            // get the first sub block -- this is an input for the main block
+            let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // array of connections
+            const connections = [];
+
+            // Store the connections to the main block from the sub-blocks
+            while (itemBlock && !itemBlock.isInsertionMarker()) {
+                // assume that inputConnections is an array of however many inputs the block will have
+                connections.push(itemBlock.inputConnections_ || []);
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
+
+            // disconnect children from the sub block that have been deleted/removed
+            for (let i = 0; i < mutator.itemCount_; i++) {
+                // get all the connections
+                for (let j = 0; j < mutator.numArgs_; j++) {
+                    let input = mutator.getInput(`ARG${j}_${i}`);
+
+                    if (input) {
+                        let conn = input.connection.targetConnection;
+                        if (conn && !connections[i]?.includes(conn)) {
+                            conn.disconnect();
+                        }
+                    }
+                }
+            }
+
+            // update the block shape
+            mutator.itemCount_ = connections.length;
+            mutator.updateShape();
+
+            // reconnect remaining child blocks
+            for (let i = 0; i < mutator.itemCount_; i++) {
+                for (let j = 0; j < mutator.numArgs_; j++) {
+                    let conn = connections[i]?.[j];
+                    if (conn) {
+                        conn.reconnect(this,`ARG${j}_${i}`);
+                    }
+                }
+            }
+        },
+
+        saveConnections: (mutator, topBlock) => {
+            // get the first sub-block (i.e. an input on our main block)
+            let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // Assign references to connections on the main block
+            let i = 0; // counter
+
+            while (itemBlock) {
+                const inputConns = [];
+
+                for (let j = 0; j < mutator.numArgs_; j++) {
+                    let input = mutator.getInput(`ARG${j}_${i}`);
+                    inputConns.push(
+                        input && input.connection.targetConnection
+                    );
+                }
+
+                itemBlock.inputConnections_ = inputConns;
+                i++;
+
+                // move to the next connection
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
+        },
+
+        updateShape: (mutator, arg) => {
+            // empty case
+            if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
+                // remove the empty input block
+                mutator.removeInput('EMPTY');
+            } // is the itemCount 0 and input block not empty?
+            else if (!mutator.itemCount_ && !mutator.getInput('EMPTY')) {
+                mutator.appendDummyInput('EMPTY').appendField('');
+                return;
+            }
+
+            // Implement the list functionality (i.e. 'find [] : [], [] : []')
+
+            // Take a message like `%1 : %2`. '%1' and '%2' are the arguments. We want this to be split into
+            // ['%1', ':', '%2'] so that the blocks can incorporate the grammar in between.
+            const parts = arg.message.split(/\s+/);
+
+            for (let i = 0; i < mutator.itemCount_; i++) {
+                let j = 0; // counter for the arguments.
+
+                for (let p = 0; p < parts.length; p++) {
+                    const part = parts[p];
+
+                    // if it is an argument (looks like '%'), append it
+                    if (part.match(/%\d+/)) {
+                        const inputName = `ARG${j}_${i}`;
+
+                        if (!mutator.getInput(inputName)) {
+                            let input = mutator
+                                .appendValueInput(inputName)
+                                .setCheck(arg.args[j].check);
+
+                            // add a comma before the first arg of each item after the first
+                            if (i > 0 && j === 0) {
+                                input.appendField(',');
+                            }
+                        }
+
+                        j++;
+                    }
+                    else {
+                        // label for non-args
+                        const labelName = `LABEL${p}_${i}`;
+
+                        if (!mutator.getInput(labelName)) {
+                            mutator.appendDummyInput(labelName)
+                                .appendField(part);
+                        }
+                    }
+                }
+            }
+
+            // remove inputs for items that no longer exist
+            for (let i = mutator.itemCount_; ; i++) {
+                let found = false;
+
+                for (let j = 0; j < mutator.numArgs_; j++) {
+                    if (mutator.getInput(`ARG${j}_${i}`)) {
+                        mutator.removeInput(`ARG${j}_${i}`);
+                        found = true;
+                    }
+                }
+
+                // and the labels
+                for (let p = 0; p < parts.length; p++) {
+                    if (mutator.getInput(`LABEL${p}_${i}`)) {
+                        mutator.removeInput(`LABEL${p}_${i}`);
+                        found = true;
+                    }
+                }
+
+                if (!found) break;
+            }
+        },
+
+        generator: (block, generator, grammarName, arg) => {
+            const parts = arg.message.split(/\s+/);
+            const items = [];
+
+            for (let i = 0; i < block.itemCount_; i++) {
+                let itemCode = '';
+                let j = 0;
+
+                for (let p = 0; p < parts.length; p++) {
+                    const part = parts[p];
+
+                    if (part.match(/%\d+/)) {
+                        // get the value from the block input
+                        const valueCode = generator.valueToCode(block, `ARG${j}_${i}`, 0) || '';
+                        itemCode += valueCode;
+                        j++;
+                    } else {
+                        itemCode += ` ${part} `;
+                    }
+                }
+
+                items.push(itemCode.trim());
+            }
+
+            const code = `${grammarName} ${items.join(' , ')}`;
+
+            // allows the chaining with the next program block
+            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
+                return code + '\n' + generator.blockToCode(block.getNextBlock());
+            }
+
+            return [code, 0];
+        }
+    },
+    MATRIX: { // for `matrix indexed by [{domain}] of {domain}` blocks
+        compose: (mutator, topBlock) => {
+            // get the first sub block -- this is an input for the main block
+            let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // array of connections
+            const connections = [];
+
+            // Store the connections to the main block from the sub-blocks
+            while (itemBlock && !itemBlock.isInsertionMarker()) {
+                // assume that inputConnections is an array of however many inputs the block will have
+                connections.push({
+                    byConn: itemBlock.byConnection_, // should be repeated
+                });
+
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
+
+            // disconnect children from the sub block that have been deleted/removed
+            for (let i = 0; i < mutator.itemCount_; i++) {
+                // get the variable and domain connections
+                let byInput = mutator.getInput(`BY${i}`);
+
+                // is the variable input not null?
+                if (byInput) {
+                    let conn = byInput.connection.targetConnection;
+
+                    // if we can find the connection then disconnect it
+                    if (conn && !connections.find((c, idx) => idx === i && c.byConn === conn)) {
+                        conn.disconnect();
+                    }
+                }
+            }
+
+            // update the block shape
+            mutator.itemCount_ = connections.length;
+            mutator.updateShape();
+
+            // reconnect remaining child blocks
+            for (let i = 0; i < mutator.itemCount_; i++) {
+                if (connections[i].byConn) connections[i].byConn.reconnect(mutator, `BY${i}`);
+            }
+        },
+        saveConnections: (mutator, topBlock) => {
+            // get the first sub-block (i.e. an input on our main block)
+            let itemBlock = topBlock.getInputTargetBlock('STACK');
+
+            // Assign references to connections on the main block
+            let i = 0; // counter
+
+            while (itemBlock) {
+                let byInput = mutator.getInput(`BY${i}`);
+
+                itemBlock.byConnection_ = byInput && byInput.connection.targetConnection;
+                i++;
+
+                // move to the next connection
+                itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
+            }
+        },
+        updateShape: (mutator, arg) => {
+            // empty case
+            if (mutator.itemCount_ && mutator.getInput('EMPTY')) {
+                // remove the empty input block
+                mutator.removeInput('EMPTY');
+            } // is the itemCount 0 and input block not empty?
+            else if (!mutator.itemCount_ && !mutator.getInput('EMPTY')) {
+                mutator.appendDummyInput('EMPTY').appendField('');
+                return;
+            }
+
+            // remove 'of' so that it the extra by domains dont get appended at the end of the block
+            if (mutator.getInput('OF')) {
+                mutator.removeInput('OF');
+            }
+
+            // Makes 'find [] : [], [] : []'
+            for  (let i = 0; i < mutator.itemCount_; i++) {
+                if (!mutator.getInput(`BY${i}`)) {
+                    let input = mutator
+                        .appendValueInput(`BY${i}`)
+                        .setCheck('domain');
+
+                    // Initially there is no list
+                    if (i === 0) {
+                        input.appendField('matrix indexed by [');
+                    }
+                    else {
+                        input.appendField(',');
+                    }
+                }
+            }
+
+            for (let i = mutator.itemCount_; mutator.getInput(`BY${i}`); i++) {
+                mutator.removeInput(`BY${i}`);
+            }
+
+            // Add the singular instance of, ironically, 'of'
+            if (!mutator.getInput('OF')) {
+                mutator.appendValueInput('OF')
+                    .setCheck('domain')
+                    .appendField('] of');
+            }
+        },
+        generator: (block, generator, grammarName, arg) => {
+            // stores the domain, variable pairs
+            const byParts = [];
+
+            // iterate through every item
+            for(let i = 0; i < block.itemCount_; i++) {
+                byParts.push(generator.valueToCode(block, `BY${i}`, 0) || '');
+            }
+
+            const ofCode = generator.valueToCode(block, 'OF', 0) || '';
+
+            const code = `matrix indexed by [ ${byParts.join(', ')} ] of ${ofCode}`;
+
+            // allows the chaining with the next program block
+            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
+                const next = generator.blockToCode(block.getNextBlock());
+                return code + '\n' + next;
+            }
+
+            return [code, 0];
+        },
+    },
+    MATRIX_ACCESS: 2, // for `{variable} [{index}]` blocks. (accessing indexes of a matrix)
+    // OPERATION: 3, // for operations. TODO
+})
+
+export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutator=mutatorType.DEFAULT) {
     /**
      * Sets the initial number of inputs. This DOES NOT mean the number of gaps
      * for blocks to be put in. For example, itemCount = 1 looks like `such that
@@ -19,7 +343,9 @@ export const applyMutator = function (mutatorName, grammarName, arg) {
      */
     let helper = function() {
         this.itemCount_ = 1;
-        this.numArgs_ = arg.args.length;
+        this.numArgs_ = arg.args?.length || 0;
+
+        this.updateShape();
     }
 
     /**
@@ -78,46 +404,7 @@ export const applyMutator = function (mutatorName, grammarName, arg) {
              * @param topBlock
              */
             compose:  function(topBlock) {
-                // get the first sub block -- this is an input for the main block
-                let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-                const connections = [];
-
-                // Store the connections to the main block from the sub-blocks
-                while (itemBlock && !itemBlock.isInsertionMarker()) {
-                    // assume that inputConnections is an array of however many inputs the block will have
-                    connections.push(itemBlock.inputConnections_ || []);
-                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-                }
-
-                // disconnect children from the sub block that have been deleted/removed
-                for (let i = 0; i < this.itemCount_; i++) {
-                    // get all the connections
-                    for (let j = 0; j < this.numArgs_; j++) {
-                        let input = this.getInput(`ARG${j}_${i}`);
-
-                        if (input) {
-                            let conn = input.connection.targetConnection;
-                            if (conn && !connections[i]?.includes(conn)) {
-                                conn.disconnect();
-                            }
-                        }
-                    }
-                }
-
-                // update the block shape
-                this.itemCount_ = connections.length;
-                this.updateShape();
-
-                // reconnect remaining child blocks
-                for (let i = 0; i < this.itemCount_; i++) {
-                    for (let j = 0; j < this.numArgs_; j++) {
-                        let conn = connections[i]?.[j];
-                        if (conn) {
-                            conn.reconnect(this,`ARG${j}_${i}`);
-                        }
-                    }
-                }
+                typeOfMutator.compose(this, topBlock);
             },
 
             /**
@@ -125,106 +412,14 @@ export const applyMutator = function (mutatorName, grammarName, arg) {
              * @param topBlock
              */
             saveConnections: function(topBlock) {
-                // get the first sub-block (i.e. an input on our main block)
-                let itemBlock = topBlock.getInputTargetBlock('STACK');
-
-                // Assign references to connections on the main block
-                let i = 0; // counter
-
-                while (itemBlock) {
-                    const inputConns = [];
-
-                    for (let j = 0; j < this.numArgs_; j++) {
-                        let input = this.getInput(`ARG${j}_${i}`);
-                        inputConns.push(
-                            input && input.connection.targetConnection
-                        );
-                    }
-
-                    itemBlock.inputConnections_ = inputConns;
-                    i++;
-
-                    // move to the next connection
-                    itemBlock = itemBlock.nextConnection && itemBlock.nextConnection.targetBlock();
-                }
+                typeOfMutator.saveConnections(this, topBlock);
             },
 
             /**
              * Updates the shape of the block
              */
             updateShape: function() {
-                // empty case
-                if (this.itemCount_ && this.getInput('EMPTY')) {
-                    // remove the empty input block
-                    this.removeInput('EMPTY');
-                } // is the itemCount 0 and input block not empty?
-                else if (!this.itemCount_ && !this.getInput('EMPTY')) {
-                    this.appendDummyInput('EMPTY').appendField('');
-                    return;
-                }
-
-                // Implement the list functionality (i.e. 'find [] : [], [] : []')
-
-                // Take a message like `%1 : %2`. '%1' and '%2' are the arguments. We want this to be split into
-                // ['%1', ':', '%2'] so that the blocks can incorporate the grammar in between.
-                const parts = arg.message.split(/\s+/);
-
-                for (let i = 0; i < this.itemCount_; i++) {
-                    let j = 0; // counter for the arguments.
-
-                    for (let p = 0; p < parts.length; p++) {
-                        const part = parts[p];
-
-                        // if it is an argument (looks like '%'), append it
-                        if (part.match(/%\d+/)) {
-                            const inputName = `ARG${j}_${i}`;
-
-                            if (!this.getInput(inputName)) {
-                                let input = this
-                                    .appendValueInput(inputName)
-                                    .setCheck(arg.args[j].check);
-
-                                // add a comma before the first arg of each item after the first
-                                if (i > 0 && j === 0) {
-                                    input.appendField(',');
-                                }
-                            }
-
-                            j++;
-                        }
-                        else {
-                            // label for non-args
-                            const labelName = `LABEL${p}_${i}`;
-
-                            if (!this.getInput(labelName)) {
-                                this.appendDummyInput(labelName)
-                                    .appendField(part);
-                            }
-                        }
-                    }
-                }
-
-                // remove inputs for items that no longer exist
-                for (let i = this.itemCount_; ; i++) {
-                    let found = false;
-
-                    for (let j = 0; j < this.numArgs_; j++) {
-                        if (this.getInput(`ARG${j}_${i}`)) {
-                            this.removeInput(`ARG${j}_${i}`);
-                            found = true;
-                        }
-                    }
-
-                    // and the labels
-                    for (let p = 0; p < parts.length; p++) {
-                        if (this.getInput(`LABEL${p}_${i}`)) {
-                            this.removeInput(`LABEL${p}_${i}`);
-                            found = true;
-                        }
-                    }
-
-                    if (!found) break;
-                }
+                typeOfMutator.updateShape(this, arg);
             }
         },
         helper,
@@ -233,41 +428,21 @@ export const applyMutator = function (mutatorName, grammarName, arg) {
 
     // overridden generator
     generatorRegistry.register(function(type) {
-        essenceGenerator.forBlock[type] = function(block, generator) {
-            const parts = arg.message.split(/\s+/);
-            const items = [];
-
-            for (let i = 0; i < block.itemCount_; i++) {
-                let itemCode = '';
-                let j = 0;
-
-                for (let p = 0; p < parts.length; p++) {
-                    const part = parts[p];
-
-                    if (part.match(/%\d+/)) {
-                        // get the value from the block input
-                        const valueCode = generator.valueToCode(block, `ARG${j}_${i}`, 0) || '';
-                        itemCode += valueCode;
-                        j++;
-                    }
-                    else {
-                        itemCode += ` ${part} `;
-                    }
-                }
-
-                items.push(itemCode.trim());
-            }
-
-            const code = `${grammarName} ${items.join(' , ')}`;
-
-            // allows the chaining with the next program block
-            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
-                return code + '\n' + generator.blockToCode(block.getNextBlock());
-            }
-
-            return [code, 0];
+        essenceGenerator.forBlock[type] =  function(block, generator) {
+            return typeOfMutator.generator(block, generator, grammarName, arg);
         }
     })
+
+    // if there is no repeat called, this function must return a value
+    if (typeOfMutator !== mutatorType.DEFAULT) {
+        // since repeat isn't used, the mutateMatrix must return a value
+        return {
+            'message': "",
+            'args': [],
+            'extraState': { 'itemCount': 1 },
+            'mutator': mutatorName
+        };
+    }
 }
 
 export const mutateMatrix = function (arg, mutatorName) {
@@ -392,7 +567,7 @@ export const mutateMatrix = function (arg, mutatorName) {
                 while (itemBlock) {
                     let byInput = this.getInput(`BY${i}`);
 
-                    itemBlock.varConnection_ = byInput && byInput.connection.targetConnection;
+                    itemBlock.byConnection_ = byInput && byInput.connection.targetConnection;
                     i++;
 
                     // move to the next connection
@@ -477,14 +652,30 @@ export const mutateMatrix = function (arg, mutatorName) {
         }
     })
 
-    // since repeat isn't used, the mutateMatrix must return a value
-    return {
-        'message': "",
-        'args': [],
-        'extraState': { 'itemCount': 1 },
-        'mutator': mutatorName
-    };
+
 }
+
+/**
+ * COMPOSE:
+ */
+
+function defaultCompose(itemBlock, mutator) {
+
+}
+
+function mutatorCompose() {
+
+}
+
+function mutatorAccessCompose() {
+
+}
+
+/**
+ * GENERATORS:
+ * Mutators require a custom generator function due to their different structure. This can further change by the type of
+ * block that is being mutated. This section defines the generators available.
+ */
 
 
 
