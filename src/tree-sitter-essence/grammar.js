@@ -22,6 +22,7 @@ export default grammar({
       $.find_statement_list,
       $.constraint_list,
       $.letting_statement_list,
+      $.given_list,
       $.dominance_relation
     )),
 
@@ -50,12 +51,12 @@ export default grammar({
     //find statements
     find_statement_list: $ => seq("find", repeat($.find_statement)),
 
-    find_statement: $ => seq(
+    find_statement: $ => prec.left(seq(
       $.variable_list,
       ":",
       $.domain,
       optional(",")
-    ),
+    )),
 
     variable_list: $ => seq(
       $.variable,
@@ -107,6 +108,8 @@ export default grammar({
       "be",
       choice($.expression, $.domain_expr)
     ),
+
+    given_list: $ => seq("given", repeat(seq($.find_statement, optional(",")))),
 
     domain_expr: $ => seq("domain", $.domain),
 

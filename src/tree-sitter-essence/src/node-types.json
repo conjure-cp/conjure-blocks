@@ -289,6 +289,21 @@
     }
   },
   {
+    "type": "given_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "find_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "implication",
     "named": true,
     "fields": {},
@@ -479,6 +494,10 @@
         },
         {
           "type": "find_statement_list",
+          "named": true
+        },
+        {
+          "type": "given_list",
           "named": true
         },
         {
@@ -695,6 +714,10 @@
   },
   {
     "type": "fromSolution",
+    "named": false
+  },
+  {
+    "type": "given",
     "named": false
   },
   {

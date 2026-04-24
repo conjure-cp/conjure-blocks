@@ -593,7 +593,6 @@ const recurseTree = function (node, parent, arg) {
       }
       if (parent){
         if (parent.type.endsWith("list")){
-          console.log("INSIDELIST")
           console.log(parent.inputList);
           // if have input - have dummy?
           if (parent.inputList.length > 0){
