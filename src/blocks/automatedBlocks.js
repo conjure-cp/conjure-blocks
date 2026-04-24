@@ -280,7 +280,8 @@ autoBlocks.push( {
         "defaultType": "int_domain"
       }
     ],
-    "output": ["int_domain", "domain", "expression", "variable"]  
+    "output": ["int_domain", "domain", "expression", "variable"],
+    "colour": "#D60270"
   });
 
 autoBlocks.push( {
@@ -296,9 +297,24 @@ autoBlocks.push( {
       }
     ],
     "output": ["bool_domain", "domain", "expression", "variable"] ,
-    "colour": 120
+    "colour": "#9B4F96"
   });
 
+autoBlocks.push({
+    "type": "variables_get_matrix",
+    "message0": "%1",
+    "args0": [
+        {
+            "type": "field_variable",
+            "name": "VAR",
+            "variable": "%{BKY_VARIABLES_DEFAULT_NAME}",
+            "variableTypes": ["matrix_domain", "domain", "expression", "variable"],
+            "defaultType": "matrix_domain"
+        }
+    ],
+    "output": ["matrix_domain", "domain", "expression", "variable"],
+    "colour": "#0038A8"
+});
   // toolbox definition
 export const autoToolbox = {
     'kind': 'categoryToolbox',
