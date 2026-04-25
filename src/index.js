@@ -91,7 +91,7 @@ const createFlyout = function (ws) {
     "callbackKey": "matrix_callback"
   });
 
-  for (let v of ws.getVariablesOfType('int_domain')){
+  for (let v of ws.getVariableMap().getVariablesOfType('int_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_integer',
@@ -104,7 +104,7 @@ const createFlyout = function (ws) {
     })
   }
 
-  for (let v of ws.getVariablesOfType('bool_domain')){
+  for (let v of ws.getVariableMap().getVariablesOfType('bool_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_bool',
@@ -117,7 +117,7 @@ const createFlyout = function (ws) {
     })
   }
 
-  for (let v of ws.getVariablesOfType('matrix_domain')){
+  for (let v of ws.getVariableMap().getVariablesOfType('matrix_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_matrix',
@@ -260,10 +260,20 @@ ws.addChangeListener((e) => {
       let block = ws.getBlockById(b);
       let types = "";
       let slot = 1;
-      
+
       // if has a mutator - i.e a list block, individual description for all inputs
-      if (block.mutator && block.inputList[1]){
-        types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
+      if (block.mutator && block.inputList.length > 0) {
+        types += ("Click cog to change number of inputs.")
+        // go through each input
+        for (let i  = 0; i < block.inputList.length; i++) {
+          const conn = block.inputList[i].connection;
+
+          if (conn !== null) { // add this onto types if its not null
+            let inputs = conn.getCheck();
+
+            types += `\nInput ${i} takes the following block(s): ${conn.getCheck()}`;
+          }
+        }
       } 
       else {
         // build description labelling input with types
@@ -275,14 +285,11 @@ ws.addChangeListener((e) => {
         
         }
       }
-     
-      
+
       // no comment if no inputs.
       if (types.length > 0 && !block.getCommentText()){
         block.setCommentText(types);
       }
-      
-
     }
   }
 })

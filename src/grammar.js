@@ -1,6 +1,6 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), also consider installing treesitter, might be more readable
-import { seq, choice, repeat, optional, prec, categories} from "./predefinedFunctions";
-import {applyMutator, mutateMatrix, mutatorType} from "./generators/mutators";
+import { seq, choice, repeat, optional, prec} from "./predefinedFunctions";
+import {applyMutator, mutatorType} from "./generators/mutators";
 
 export const grammar = {
   name: 'essence',
@@ -121,21 +121,6 @@ export const grammar = {
       // one of those 'trust me bro' instances. mutateMatrix will make this look correct.
     matrix: $ => applyMutator('matrixMutator', '', seq($.domain), mutatorType.MATRIX),
 
-      matrix_accessor: $ => applyMutator(
-          'matrixAccessMutator',
-          '',
-          seq(
-              $.variable,
-              '[',
-              choice(
-                  $.variable,
-                  $.expression,
-              ),
-              '['
-          ),
-          mutatorType.MATRIX_ACCESS
-      ),
-
     /*
     * RANGE SECTION - Has been commented out due to having no current use.
     */
@@ -168,13 +153,8 @@ export const grammar = {
         $.not_expr,
         $.abs_value,
         $.negative_expr,
-        $.exponent,
-        $.product_expr,
-        $.sum_expr,
+        $.operations_expr,
         $.comparison,
-        $.and_expr,
-        $.or_expr,
-        $.implication,
         $.quantifier_expr,
         $.expr_list,
         $.flatten,
@@ -187,19 +167,14 @@ export const grammar = {
     ),
 
       arithmetic: $ => choice(
-          $.product_expr,
-          $.sum_expr,
+          $.operations_expr,
           $.abs_value,
           $.negative_expr,
-          $.exponent,
       ),
 
       boolean: $ => choice(
           $.comparison,
           $.not_expr,
-          $.and_expr,
-          $.or_expr,
-          $.implication,
       ),
 
       misc: $ => choice(
@@ -223,25 +198,16 @@ export const grammar = {
 
     negative_expr: $ => prec(15, prec.left(seq("-", $.expression))),
 
-    exponent: $ => prec(14, prec.right(seq($.expression, "**", $.expression))),
-
-    product_expr: $ => prec(13, prec.left(
-        seq($.expression, choice("*", "/", "%"), $.expression)
-    )),
-
-    sum_expr: $ => prec(12, prec.left(
-        seq($.expression, choice("+", "-"), $.expression)
-    )),
+    operations_expr: $ => applyMutator(
+        'operExpressionMutator',
+        '',
+        seq($.expression, choice("+", "-", "*", "/", "%", "**", "="), $.expression),
+        mutatorType.OPERATION
+    ),
 
     comparison: $ => prec(10, prec.left(
-        seq($.expression, choice("=", "!=", "<=", ">=", "<", ">"), $.expression)
+        seq($.expression, choice("=", "!=", "<=", ">=", "<", ">", "/\\", "\\/", "->"), $.expression)
     )),
-
-    and_expr: $ => prec(9, prec.left(seq($.expression, "/\\", $.expression))),
-
-    or_expr: $ => prec(8, prec.left(seq($.expression, "\\/", $.expression))),
-
-    implication: $ => prec(7, prec.left(seq($.expression, "->", $.expression))),
 
     quantifier_expr: $ => seq(
         choice(
@@ -292,6 +258,21 @@ export const grammar = {
           ")"
       ),
 
+      matrix_accessor: $ => applyMutator(
+          'matrixAccessMutator',
+          '',
+          seq(
+              $.variable,
+              '[',
+              choice(
+                  $.variable,
+                  $.expression,
+              ),
+              '['
+          ),
+          mutatorType.MATRIX_ACCESS
+      ),
+
     /* 
     * FOR COLOUR PURPOSES ONLY
     */
@@ -304,7 +285,6 @@ export const grammar = {
         $.letting_statement_list,
     ),
 
-    // TODO: remove these from being displayed
     objective_statement: $ => choice(
         $.maximising,
         $.minimising

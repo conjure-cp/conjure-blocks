@@ -249,7 +249,75 @@ export const mutatorType = Object.freeze({
             return [code, 0];
         }
     },
-    // OPERATION: 3, // for operations. TODO
+    OPERATION: { // for operations. Should look like `x + y + z .....`
+        updateShape: (mutator, arg) => {
+            if (emptyCheck(mutator)) return;
+
+            // Add the first operator -- THIS ONE DOESN'T REPEAT
+            if (!mutator.getInput('OPER1')) {
+                mutator.appendValueInput('OPER1')
+                    .setCheck(arg.args[0].check);
+            }
+
+            // bits in here are repeated
+            for (let i = 0; i < mutator.itemCount_; i++) {
+
+                // add the dropdown next
+                if (!mutator.getInput(`DROPDOWN${i}`)) {
+                    mutator.appendDummyInput(`DROPDOWN${i}`)
+                        .appendField(new Blockly.FieldDropdown(arg?.args[1]?.options, mutator.validate), `DROPDOWN${i}`);
+                }
+
+                // then add the second operator
+                if (!mutator.getInput(`ARG0_${i}`)) {
+                    mutator.appendValueInput(`ARG0_${i}`)
+                        .setCheck(arg.args[2].check);
+                }
+            }
+
+            // remove inputs for items that no longer exist
+            for (let i = mutator.itemCount_; ; i++) {
+                let found = false;
+
+                // remove the DROPDOWN
+                if (mutator.getInput(`DROPDOWN${i}`)) {
+                    mutator.removeInput(`DROPDOWN${i}`);
+                    found = true;
+                }
+
+                // remove the args
+                if (mutator.getInput(`ARG0_${i}`)) {
+                    mutator.removeInput(`ARG0_${i}`);
+                    found = true;
+                }
+
+                if (!found) break;
+            }
+        },
+        generator: (block, generator, grammarName, arg) => {
+            const parts = [];
+
+            // add the first operator
+            parts.push(generator.valueToCode(block, 'OPER1', 0) || '');
+
+            // get each additional operand and operator
+            for (let i = 0; i < block.itemCount_; i++) {
+                const operator =  block.getFieldValue(`DROPDOWN${i}`) || '+';
+                const operand = generator.valueToCode(block, `ARG0_${i}`, 0) || '';
+
+                parts.push(`${operator} ${operand}`);
+            }
+
+            const code = parts.join(' ');
+
+            // allows the chaining with the next program block
+            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
+                return code + '\n' + generator.blockToCode(block.getNextBlock());
+            }
+
+            return [code, 0];
+        }
+    },
 })
 
 export const applyMutator = function (mutatorName, grammarName, arg, typeOfMutator=mutatorType.DEFAULT) {
