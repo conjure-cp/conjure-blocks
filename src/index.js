@@ -344,15 +344,17 @@ function outputSolution(solution) {
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
   // clear any blocks from previous runs
   blockOut.clear();
+
   // if solved, create relevant blocks and add to output workspace
   if (solution.status === "ok"){
     for (let sol of solution.solution){
-      let prev;
       for (let v in sol){
         blockOut.createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');
         varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-        let valueBlock;
+
+        let valueBlock = null;
+
         switch (typeof(sol[v])){
           case("bigint"): 
           case("number"): {
@@ -369,19 +371,33 @@ function outputSolution(solution) {
             valueBlock = blockOut.newBlock('logic_boolean');
             valueBlock.setFieldValue(sol[v], "BOOL");
             break;
+          } // for matrix cases
+          case ("object"): {
+            if (sol[v] === null) return null;
+
+            // matrix objects look like { "1": { "1": 2, "2": 7 }, "2": ... }
+            const text = formatMatrixValue(sol[v]);
+            let b = blockOut.newBlock('text');
+            b.setFieldValue(text, "TEXT");
+            return b;
           }
-          default:{
-            valueBlock = null;
+          default: {
+            console.warn(`Unhandled solution value type: ${typeof(sol[v])} for variable ${v}`, sol[v]);
             break;
           }
 
         }
-        varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+
+        varBlock.initSvg();
+
+        if (valueBlock) {
+          valueBlock.initSvg();
+          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+          valueBlock.setEditable(false);
+        }
+
         // stop changes blocks
         varBlock.setEditable(false);
-        valueBlock.setEditable(false);
-        varBlock.initSvg();
-        valueBlock.initSvg();
        
       }
     }  
@@ -390,6 +406,36 @@ function outputSolution(solution) {
 
   }
  
+}
+
+function formatMatrixValue(value) {
+  // If the output is an array
+  if (Array.isArray(value)) {
+    return '[' + value
+        .map(v => typeof v === 'object' && v !== null ? formatMatrixValue(v) : v)
+        .join(', ') + ']';
+  }
+
+  // if the output is an object
+  if (typeof value === 'object') {
+    const keys = Object
+        .keys(value)
+        .sort((a, b) => Number(a) - Number(b));
+
+    const values = keys.map(key => {
+      (typeof value[key] === 'object' && value[key] !== null)
+          ? formatMatrixValue(values[key])
+          : value[key]
+    });
+
+    // case: its a 2D matrix
+    const isNested = typeof value[keys[0]] === 'object';
+    return isNested
+        ? '[' + values.join(', ') + ']'
+        : '[' + values.join(', ') + ']';
+  }
+
+  return String(value);
 }
 
 // generate essence file from generated code
