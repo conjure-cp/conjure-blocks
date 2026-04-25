@@ -491,6 +491,7 @@ file.addEventListener("change", () => {
           errorPopUp.showModal();
         }
         Blockly.Events.enable();
+        runCode();
       
       };
       reader.onerror = () => {
