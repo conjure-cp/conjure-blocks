@@ -122,18 +122,30 @@ export const grammar = {
       // one of those 'trust me bro' instances. mutateMatrix will make this look correct.
     matrix: $ => applyMutator('matrixMutator', '', seq($.domain), mutatorType.MATRIX),
 
-      // matrix: $ => mutateMatrix(seq($.domain), 'matrixMutator', $.domain),
+      // matrix_accessor: $ => seq(
+      //     $.variable,
+      //     '[',
+      //     repeat(seq(
+      //         choice(
+      //             $.variable,
+      //             $.constants,
+      //     )), '['),
+      //     ']',
+      // ),
 
-      matrix_accessor: $ => seq(
-          $.variable,
-          '[',
-          repeat(seq(
+      matrix_accessor: $ => applyMutator(
+          'matrixAccessMutator',
+          '',
+          seq(
+              $.variable,
+              '[',
               choice(
-                  $.integer,
-                  $.boolean,
                   $.variable,
-          )), '['),
-          ']',
+                  $.constants,
+              ),
+              '['
+          ),
+          mutatorType.MATRIX_ACCESS
       ),
 
     /*

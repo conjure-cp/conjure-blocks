@@ -185,8 +185,68 @@ export const mutatorType = Object.freeze({
             return [code, 0];
         },
     },
-    MATRIX_ACCESS: {
-    }, // for `{variable} [{index}]` blocks. (accessing indexes of a matrix)
+    MATRIX_ACCESS: { // for `{variable} [{index}]` blocks. (accessing indexes of a matrix)
+        updateShape: (mutator, arg) => {
+            if (emptyCheck(mutator)) return;
+
+            // remove 'of' so that it the extra by domains don't get appended at the end of the block
+            if (mutator.getInput('CLOSING')) {
+                mutator.removeInput('CLOSING');
+            }
+
+            // add var once
+            if (!mutator.getInput('VAR')) {
+                mutator.appendValueInput('VAR')
+                    .setCheck('variable');
+            }
+
+            // Makes '{variable} [{index}]'
+            for  (let i = 0; i < mutator.itemCount_; i++) {
+                if (!mutator.getInput(`ARG0_${i}`)) {
+                    let input = mutator
+                        .appendValueInput(`ARG0_${i}`)
+                        .setCheck(['variable', 'constants']);
+
+                    // Initially there is no list
+                    if (i === 0) {
+                        input.appendField('[');
+                    }
+                    else {
+                        input.appendField(',');
+                    }
+                }
+
+                for (let i = mutator.itemCount_; mutator.getInput(`ARG0_${i}`); i++) {
+                    mutator.removeInput(`ARG0_${i}`);
+                }
+            }
+            // add closing bracket
+            if (!mutator.getInput('CLOSING')) {
+                mutator
+                    .appendDummyInput('CLOSING')
+                    .appendField(']');
+            }
+        },
+        generator: (block, generator, grammarName, arg) => {
+            const byParts = [];
+
+            const varCode = generator.valueToCode(block, 'VAR', 0) || '';
+
+            for (let i = 0; i < block.itemCount_; i++) {
+                byParts.push(generator.valueToCode(block, `ARG0_${i}`, 0) || '');
+            }
+
+            const code = `${varCode} [ ${byParts.join(', ')} ]`;
+
+            // allows the chaining with the next program block
+            if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
+                const next = generator.blockToCode(block.getNextBlock());
+                return code + '\n' + next;
+            }
+
+            return [code, 0];
+        }
+    },
     // OPERATION: 3, // for operations. TODO
 })
 

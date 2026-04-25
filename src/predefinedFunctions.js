@@ -61,6 +61,8 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg, opener) {
+    console.log(arg);
+
     if (typeof arg === "function") {
         console.error(`argument provided must be wrapped in a seq()\n${arg}`);
         return;
