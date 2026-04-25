@@ -20,3 +20,13 @@ To integrate into Conjure-Blocks, run
  Copy `tree-sitter-essence.wasm` into `src` and ensure this file is included in the `CopyWebpackPlugin` patterns in `webpack.config.js`.
 
  Now, when the website is run using `npm run start`, the correct grammar and bindings are used.
+
+
+## Description of creating blocks from parse tree
+1. Parse the text in the output box using tree-sitter to obtain the parse tree.
+2. For each child of `program`, recursively traverse the tree, creating blocks of each node type and ensure the blocks are connected with the below conditions
+      1. If it is a variable, create correct block type. Type of variable is either obtain from current blockly mapping, or is defined in a "<name> <defines> <domain/type>" block, and so is obtained by  third child of the grandparent.
+      2. If it is a constant, return place the text value in an `integer` block.
+      3. If the parent is a list, account for dummy inputs and the number argument current node is.
+      4. Skip children that are categories.
+      5. Skip any non-block/failing block generations (retaining argument place in child).
