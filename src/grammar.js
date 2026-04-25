@@ -97,7 +97,6 @@ export const grammar = {
         $.int_expression,
         $.variable,
         $.matrix,
-        $.matrix_accessor,
         $.domain_expr,
     ),
 
@@ -122,17 +121,6 @@ export const grammar = {
       // one of those 'trust me bro' instances. mutateMatrix will make this look correct.
     matrix: $ => applyMutator('matrixMutator', '', seq($.domain), mutatorType.MATRIX),
 
-      // matrix_accessor: $ => seq(
-      //     $.variable,
-      //     '[',
-      //     repeat(seq(
-      //         choice(
-      //             $.variable,
-      //             $.constants,
-      //     )), '['),
-      //     ']',
-      // ),
-
       matrix_accessor: $ => applyMutator(
           'matrixAccessMutator',
           '',
@@ -141,7 +129,7 @@ export const grammar = {
               '[',
               choice(
                   $.variable,
-                  $.constants,
+                  $.expression,
               ),
               '['
           ),
@@ -194,6 +182,8 @@ export const grammar = {
         $.toInt_expr,
         $.variable,
         $.domain_expr,
+        $.allDiff,
+        $.matrix_accessor,
     ),
 
       arithmetic: $ => choice(
@@ -221,6 +211,8 @@ export const grammar = {
           $.toInt_expr,
           $.variable,
           $.domain_expr,
+          $.allDiff,
+          $.matrix_accessor,
       ),
 
     bracket_expr: $ => seq("(", $.expression, ")"),
@@ -265,7 +257,9 @@ export const grammar = {
         ":",
         $.domain,
         ".",
-        $.expression
+        "(",
+        $.expression,
+        ")"
     ),
 
     expr_list: $ => repeat(
@@ -291,6 +285,12 @@ export const grammar = {
         $.expression, 
         ")"
     ),
+
+      allDiff:  $ => seq(
+          "allDiff (",
+          $.expression,
+          ")"
+      ),
 
     /* 
     * FOR COLOUR PURPOSES ONLY

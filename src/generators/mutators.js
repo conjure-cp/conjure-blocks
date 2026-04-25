@@ -93,6 +93,8 @@ export const mutatorType = Object.freeze({
         },
 
         generator: (block, generator, grammarName, arg) => {
+            const newlineGrammars = ["find", "given", "letting", "such that"]
+
             const parts = arg.message.split(/\s+/);
             const items = [];
 
@@ -116,7 +118,7 @@ export const mutatorType = Object.freeze({
                 items.push(itemCode.trim());
             }
 
-            const code = `${grammarName} ${items.join(' , ')}`;
+            const code = `${grammarName} ${newlineGrammars.includes(grammarName) ? items.join(',\n\t') : items.join(' , ') }`;
 
             // allows the chaining with the next program block
             if (block.nextConnection && block.nextConnection.getCheck()?.[0] === 'program') {
@@ -205,7 +207,7 @@ export const mutatorType = Object.freeze({
                 if (!mutator.getInput(`ARG0_${i}`)) {
                     let input = mutator
                         .appendValueInput(`ARG0_${i}`)
-                        .setCheck(['variable', 'constants']);
+                        .setCheck(['variable', 'expression']);
 
                     // Initially there is no list
                     if (i === 0) {
