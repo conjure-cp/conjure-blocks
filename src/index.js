@@ -482,30 +482,31 @@ loadButton.addEventListener("click", (e) => {
 file.addEventListener("change", () => {
  
   for (const f of file.files) {
+    const errorPopUp = document.getElementById("errorM");
+    const errorMessage = document.getElementById("errormessage");
+    const errorClose = document.getElementById("closel");
+    errorClose.addEventListener("click", () => {errorPopUp.close()});
     if (f.name.endsWith(".block")){ 
       const reader = new FileReader();
-      const errorPopUp = document.getElementById("errorM");
-      const errorClose = document.getElementById("closel");
-      errorClose.addEventListener("click", () => {errorPopUp.close()});
       reader.onload = () => {
         
         Blockly.Events.disable();
         try{
           Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
         } catch {
-          errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+          errorMessage.innerText = "Error reading the file. Please try again.";
           errorPopUp.showModal();
         }
         Blockly.Events.enable();
       
       };
       reader.onerror = () => {
-         errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+        errorMessage.innerText = "Error reading the file. Please try again.";
          errorPopUp.showModal();
       };
       reader.readAsText(f);
     } else {
-      errorPopUp.insertAdjacentText("afterbegin", "Incorrect file type. Please try again with a .block file.");
+      errorMessage.innerText = "Incorrect file type. Please try again with a .block file.";
       errorPopUp.showModal();
     }
     
@@ -517,19 +518,26 @@ convertButton.addEventListener("click", (e) =>
 {
   Blockly.common.setMainWorkspace(ws);
   const code = codeDiv.innerText;
-  console.log(code);
-  console.log(parser);
   const tree = parser.parse(code);
-  console.log(tree.rootNode.toString());
-  ws.clear()
-  for (let i = 0; i < tree.rootNode.childCount; i++){
-    recurseTree(tree.rootNode.child(i), null, 0);
+  if (!tree.rootNode.hasError){
+    ws.clear()
+    for (let i = 0; i < tree.rootNode.childCount; i++){
+      recurseTree(tree.rootNode.child(i), null, 0);
+    }
+  
+    ws.render();
+    // don't know why must wait for this function to work
+    setTimeout(test, 100);
+
+  } else {
+    const errorPopUp = document.getElementById("errorM");
+    const errorMessage = document.getElementById("errormessage");
+    const errorClose = document.getElementById("closel");
+    errorClose.addEventListener("click", () => {errorPopUp.close()});
+    errorMessage.innerText = "Parsing Error: Please check your Essence syntax is correct.";
+    errorPopUp.showModal();
   }
  
-  ws.render();
-  // don't know why must wait for this function to work
-  setTimeout(test, 100);
-
 
 })
 
@@ -585,10 +593,7 @@ const recurseTree = function (node, parent, arg) {
         b.setFieldValue(node.text, "OPTION");
       }
     
-      /*if (node.type.endsWith("list")){
-        b.updateShape_();
-        console.log("item count"+ b.itemCount_ )
-      }*/    // connect blocks correctly
+       // connect blocks correctly
       b.initSvg();
       }
       if (parent){
@@ -605,14 +610,9 @@ const recurseTree = function (node, parent, arg) {
           parent.updateShape_();
         }
       
-        console.log(parent.inputList);
-        console.log(arg)
-        console.log(parent.inputList[arg]);
-        //b.setColour("green")
         let replace = parent.getInputTargetBlock(parent.inputList[arg].name);
         let out = b.outputConnection.reconnect(parent, parent.inputList[arg].name);
         if (replace) {
-          //replace.setColour("red");
           replace.dispose();
         }
       }
