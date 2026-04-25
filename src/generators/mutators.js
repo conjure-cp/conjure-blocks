@@ -14,8 +14,6 @@ import {essenceGenerator} from "../blocks/automatedBlocks";
 /**
  * JSON object that holds mutator specific functions
  *
- * TODO: reduce more repetition.
- *
  * STRUCTURE:
  * {
  *     updateShape: (mutator, arg) => {}.
