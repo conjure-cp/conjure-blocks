@@ -47,13 +47,11 @@
 <!--        TODO: Add a switch -->
 <!--        Users are able to toggle between the simplified version of the output and the JSON solution -->
         <div class="solutions-container">
-          <div class="toggle-container">
-            <label  for="solutionType" class="solution">
-              <span class="solution-text">Simple</span>
-              <input type="checkbox" id="solutionType">
-              <span class="solution-button"></span>
-              <span class="solution-text">JSON</span>
-            </label>
+          <h3 id="solution-text">Solution</h3>
+          <div id="toggle">
+            <input type="checkbox" class="checkbox" />
+            <div class="knobs"></div>
+            <div class="layer"></div>
           </div>
 
           <div id="output"></div>
