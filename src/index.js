@@ -486,20 +486,21 @@ file.addEventListener("change", () => {
         try{
           Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
         } catch {
-          file.value = ''
+          file.value = '';
           errorMessage.innerText = "Error reading the file. Please try again.";
           errorPopUp.showModal();
         }
         Blockly.Events.enable();
         runCode();
-      
+        file.value = '';
       };
       reader.onerror = () => {
         errorMessage.innerText = "Error reading the file. Please try again.";
-        file.value = ''
+        file.value = '';
          errorPopUp.showModal();
       };
       reader.readAsText(f);
+
     } else {
       errorMessage.innerText = "Incorrect file type. Please try again with a .block file.";
       file.value = ''
