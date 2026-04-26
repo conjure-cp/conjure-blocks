@@ -21,11 +21,6 @@ import { autoToolbox } from './blocks/automatedBlocks';
 import {initTooltips } from './tooltips';
 import { blocks } from 'blockly/blocks';
 
-/*console.log(essenceBlocks);
-for (let b of essenceBlocks){
-  console.log(b);
-}*/
-
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
@@ -264,10 +259,6 @@ ws.addChangeListener((e) => {
   }
 })
 
-function printGeneratedCode(){
-  console.log(essenceGenerator.workspaceToCode(ws));
-}
-
 // submits data and code to conjure
 //from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function submit(inputData) {
@@ -314,9 +305,7 @@ async function getSolution() {
     solutionText.innerHTML = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
-    console.log("data " + data);
     let code = essenceGenerator.workspaceToCode(ws);
-    console.log("code " + code);
     const client = new ConjureClient("conjure-blocks");
     client.solve(code, {data : data})
       .then(result => outputSolution(result));   
@@ -324,8 +313,12 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  // TODO: OUTPUT THIS WITH TWO OPTIONS
+  console.log(solution);
+  // get the pretty version of the json
+  // const solObj = JSON.parse(solution);
+
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+
   // clear any blocks from previous runs
   blockOut.clear();
   // if solved, create relevant blocks and add to output workspace
@@ -340,25 +333,21 @@ function outputSolution(solution) {
         switch (typeof(sol[v])){
           case("bigint"): 
           case("number"): {
-              console.log("number");
               valueBlock = blockOut.newBlock('math_number');
               valueBlock.setFieldValue(sol[v], "NUM");
               break;
           }
           case("string"): {
-            console.log("enum");
             valueBlock = blockOut.newBlock('text');
             valueBlock.setFieldValue(sol[v], "TEXT");
             break;
           }
           case("boolean"): {
-            console.log("bool")
             valueBlock = blockOut.newBlock('logic_boolean');
             valueBlock.setFieldValue(sol[v], "BOOL");
             break;
           }
           default:{
-            console.log("idk");
             valueBlock = null;
             break;
           }
