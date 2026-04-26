@@ -324,6 +324,7 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
+  // TODO: OUTPUT THIS WITH TWO OPTIONS
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
   // clear any blocks from previous runs
   blockOut.clear();

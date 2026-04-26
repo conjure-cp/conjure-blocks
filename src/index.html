@@ -43,9 +43,22 @@
         <h3>Generated Essence Code</h3>
         <pre id="generatedCode"><code></code></pre>
         <div id="buttons" style=" display: grid; grid-template-columns: 1fr 1fr; max-height: 25%;"><button id="solve">Solve</button><button id="download">Download</button></div>
-        <h3>JSON Solution</h3>
-        <div id="output">
+
+<!--        TODO: Add a switch -->
+<!--        Users are able to toggle between the simplified version of the output and the JSON solution -->
+        <div class="solutions-container">
+          <div class="toggle-container">
+            <label  for="solutionType" class="solution">
+              <span class="solution-text">Simple</span>
+              <input type="checkbox" id="solutionType">
+              <span class="solution-button"></span>
+              <span class="solution-text">JSON</span>
+            </label>
+          </div>
+
+          <div id="output"></div>
         </div>
+
       </div>
 
       <div id="blocklyDivOut" class="blocklyDivOut">
