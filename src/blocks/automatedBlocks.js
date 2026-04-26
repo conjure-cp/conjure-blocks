@@ -281,7 +281,7 @@ autoBlocks.push( {
       }
     ],
     "output": ["int_domain", "domain", "expression", "variable"],
-    "colour": "#D60270"
+    "colour": "#0F433B"
   });
 
 autoBlocks.push( {
@@ -297,7 +297,7 @@ autoBlocks.push( {
       }
     ],
     "output": ["bool_domain", "domain", "expression", "variable"] ,
-    "colour": "#9B4F96"
+    "colour": "#684a82"
   });
 
 autoBlocks.push({
@@ -313,7 +313,7 @@ autoBlocks.push({
         }
     ],
     "output": ["matrix_domain", "domain", "expression", "variable"],
-    "colour": "#0038A8"
+    "colour": "#604116"
 });
   // toolbox definition
 export const autoToolbox = {

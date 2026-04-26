@@ -264,6 +264,7 @@ ws.addChangeListener((e) => {
       // if has a mutator - i.e a list block, individual description for all inputs
       if (block.mutator && block.inputList.length > 0) {
         types += ("Click cog to change number of inputs.")
+        let counter = 1;
         // go through each input
         for (let i  = 0; i < block.inputList.length; i++) {
           const conn = block.inputList[i].connection;
@@ -271,7 +272,8 @@ ws.addChangeListener((e) => {
           if (conn !== null) { // add this onto types if its not null
             let inputs = conn.getCheck();
 
-            types += `\nInput ${i} takes the following block(s): ${conn.getCheck()}`;
+            types += `\nInput ${counter} takes the following block(s): ${conn.getCheck()}`;
+            counter++;
           }
         }
       } 
