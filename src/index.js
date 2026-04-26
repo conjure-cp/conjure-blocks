@@ -313,18 +313,17 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  console.log(solution);
+  console.log(JSON.stringify(solution, undefined, 2));
   // get the pretty version of the json
   // const solObj = JSON.parse(solution);
 
-  solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+  solutionText.innerText = `${JSON.stringify(solution, undefined, 2)}`;
 
   // clear any blocks from previous runs
   blockOut.clear();
   // if solved, create relevant blocks and add to output workspace
-  if (solution.status == "ok"){
+  if (solution.status === "ok"){
     for (let sol of solution.solution){
-      let prev;
       for (let v in sol){
         blockOut.createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');

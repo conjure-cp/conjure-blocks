@@ -161,10 +161,14 @@ dialog::backdrop {
 }
 
 #output {
-    height: 50%;
-    display: grid;
-    /*grid-template-rows: 1fr 4fr;
-    grid-template-columns: 1fr 1fr;*/
+    height: 335px;
+    width: 100%;
+
+    overflow-x:  auto;
+    overflow-y:  auto;
+
+    white-space: pre;
+    font-family: monospace;
 }
 
 .blocklyDivOut {
