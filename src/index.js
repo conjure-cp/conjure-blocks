@@ -491,32 +491,36 @@ loadButton.addEventListener("click", (e) => {
 })
 
 file.addEventListener("change", () => {
- 
   for (const f of file.files) {
+    const errorPopUp = document.getElementById("errorM");
+    const errorMessage = document.getElementById("errormessage");
+    const errorClose = document.getElementById("closel");
+    errorClose.addEventListener("click", () => {errorPopUp.close()});
     if (f.name.endsWith(".block")){ 
       const reader = new FileReader();
-      const errorPopUp = document.getElementById("errorM");
-      const errorClose = document.getElementById("closel");
-      errorClose.addEventListener("click", () => {errorPopUp.close()});
       reader.onload = () => {
-        
         Blockly.Events.disable();
         try{
           Blockly.serialization.workspaces.load(JSON.parse(reader.result), ws, false);
         } catch {
-          errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+          file.value = '';
+          errorMessage.innerText = "Error reading the file. Please try again.";
           errorPopUp.showModal();
         }
         Blockly.Events.enable();
-      
+        runCode();
+        file.value = '';
       };
       reader.onerror = () => {
-         errorPopUp.insertAdjacentText("afterbegin", "Error reading the file. Please try again.");
+        errorMessage.innerText = "Error reading the file. Please try again.";
+        file.value = '';
          errorPopUp.showModal();
       };
       reader.readAsText(f);
+
     } else {
-      errorPopUp.insertAdjacentText("afterbegin", "Incorrect file type. Please try again with a .block file.");
+      errorMessage.innerText = "Incorrect file type. Please try again with a .block file.";
+      file.value = ''
       errorPopUp.showModal();
     }
     

@@ -17,6 +17,7 @@ Conjure-Blocks is built using [blockly](https://developers.google.com/blockly), 
  - Fork this [repo] (https://github.com/conjure-cp/conjure-blocks)
  - Create a new branch
  - Develop on this new branch
+ - Test your work using manual testing procedure as described [here](./ManualTesting.md).
  - Pull request from this branch to main branch of the origin
  - Request @N-J-Martin or @JamieASM for review
  - Once approved, request @ozgurakgun for review
@@ -49,11 +50,12 @@ Conjure-Blocks is built using [blockly](https://developers.google.com/blockly), 
 - Automated testing
 - Accessibility improvements
 - highlight statements that cut solution space
-- Extending grammar
+
 
 ## Currently working on
 
 - Different connection shapes for each category.
-- Text to Block 
+- Text to Block (See more detail [here](./Parsing.md), especially if looking to change the grammar)
+- Extending grammar
 
 
