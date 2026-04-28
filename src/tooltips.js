@@ -58,7 +58,6 @@ export function initTooltips() {
         const pElements = text.querySelectorAll('p');
 
         pElements.forEach(el => {
-            console.log("got here");
             const image = el.querySelector('img');
 
             if (image) {
@@ -90,7 +89,6 @@ export function initTooltips() {
 export function getContent(blockName) {
     try {
         const markdown = docsContext(`./${blockName}.md`);
-        console.log(marked.parse(markdown))
         return marked.parse(markdown);
     }
     catch {
