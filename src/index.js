@@ -26,6 +26,7 @@ Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
+const generatedCode = document.getElementById('generatedCode');
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
@@ -313,14 +314,18 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  console.log(JSON.stringify(solution, undefined, 2));
-  // get the pretty version of the json
-  // const solObj = JSON.parse(solution);
+  // if the output is a failure, briefly make the code element red
+  if (solution.status.includes("terminated")) {
+    generatedCode.classList.remove('red-flush');
+    void generatedCode.offsetWidth; // force reflow to reset animation
+    generatedCode.classList.add('red-flush');
+  }
 
   solutionText.innerText = `${JSON.stringify(solution, undefined, 2)}`;
 
   // clear any blocks from previous runs
   blockOut.clear();
+
   // if solved, create relevant blocks and add to output workspace
   if (solution.status === "ok"){
     for (let sol of solution.solution){
@@ -351,7 +356,8 @@ function outputSolution(solution) {
             break;
           }
 
-        };
+        }
+
         varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
         // stop changes blocks
         varBlock.setEditable(false);

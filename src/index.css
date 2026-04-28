@@ -160,6 +160,26 @@ dialog::backdrop {
     margin: .5rem;
 }
 
+@keyframes red-flush {
+    0%   {
+        background-color: #DEDEDE;
+        box-shadow: -5px 5px #beb8b8;
+    }
+    50% {
+        background-color: rgba(255, 151, 151, 0.75);
+        box-shadow: -5px 5px rgba(255, 151, 151, 0.4);
+    }
+    100%   {
+        background-color: #DEDEDE;
+        box-shadow: -5px 5px #beb8b8;
+    }
+}
+
+.red-flush {
+    animation: red-flush 1s ease-in-out forwards;
+}
+
+
 #output {
     height: 335px;
     width: 100%;
