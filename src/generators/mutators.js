@@ -130,6 +130,9 @@ export const mutatorType = Object.freeze({
         updateShape: (mutator, arg) => {
             if (emptyCheck(mutator)) return;
 
+            const ofConnection = mutator.getInput('OF')
+                ?.connection?.targetConnection || null;
+
             // remove 'of' so that it the extra by domains don't get appended at the end of the block
             if (mutator.getInput('OF')) {
                 mutator.removeInput('OF');
@@ -161,6 +164,10 @@ export const mutatorType = Object.freeze({
                 mutator.appendValueInput('OF')
                     .setCheck('domain')
                     .appendField('] of');
+            }
+
+            if (ofConnection) {
+                ofConnection.reconnect(mutator, 'OF');
             }
         },
         generator: (block, generator, grammarName, arg) => {
@@ -215,11 +222,12 @@ export const mutatorType = Object.freeze({
                         input.appendField(',');
                     }
                 }
-
-                for (let i = mutator.itemCount_; mutator.getInput(`ARG0_${i}`); i++) {
-                    mutator.removeInput(`ARG0_${i}`);
-                }
             }
+
+            for (let i = mutator.itemCount_; mutator.getInput(`ARG0_${i}`); i++) {
+                mutator.removeInput(`ARG0_${i}`);
+            }
+
             // add closing bracket
             if (!mutator.getInput('CLOSING')) {
                 mutator
