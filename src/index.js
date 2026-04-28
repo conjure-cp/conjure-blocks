@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
- * EDITED by N-J-Martin
+ * EDITED by N-J-Martin, JamieASM
  */
 import Split from 'split.js'
 //import vid from './conjure-blocks-example.mp4';
@@ -26,6 +26,7 @@ Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
+const solutionType = document.getElementById('checkbox');
 const generatedCode = document.getElementById('generatedCode');
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
@@ -33,7 +34,7 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
-var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
+let split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
@@ -172,18 +173,32 @@ jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   return [code, 0];
 }
 //add output button
-var outputButton = document.getElementById("solve");
+let outputButton = document.getElementById("solve");
 outputButton.addEventListener("click", getSolution);
 
 // add download button
-var downloadButton = document.getElementById("download");
+let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
-var solutionText = document.createElement("Solution");
+let solutionText = document.createElement("Solution");
 solutionText.style.scrollBehavior="auto";
 outputDiv.append(solutionText);
 
+// To store the solutions [DEFAULT, JSON]
+let solutions = ["", ""]
+
+solutionText.innerText = "No solutions to display yet...";
+
+// Add an event listener for the solution type toggle
+solutionType.addEventListener('input', (e) => {
+  if (e.target.checked && solutions[1].length !== 0) {
+    solutionText.innerText = solutions[1];
+  }
+  else if (solutions[0].length !== 0) {
+    solutionText.innerText = solutions[0];
+  }
+})
 
 
 // This function resets the code and output divs, shows the
@@ -303,7 +318,7 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    solutionText.innerHTML = "Solving..."
+    solutionText.innerText = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
     let code = essenceGenerator.workspaceToCode(ws);
@@ -314,6 +329,7 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
+
   // if the output is a failure, briefly make the code element red
   if (solution.status.includes("terminated")) {
     generatedCode.classList.remove('red-flush');
@@ -321,7 +337,13 @@ function outputSolution(solution) {
     generatedCode.classList.add('red-flush');
   }
 
-  solutionText.innerText = `${JSON.stringify(solution, undefined, 2)}`;
+  let text = `${JSON.stringify(solution, undefined, 2)}`;
+  solutions[1] = text;
+
+  // update everything -- stops us from waiting for te user to update the toggle
+  if (solutionType.checked) {
+    solutionText.innerText = text;
+  }
 
   // clear any blocks from previous runs
   blockOut.clear();
