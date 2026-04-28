@@ -1,28 +1,72 @@
 //from conjure-oxide tree-sitter. had to remove grammar(), also consider installing treesitter, might be more readable
 import { seq, choice, repeat, optional, prec} from "./predefinedFunctions";
+import {applyMutator, mutatorType} from "./generators/mutators";
 
 export const grammar = {
   name: 'essence',
 
   rules: {
-    //top-level statements
+    /* 
+    * PROGRAM SECTION
+    */
     program: $ => choice(
         $.find_statement_list,
-        $.find_statement,
-        $.constraint_list,
-        $.letting_statement_list,
-        $.letting_statement,
         $.given_list,
-        $.dominance_relation
+        $.letting_statement_list,
+        $.maximising,
+        $.minimising,
+        $.such_that,
+        $.dominance_relation,
     ),
 
-    // TODO: Implement comment blocks
-    // single_line_comment: $ => token(seq('$', /.*/)),
+    find_statement_list: $ => seq("find", repeat(
+        seq($.variable_list, ":", $.domain), 
+        'find'
+    )),
 
-    // language_declaration: $ => token(seq("language", /.*/)),
+    given_list: $ => seq(
+        "given",
+        repeat(
+            seq($.variable_list, ":", $.domain), 
+            'given'
+        )),
 
-    //general
-    constant: $ => choice(
+    letting_statement_list: $ => seq("letting", 
+        repeat(
+            seq($.variable, "be", $.expression),
+            'letting'
+        )
+    ),
+
+    maximising: $ => seq(
+        "maximising",
+        $.expression
+    ),
+
+    minimising: $ => seq(
+        "minimising",
+        $.expression
+    ),
+
+    such_that: $ => seq(
+        "such that", 
+        repeat(
+            seq($.expression), // TODO: can we remove the comma?
+            'such that'
+        )
+    ),
+
+    dominance_relation: $ => seq(
+        "dominanceRelation",
+        $.expression
+    ),
+
+      domain_expr: $ => seq("domain", $.domain),
+
+    /* 
+    * Constants Section
+    */
+   constants: $ => choice(
         $.integer,
         $.TRUE,
         $.FALSE
@@ -34,165 +78,165 @@ export const grammar = {
 
     FALSE: $ => "false",
 
-    //need to replace soon
+    /*
+    * VARIABLE SECTION
+    */
     variable: $ => {},
 
-    variable_list: $ => repeat(seq(
-        ", ",
-        $.variable
-    )),
-
-    //find statements
-    find_statement_list: $ => seq("find", repeat($.find_statement)),
-
-    find_statement: $ => seq(
-        $.variable_list,
-        ":",
-        $.domain,
-        //optional(",")
+    variable_list: $ => repeat(
+        seq($.variable),
+        ''
     ),
 
-    // as range list, ensure list properly
-    /*variable_list: $ => seq(
-      $.variable,
-      optional(repeat(seq(
-        ",",
-        $.variable
-      )))
-    ),*/
-
-
+    /*
+    * DOMAIN SECTION
+    */
     domain: $ => choice(
         $.bool_domain,
         $.int_domain,
-        $.variable
+        $.int_expression,
+        $.variable,
+        $.matrix,
+        $.domain_expr,
     ),
 
     bool_domain: $ => "bool",
 
-    // removed prec.left (add back in)
     int_domain: $ => seq(
         "int",
-        optional(seq(
+        seq(
             "(",
-            $.range_list,
-            //TODO: eventually add in expressions here
+            optional($.expression), "..", optional($.expression),
             ")"
-        ))
+        )
     ),
 
-    // range_list: $ => prec(2, seq(
-    //   choice(
+    int_expression: $ => seq(
+        "int",
+        "(",
+        $.expression,
+        ")"
+    ),
+
+      // one of those 'trust me bro' instances. mutateMatrix will make this look correct.
+    matrix: $ => applyMutator('matrixMutator', '', seq($.domain), mutatorType.MATRIX),
+
+    /*
+    * RANGE SECTION - Has been commented out due to having no current use.
+    */
+    // range: $ => choice(
     //     $.int_range,
-    //     $.integer
-    //   ),
-    //   optional(repeat(seq(
-    //     ",",
-    //     choice(
-    //       $.int_range,
-    //       $.integer
-    //     ),
-    //   )))
-    // )),
-
-    // remove precedence, so don't get duplicate brackets, also ensures list corrects
-    range_list: $ => repeat(seq(",", choice($.int_range, $.integer))),
-
-    int_range: $ => seq(optional($.expression), "..", optional($.expression)),
-
-    //letting statements
-    letting_statement_list: $ => seq("letting", repeat($.letting_statement)),
-
-    letting_statement: $ => seq(
-        $.variable_list,
-        "be",
-        choice($.expression, $.domain_expr)
-    ),
+    //     $.range_list
+    // ),
+    //
+    // // remove precedence, so don't get duplicate brackets, also ensures list corrects
+    // range_list: $ => repeat(
+    //     seq(choice($.int_range, $.integer), optional(",")),
+    //     categories.LIST
+    // ),
+    //
+    // int_range: $ => seq(optional($.expression), "..", optional($.expression)),
 
 
-    // adding given so can demonstrate data entry
-    given_list: $ => seq("given", repeat(seq($.find_statement, optional(",")))),
-
-    //constraints
-    constraint_list: $ => seq("such that", repeat(seq($.expression, optional(",")))),
-    // separated out for
-    bracket_expr: $ => seq("(", $.expression, ")"),
-    domain_expr: $ => seq("domain", $.domain),
-
+    /*
+    * EXPRESSION SECTION
+    */
     expression: $ => choice(
+        // categories of expressions
+        $.constants,
+        $.arithmetic,
+        $.boolean,
+        $.misc,
+
+        // non-categories
         $.bracket_expr,
         $.not_expr,
         $.abs_value,
-        $.exponent,
         $.negative_expr,
-        $.product_expr,
-        $.sum_expr,
+        $.operations_expr,
         $.comparison,
-        $.and_expr,
-        $.or_expr,
-        $.implication,
         $.quantifier_expr,
         $.expr_list,
-        $.constant,
-        $.variable,
-        $.comparing,
-        $.additive,
-        $.muliplicative,
+        $.flatten,
         $.from_solution,
+        $.toInt_expr,
+        $.variable,
+        $.domain_expr,
+        $.allDiff,
+        $.matrix_accessor,
     ),
+
+      arithmetic: $ => choice(
+          $.operations_expr,
+          $.abs_value,
+          $.negative_expr,
+      ),
+
+      boolean: $ => choice(
+          $.comparison,
+          $.not_expr,
+      ),
+
+      misc: $ => choice(
+          $.bracket_expr,
+          $.quantifier_expr,
+          $.expr_list,
+          $.flatten,
+          $.from_solution,
+          $.toInt_expr,
+          $.variable,
+          $.domain_expr,
+          $.allDiff,
+          $.matrix_accessor,
+      ),
+
+    bracket_expr: $ => seq("(", $.expression, ")"),
 
     not_expr: $ => prec(20, seq("!", $.expression)),
 
     abs_value: $ => prec(20, seq("|", $.expression, "|")),
 
-    exponent: $ => prec(18, prec.right(seq($.expression, "**", $.expression))),
-
     negative_expr: $ => prec(15, prec.left(seq("-", $.expression))),
 
-    product_expr: $ => prec(10, prec.left(seq($.expression, $.multiplicative_op, $.expression))),
-
-    multiplicative_op: $ => choice("*", "/", "%"),
-
-    sum_expr: $ => prec(1, prec.left(seq($.expression, $.additive_op, $.expression))),
-
-    additive_op: $ => choice("+", "-"),
-
-    comparison: $ => prec(0, prec.left(seq($.expression, $.comp_op, $.expression))),
-
-    comp_op: $ => choice("=", "!=", "<=", ">=", "<", ">"),
-
-    and_expr: $ => prec(-1, prec.left(seq($.expression, "/\\", $.expression))),
-
-    or_expr: $ => prec(-2, prec.left(seq($.expression, "\\/", $.expression))),
-
-    implication: $ => prec(-4, prec.left(seq($.expression, "->", $.expression))),
-
-    toInt_expr: $ => seq("toInt", "(", $.expression, ")"),
-
-    //separate operation so can fix block
-
-    quantifier_expr: $ => prec(-10, seq(
-        choice("and", "or", "min", "max", "sum", "allDiff"),
-        "([",
-        $.expr_list,
-        "])"
-    )),
-
-    expr_list: $ => repeat(seq(
-        $.expression,
-        optional(",")
-    )),
-
-
-    //adding other toolbox/colour only categories
-    muliplicative: $ => choice(
-        $.product_expr,
-        $.multiplicative_op
+    operations_expr: $ => applyMutator(
+        'operExpressionMutator',
+        '',
+        seq($.expression, choice("+", "-", "*", "/", "%", "**", "="), $.expression),
+        mutatorType.OPERATION
     ),
 
-    additive: $ => choice(
-        $.additive_op,
-        $.sum_expr
+    comparison: $ => prec(10, prec.left(
+        seq($.expression, choice("=", "!=", "<=", ">=", "<", ">", "/\\", "\\/", "->"), $.expression)
+    )),
+
+    quantifier_expr: $ => seq(
+        choice(
+            "exists",
+            "forAll",
+            "sum",
+            "min",
+            "max",
+            "and",
+            "or"
+        ),
+        $.variable,
+        ":",
+        $.domain,
+        ".",
+        "(",
+        $.expression,
+        ")"
+    ),
+
+    expr_list: $ => repeat(
+        seq($.expression),
+        ''
+    ),
+
+    flatten: $ => seq(
+        "flatten (",
+        $.expression,
+        ")"
     ),
 
     from_solution: $ => seq(
@@ -202,32 +246,48 @@ export const grammar = {
         ")"
     ),
 
-    dominance_relation: $ => seq(
-        "dominanceRelation",
-        $.expression
+    toInt_expr: $ => seq(
+        "toInt", "(", 
+        $.expression, 
+        ")"
     ),
 
-    // defining categories.
-    comparing: $ => choice(
-        $.comparison,
-        $.comp_op
-    ),
+      allDiff:  $ => seq(
+          "allDiff (",
+          $.expression,
+          ")"
+      ),
 
+      matrix_accessor: $ => applyMutator(
+          'matrixAccessMutator',
+          '',
+          seq(
+              $.variable,
+              '[',
+              choice(
+                  $.variable,
+                  $.expression,
+              ),
+              '['
+          ),
+          mutatorType.MATRIX_ACCESS
+      ),
+
+    /* 
+    * FOR COLOUR PURPOSES ONLY
+    */
     find: $ => choice(
-        $.find_statement,
         $.find_statement_list,
         $.given_list
     ),
 
     letting: $ => choice(
-        $.letting_statement,
         $.letting_statement_list,
-        $.domain_expr
     ),
 
-    range: $ => choice(
-        $.int_range,
-        $.range_list
-    )
+    objective_statement: $ => choice(
+        $.maximising,
+        $.minimising
+    ),
   }
 };

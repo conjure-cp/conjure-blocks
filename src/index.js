@@ -12,19 +12,13 @@ import * as Blockly from 'blockly';
 import {jsonBlocks} from './blocks/json';
 import {essenceGenerator} from './blocks/automatedBlocks';
 import {jsonGenerator} from './generators/json';
-import {save, load} from './serialization';
+import {save} from './serialization';
 import {jsonToolbox} from './jsonToolbox';
 import './index.css';
 import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
-import { blocks } from 'blockly/blocks';
-
-/*console.log(essenceBlocks);
-for (let b of essenceBlocks){
-  console.log(b);
-}*/
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
@@ -37,14 +31,14 @@ const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
-var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
+let split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
   for (const entry of entries) {
-    if (entry.target == blocklyDiv) {
+    if (entry.target === blocklyDiv) {
       Blockly.svgResize(ws);
-    } else if (entry.target == dataDiv) {
+    } else if (entry.target === dataDiv) {
       Blockly.svgResize(dataWS);
     } else{
       Blockly.svgResize(blockOut);
@@ -91,7 +85,13 @@ const createFlyout = function (ws) {
     "callbackKey": "bool_callback"
   });
 
-  for (let v of ws.getVariablesOfType('int_domain')){
+  blockList.push({
+    "kind": "button",
+    "text": "create matrix_domain variable",
+    "callbackKey": "matrix_callback"
+  });
+
+  for (let v of ws.getVariableMap().getVariablesOfType('int_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_integer',
@@ -104,7 +104,7 @@ const createFlyout = function (ws) {
     })
   }
 
-  for (let v of ws.getVariablesOfType('bool_domain')){
+  for (let v of ws.getVariableMap().getVariablesOfType('bool_domain')){
     blockList.push({
       'kind':'block',
       'type':'variables_get_bool',
@@ -112,6 +112,19 @@ const createFlyout = function (ws) {
         'VAR': {
           "name": v.name,
           "type": "bool_domain"
+        }
+      }
+    })
+  }
+
+  for (let v of ws.getVariableMap().getVariablesOfType('matrix_domain')){
+    blockList.push({
+      'kind':'block',
+      'type':'variables_get_matrix',
+      'fields': {
+        'VAR': {
+          "name": v.name,
+          "type": "matrix_domain"
         }
       }
     })
@@ -137,8 +150,12 @@ const int_button_callback = function () {
 const bool_button_callback = function () {
   Blockly.Variables.createVariableButtonHandler(ws, null, 'bool_domain');
 }
+const matrix_button_callback = function () {
+  Blockly.Variables.createVariableButtonHandler(ws, null, 'matrix_domain');
+}
 ws.registerButtonCallback('int_callback', int_button_callback);
 ws.registerButtonCallback('bool_callback', bool_button_callback);
+ws.registerButtonCallback('matrix_callback', matrix_button_callback);
 
 
 // adding variable category to data input WS
@@ -159,32 +176,38 @@ dataWS.registerToolboxCategoryCallback(
 
 // generators for get variable blocks
 essenceGenerator.forBlock['variables_get_integer'] = function(block) {
-  var vars = block.getVars()
+  let vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
   
 essenceGenerator.forBlock['variables_get_bool'] = function(block) {
-  var vars = block.getVars()
+  let vars = block.getVars()
+  const code = ws.getVariableById(vars[0]).name
+  return [code, 0];
+}
+
+essenceGenerator.forBlock['variables_get_matrix'] = function(block) {
+  let vars = block.getVars()
   const code = ws.getVariableById(vars[0]).name
   return [code, 0];
 }
 
 jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
-  var vars = block.getVars()
+  let vars = block.getVars()
   const code = dataWS.getVariableById(vars[0]).name
   return [code, 0];
 }
 //add output button
-var outputButton = document.getElementById("solve");
+let outputButton = document.getElementById("solve");
 outputButton.addEventListener("click", getSolution);
 
 // add download button
-var downloadButton = document.getElementById("download");
+let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
-var solutionText = document.createElement("Solution");
+let solutionText = document.createElement("Solution");
 solutionText.style.scrollBehavior="auto";
 outputDiv.append(solutionText);
 
@@ -221,7 +244,7 @@ ws.addChangeListener((e) => {
   // Don't run the code when the workspace finishes loading; we're
   // already running it once when the application starts.
   // Don't run the code during drags; we might have invalid state.
-  if (e.isUiEvent || e.type == Blockly.Events.FINISHED_LOADING ||
+  if (e.isUiEvent || e.type === Blockly.Events.FINISHED_LOADING ||
     ws.isDragging()) {
     return;
   }
@@ -232,15 +255,27 @@ ws.addChangeListener((e) => {
 // change listener to add comment to describe the required input types on block creation.
 ws.addChangeListener((e) => {
 
-  if (e.type == Blockly.Events.BLOCK_CREATE) {
+  if (e.type === Blockly.Events.BLOCK_CREATE) {
     for (let b of e.ids){
       let block = ws.getBlockById(b);
       let types = "";
       let slot = 1;
-      
+
       // if has a mutator - i.e a list block, individual description for all inputs
-      if (block.mutator & block.inputList[1]){
-        types = "Click cog to change number of inputs. Each input requires a '" + block.inputList[1].connection.getCheck() + "' block.";
+      if (block.mutator && block.inputList.length > 0) {
+        types += ("Click cog to change number of inputs.")
+        let counter = 1;
+        // go through each input
+        for (let i  = 0; i < block.inputList.length; i++) {
+          const conn = block.inputList[i].connection;
+
+          if (conn !== null) { // add this onto types if its not null
+            let inputs = conn.getCheck();
+
+            types += `\nInput ${counter} takes the following block(s): ${conn.getCheck()}`;
+            counter++;
+          }
+        }
       } 
       else {
         // build description labelling input with types
@@ -252,21 +287,14 @@ ws.addChangeListener((e) => {
         
         }
       }
-     
-      
+
       // no comment if no inputs.
       if (types.length > 0 && !block.getCommentText()){
         block.setCommentText(types);
       }
-      
-
     }
   }
 })
-
-function printGeneratedCode(){
-  console.log(essenceGenerator.workspaceToCode(ws));
-}
 
 // submits data and code to conjure
 //from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
@@ -314,9 +342,7 @@ async function getSolution() {
     solutionText.innerHTML = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
-    console.log("data " + data);
     let code = essenceGenerator.workspaceToCode(ws);
-    console.log("code " + code);
     const client = new ConjureClient("conjure-blocks");
     client.solve(code, {data : data})
       .then(result => outputSolution(result));   
@@ -327,48 +353,60 @@ function outputSolution(solution) {
   solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
   // clear any blocks from previous runs
   blockOut.clear();
+
   // if solved, create relevant blocks and add to output workspace
-  if (solution.status == "ok"){
+  if (solution.status === "ok"){
     for (let sol of solution.solution){
-      let prev;
       for (let v in sol){
         blockOut.createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');
         varBlock.setFieldValue(blockOut.getVariable(v).getId(), 'VAR');
-        let valueBlock;
+
+        let valueBlock = null;
+
         switch (typeof(sol[v])){
           case("bigint"): 
           case("number"): {
-              console.log("number");
               valueBlock = blockOut.newBlock('math_number');
               valueBlock.setFieldValue(sol[v], "NUM");
               break;
           }
           case("string"): {
-            console.log("enum");
             valueBlock = blockOut.newBlock('text');
             valueBlock.setFieldValue(sol[v], "TEXT");
             break;
           }
           case("boolean"): {
-            console.log("bool")
             valueBlock = blockOut.newBlock('logic_boolean');
             valueBlock.setFieldValue(sol[v], "BOOL");
             break;
+          } // for matrix cases
+          case ("object"): {
+            if (sol[v] === null) return null;
+
+            // matrix objects look like { "1": { "1": 2, "2": 7 }, "2": ... }
+            const text = formatMatrixValue(sol[v]);
+            let b = blockOut.newBlock('text');
+            b.setFieldValue(text, "TEXT");
+            return b;
           }
-          default:{
-            console.log("idk");
-            valueBlock = null;
+          default: {
+            console.warn(`Unhandled solution value type: ${typeof(sol[v])} for variable ${v}`, sol[v]);
             break;
           }
 
-        };
-        varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+        }
+
+        varBlock.initSvg();
+
+        if (valueBlock) {
+          valueBlock.initSvg();
+          varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
+          valueBlock.setEditable(false);
+        }
+
         // stop changes blocks
         varBlock.setEditable(false);
-        valueBlock.setEditable(false);
-        varBlock.initSvg();
-        valueBlock.initSvg();
        
       }
     }  
@@ -377,6 +415,36 @@ function outputSolution(solution) {
 
   }
  
+}
+
+function formatMatrixValue(value) {
+  // If the output is an array
+  if (Array.isArray(value)) {
+    return '[' + value
+        .map(v => typeof v === 'object' && v !== null ? formatMatrixValue(v) : v)
+        .join(', ') + ']';
+  }
+
+  // if the output is an object
+  if (typeof value === 'object') {
+    const keys = Object
+        .keys(value)
+        .sort((a, b) => Number(a) - Number(b));
+
+    const values = keys.map(key => {
+      (typeof value[key] === 'object' && value[key] !== null)
+          ? formatMatrixValue(values[key])
+          : value[key]
+    });
+
+    // case: its a 2D matrix
+    const isNested = typeof value[keys[0]] === 'object';
+    return isNested
+        ? '[' + values.join(', ') + ']'
+        : '[' + values.join(', ') + ']';
+  }
+
+  return String(value);
 }
 
 // generate essence file from generated code
@@ -456,7 +524,7 @@ function saveBlocks() {
   document.body.appendChild(a)
 }
 
-var saveButton = document.getElementById("save");
+let saveButton = document.getElementById("save");
 saveButton.addEventListener("click", saveBlocks);
 
 
@@ -464,8 +532,8 @@ saveButton.addEventListener("click", saveBlocks);
 // adapted from https://developer.mozilla.org/en-US/docs/Web/API/FileReader, 
 // https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications,
 // and serialisation.js
-var file = document.getElementById("Blockfile");
-var loadButton = document.getElementById("load")
+let file = document.getElementById("Blockfile");
+let loadButton = document.getElementById("load")
 
 loadButton.addEventListener("click", (e) => {
   if (file) {
