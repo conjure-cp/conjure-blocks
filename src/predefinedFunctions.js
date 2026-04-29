@@ -222,7 +222,6 @@ export const seq = function(...args) {
 };
 
 export const repeat = function(arg) {
-    console.log(arg)
     if (typeof(arg) == "function"){
       // joint not specified, presume comma
       addMutator(arg.name, ",")
@@ -231,7 +230,6 @@ export const repeat = function(arg) {
       let text = arg.message.replace(/%[0-9]+/, "");
       text = text.trim();
       // from grammar can assume, only other option is of form seq(type, ",") - so can just check args and message
-      console.log(`-${text}-`)
       addMutator(arg.args[0].check, text);
     }
   

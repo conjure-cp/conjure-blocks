@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
- * EDITED by N-J-Martin
+ * EDITED by N-J-Martin, JamieASM
  */
 import Split from 'split.js'
 //import vid from './conjure-blocks-example.mp4';
@@ -21,23 +21,20 @@ import { autoToolbox } from './blocks/automatedBlocks';
 import {initTooltips } from './tooltips';
 import { blocks } from 'blockly/blocks';
 
-/*console.log(essenceBlocks);
-for (let b of essenceBlocks){
-  console.log(b);
-}*/
-
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
+const solutionType = document.getElementById('checkbox');
+const generatedCode = document.getElementById('generatedCode');
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
 const dataDiv = document.getElementById("dataInputDiv");
 const ws = Blockly.inject(blocklyDiv, {toolbox:autoToolbox});
 const dataWS = Blockly.inject(dataDiv, {toolbox: jsonToolbox});
-var split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
+let split = Split(['#outputPane','#blocklyDivOut', '#dataInputDivOut', '#blocklyDiv2Out'], {gutterSize: 20, minSize:0})
 
 // resize workspaces
 const resizeObserver = new ResizeObserver((entries) => {
@@ -176,18 +173,32 @@ jsonGenerator.forBlock['variables_get_dynamic'] = function(block) {
   return [code, 0];
 }
 //add output button
-var outputButton = document.getElementById("solve");
+let outputButton = document.getElementById("solve");
 outputButton.addEventListener("click", getSolution);
 
 // add download button
-var downloadButton = document.getElementById("download");
+let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
-var solutionText = document.createElement("Solution");
+let solutionText = document.createElement("Solution");
 solutionText.style.scrollBehavior="auto";
 outputDiv.append(solutionText);
 
+// To store the solutions [DEFAULT, JSON]
+let solutions = ["", ""]
+
+solutionText.innerText = "No solutions to display yet...";
+
+// Add an event listener for the solution type toggle
+solutionType.addEventListener('input', (e) => {
+  if (e.target.checked && solutions[1].length !== 0) {
+    solutionText.innerText = solutions[1];
+  }
+  else if (solutions[0].length !== 0) {
+    solutionText.innerText = solutions[0];
+  }
+})
 
 
 // This function resets the code and output divs, shows the
@@ -264,10 +275,6 @@ ws.addChangeListener((e) => {
   }
 })
 
-function printGeneratedCode(){
-  console.log(essenceGenerator.workspaceToCode(ws));
-}
-
 // submits data and code to conjure
 //from https://conjure-aas.cs.st-andrews.ac.uk/submitDemo.html
 async function submit(inputData) {
@@ -311,12 +318,10 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    solutionText.innerHTML = "Solving..."
+    solutionText.innerText = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
-    console.log("data " + data);
     let code = essenceGenerator.workspaceToCode(ws);
-    console.log("code " + code);
     const client = new ConjureClient("conjure-blocks");
     client.solve(code, {data : data})
       .then(result => outputSolution(result));   
@@ -324,13 +329,28 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+
+  // if the output is a failure, briefly make the code element red
+  if (solution.status.includes("terminated")) {
+    generatedCode.classList.remove('red-flush');
+    void generatedCode.offsetWidth; // force reflow to reset animation
+    generatedCode.classList.add('red-flush');
+  }
+
+  let text = `${JSON.stringify(solution, undefined, 2)}`;
+  solutions[1] = text;
+
+  // update everything -- stops us from waiting for te user to update the toggle
+  if (solutionType.checked) {
+    solutionText.innerText = text;
+  }
+
   // clear any blocks from previous runs
   blockOut.clear();
+
   // if solved, create relevant blocks and add to output workspace
-  if (solution.status == "ok"){
+  if (solution.status === "ok"){
     for (let sol of solution.solution){
-      let prev;
       for (let v in sol){
         blockOut.createVariable(v);
         let varBlock = blockOut.newBlock('variables_set');
@@ -339,30 +359,27 @@ function outputSolution(solution) {
         switch (typeof(sol[v])){
           case("bigint"): 
           case("number"): {
-              console.log("number");
               valueBlock = blockOut.newBlock('math_number');
               valueBlock.setFieldValue(sol[v], "NUM");
               break;
           }
           case("string"): {
-            console.log("enum");
             valueBlock = blockOut.newBlock('text');
             valueBlock.setFieldValue(sol[v], "TEXT");
             break;
           }
           case("boolean"): {
-            console.log("bool")
             valueBlock = blockOut.newBlock('logic_boolean');
             valueBlock.setFieldValue(sol[v], "BOOL");
             break;
           }
           default:{
-            console.log("idk");
             valueBlock = null;
             break;
           }
 
-        };
+        }
+
         varBlock.getInput("VALUE").connection.connect(valueBlock.outputConnection);
         // stop changes blocks
         varBlock.setEditable(false);
