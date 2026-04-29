@@ -306,52 +306,58 @@ dialog::backdrop {
     z-index: 2;
 }
 
-#toggle, .layer {
-    border-radius: 40px;
-}
-
 #toggle {
     position: relative;
-    width: 125px;
-    height: 35px;
-    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    background-color: #efefef;
+    border-radius: 40px;
     border: #A8A8A8 solid 2.5px;
+    padding: 3px 3px 4px;
+    margin: 5px;
+    gap: 2px;
+    width: fit-content;
+    flex-shrink: 0;
+    cursor: pointer;
+    height: 23px;
 }
 
-#toggle .knobs:before {
-    content: "Default";
-    position: absolute;
-    top: 3px;
-    left: 4px;
-    width: 60px;
-    height: 27px;
-
+#toggle .knobs {
+    position: static;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    width: auto;
+    height: auto;
+}
 
+#toggle .knobs span {
+    padding: 4px 14px;
+    border-radius: 20px;
     font-size: .8rem;
     font-weight: bold;
-    color: #000000;
-
-    background-color: #E7D292;
-    box-shadow: -2px 2px #DD9871;
-    border-radius: 20px;
-    transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+    transition: all 0.25s cubic-bezier(0.18, 0.89, 0.35, 1.15);
 }
 
-#toggle #checkbox:checked + .knobs:before {
-    content: "JSON";
-    left: 63px;
+#toggle .knobs span:first-child {
+    background-color: #E7D292;
+    box-shadow: -2px 2px #DD9871;
+    color: #000;
+}
+
+#toggle .knobs span:last-child {
+    background-color: transparent;
+    color: #888;
+}
+
+#toggle #checkbox:checked ~ .knobs span:first-child {
+    background-color: transparent;
+    box-shadow: none;
+    color: #888;
+}
+
+#toggle #checkbox:checked ~ .knobs span:last-child {
     background-color: #A8A8A8;
     box-shadow: -2px 2px #5b5b5b;
     color: #fff;
-}
-
-#toggle .knobs,
-#toggle .knobs:before,
-#toggle .layer {
-    transition: 0.3s ease all;
 }
 
 #solution-text {
