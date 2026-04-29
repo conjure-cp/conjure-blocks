@@ -42,16 +42,6 @@
               <button style="width: 10%" id="close">Got it!</button>
             </form>
           </dialog>
-
-          <button id="save">Save Blocks</button>
-          <input type="file" id="Blockfile" accept=".block"/>
-
-          <button id="load" type="button">Load Blocks</button>
-          <dialog id="errorM" style="text-align: center;">
-            <form method="dialog" style="display: grid; place-items: center;">
-              <button style="width: 10%" id="closel">Ok</button>
-            </form>
-          </dialog>
         </div>
 
         <h3>Generated Essence Code</h3>
@@ -81,6 +71,15 @@
 
       <div id="blocklyDivOut" class="blocklyDivOut">
         <h3>Block Essence</h3>
+        <button id="save">Save</button>
+        <input type="file" id="Blockfile" accept=".block"/>
+
+        <button id="load" type="button">Load</button>
+        <dialog id="errorM" style="text-align: center;">
+          <form method="dialog" style="display: grid; place-items: center;">
+            <button style="width: 10%" id="closel">Ok</button>
+          </form>
+        </dialog>
         <div id="blocklyDiv" class="blocklyDiv"></div>
       </div>
 

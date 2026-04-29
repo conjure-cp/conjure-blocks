@@ -171,15 +171,6 @@ dialog::backdrop {
     font-family: monospace;
 }
 
-#help {
-    background-color: #919191;
-    /*color: white;*/
-}
-
-#help:after {
-    background-color: #DEDEDE;
-}
-
 @keyframes red-flush {
     0%   {
         background-color: #DEDEDE;
@@ -243,7 +234,7 @@ dialog::backdrop {
 .blocklyDiv {
     /*resize: horizontal;*/
     flex-basis: auto;
-    height: calc(100% - 60px);
+    height: calc(100% - 64px);
     width: 100%;
     /*position: absolute;*/
     overflow-y: hidden;
@@ -377,4 +368,8 @@ dialog::backdrop {
 
 #Blockfile{
     display: none;
+}
+
+#blocklyDiv {
+    height: calc(100% - 105px);
 }
