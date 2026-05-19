@@ -188,7 +188,8 @@ outputDiv.append(solutionText);
 // To store the solutions [DEFAULT, JSON]
 let solutions = ["", ""]
 
-solutionText.innerText = "No solutions to display yet...";
+// TODO: UNCOMMENT THIS OUT
+// solutionText.innerText = "No solutions to display yet...";
 
 // Add an event listener for the solution type toggle
 solutionType.addEventListener('input', (e) => {
@@ -337,13 +338,14 @@ function outputSolution(solution) {
     generatedCode.classList.add('red-flush');
   }
 
-  let text = `${JSON.stringify(solution, undefined, 2)}`;
-  solutions[1] = text;
-
-  // update everything -- stops us from waiting for te user to update the toggle
-  if (solutionType.checked) {
-    solutionText.innerText = text;
-  }
+  // TODO: UNCOMMENT THIS OUT
+  // let text = `${JSON.stringify(solution, undefined, 2)}`;
+  // solutions[1] = text;
+  //
+  // // update everything -- stops us from waiting for te user to update the toggle
+  // if (solutionType.checked) {
+  //   solutionText.innerText = text;
+  // }
 
   // clear any blocks from previous runs
   blockOut.clear();
