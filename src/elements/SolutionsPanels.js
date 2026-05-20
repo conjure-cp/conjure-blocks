@@ -1,9 +1,12 @@
 /**
- * Stores the prebuilt elements for the default solution option
+ * Stores the prebuilt elements for the solution options.
+ * @author JamieASM
  */
 
+// this is the parent panel for any and all solutions
 const outputPanel = document.getElementById('output');
 
+// json object that stores status information
 const STATUS = {
     SUCCESS: {
         title: 'Ran Successfully!',
@@ -15,6 +18,11 @@ const STATUS = {
     },
 }
 
+
+/**
+ * Creates and inserts HTML objects that display a default solution. 'default' solutions are summaries of the json object.
+ * @param json The json object returned from the server.
+ */
 export function insertDefaultSolution(json) {
     if (isJSONSolution()) {
         document.getElementById("json").remove();
@@ -35,6 +43,10 @@ export function insertDefaultSolution(json) {
     }
 }
 
+/**
+ * Creates and inserts a HTML object that just displays the pretty printed JSON solution.
+ * @param json The json object to display.
+ */
 export function insertJSONSolution(json) {
     // if we are currently displaying the default solution, remove it
     if (isDefaultSolution()) {
@@ -55,14 +67,26 @@ export function insertJSONSolution(json) {
     jsonSolution().innerText = JSON.stringify(json, null, 2);
 }
 
+/**
+ * Checks to see if there are any elements with the class 'default-outcome'
+ * @returns {boolean} true indicates that the default solution is currently being displayed, false otherwise.
+ */
 export function isDefaultSolution() {
     return document.getElementsByClassName("default-outcome").length !== 0;
 }
 
+/**
+ * Checks to see if there is an element with the id 'json'.
+ * @returns {boolean} true indicates that the json solution is currently being displayed, false otherwise.
+ */
 export function isJSONSolution() {
     return document.getElementById("json") !== null;
 }
 
+/**
+ * Makes the panel for a default 'success' solution.
+ * @param solution The array of solutions.
+ */
 function success(solution) {
     // first we insert the header
     insertHeader(STATUS.SUCCESS);
@@ -80,13 +104,17 @@ function success(solution) {
     });
 }
 
+/**
+ * Makes the panel for a default 'terminated' solution.
+ * @param errors The array of all errors.
+ * @param exitCode The termination exit code.
+ */
 function failure(errors, exitCode) {
     // first we insert the header
     insertHeader(STATUS.FAILED);
 
     // insert the status code
     insertItem(STATUS.FAILED, `Exit code: ${exitCode}`);
-    // outputPanel.appendChild(document.createElement('hr'));
 
     // then we insert the errors
     errors.forEach(error => {
@@ -94,6 +122,10 @@ function failure(errors, exitCode) {
     });
 }
 
+/**
+ * Creates the header panel for the default solution. Either will display 'Ran Successfully' or 'Run Failed'.
+ * @param status The json status object.
+ */
 function insertHeader(status) {
     // Remove any existing outcome elements
     const oldHeader = document.getElementById('outcomeHeader');
@@ -117,6 +149,11 @@ function insertHeader(status) {
     outputPanel.appendChild(header);
 }
 
+/**
+ * Inserts a panel that will display either a solution or an error.
+ * @param status The JSON status object.
+ * @param text Any extra text that should be inserted.
+ */
 function insertItem(status, text) {
     const item = document.createElement('div');
     const description = document.createElement('pre');

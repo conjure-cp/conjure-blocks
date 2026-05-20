@@ -19,7 +19,7 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
-import {insertDefaultSolution, insertJSONSolution, isDefaultSolution, isJSONSolution} from "./elements/defaultSolution";
+import {insertDefaultSolution, insertJSONSolution, isDefaultSolution, isJSONSolution} from "./elements/SolutionsPanels";
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
@@ -209,17 +209,6 @@ outputButton.addEventListener("click", getSolution);
 let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
-// add output text box 
-// let solutionText = document.createElement("Solution");
-// solutionText.style.scrollBehavior="auto";
-// outputDiv.append(solutionText);
-
-// To store the solutions [DEFAULT, JSON]
-// let solutions = ["", ""]
-
-// TODO: UNCOMMENT THIS OUT
-// solutionText.innerText = "No solutions to display yet...";
-
 let jsonSolution = {}
 
 // Add an event listener for the solution type toggle
@@ -240,10 +229,6 @@ solutionType.addEventListener('input', (e) => {
 const runCode = () => {
   const code = essenceGenerator.workspaceToCode(ws);
   codeDiv.innerText = code;
-
-  //outputDiv.innerHTML = '';
-
-  //eval(code);
 };
 
 // Load the initial state from storage and run the code/.
@@ -360,7 +345,6 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    // solutionText.innerText = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
     let code = essenceGenerator.workspaceToCode(ws);
@@ -381,10 +365,6 @@ function outputSolution(solution) {
 
   jsonSolution = solution;
 
-  // TODO: UNCOMMENT THIS OUT
-  // let text = `${JSON.stringify(solution, undefined, 2)}`;
-  // solutions[1] = text;
-  //
   // update everything -- stops us from waiting for te user to update the toggle
   if (!solutionType.checked) {
     insertDefaultSolution(solution);
