@@ -167,7 +167,7 @@ dialog::backdrop {
 }
 
 #output {
-    max-height: 300px;
+    max-height: 250px;
     width: 95%;
     scroll-behavior: auto;
 
