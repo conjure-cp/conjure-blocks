@@ -9,11 +9,11 @@ const outputPanel = document.getElementById('output');
 // json object that stores status information
 const STATUS = {
     SUCCESS: {
-        title: 'Ran Successfully!',
+        title: 'Solved Successfully!',
         id: 'success',
     },
     FAILED: {
-        title: 'Run Failed',
+        title: 'Solve Failed',
         id: 'failure',
     },
 }
