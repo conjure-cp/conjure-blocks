@@ -19,6 +19,7 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
+import {insertDefaultSolution, insertJSONSolution, isDefaultSolution, isJSONSolution} from "./elements/defaultSolution";
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
@@ -209,23 +210,26 @@ let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
 // add output text box 
-let solutionText = document.createElement("Solution");
-solutionText.style.scrollBehavior="auto";
-outputDiv.append(solutionText);
+// let solutionText = document.createElement("Solution");
+// solutionText.style.scrollBehavior="auto";
+// outputDiv.append(solutionText);
 
 // To store the solutions [DEFAULT, JSON]
-let solutions = ["", ""]
+// let solutions = ["", ""]
 
 // TODO: UNCOMMENT THIS OUT
 // solutionText.innerText = "No solutions to display yet...";
 
+let jsonSolution = {}
+
 // Add an event listener for the solution type toggle
 solutionType.addEventListener('input', (e) => {
-  if (e.target.checked && solutions[1].length !== 0) {
-    solutionText.innerText = solutions[1];
-  }
-  else if (solutions[0].length !== 0) {
-    solutionText.innerText = solutions[0];
+  if (Object.keys(jsonSolution).length === 0) return;
+
+  if (e.target.checked) {
+    insertJSONSolution(jsonSolution);
+  } else {
+    insertDefaultSolution(jsonSolution);
   }
 })
 
@@ -356,7 +360,7 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    solutionText.innerText = "Solving..."
+    // solutionText.innerText = "Solving..."
     // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
     let code = essenceGenerator.workspaceToCode(ws);
@@ -375,14 +379,19 @@ function outputSolution(solution) {
     generatedCode.classList.add('red-flush');
   }
 
+  jsonSolution = solution;
+
   // TODO: UNCOMMENT THIS OUT
   // let text = `${JSON.stringify(solution, undefined, 2)}`;
   // solutions[1] = text;
   //
-  // // update everything -- stops us from waiting for te user to update the toggle
-  // if (solutionType.checked) {
-  //   solutionText.innerText = text;
-  // }
+  // update everything -- stops us from waiting for te user to update the toggle
+  if (!solutionType.checked) {
+    insertDefaultSolution(solution);
+  }
+  else {
+    insertJSONSolution(solution);
+  }
 
   // clear any blocks from previous runs
   blockOut.clear();
