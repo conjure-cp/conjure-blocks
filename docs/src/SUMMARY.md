@@ -1,6 +1,7 @@
 [Introduction](intro.md)
 
 # Blocks
+
 - [Program](./blocks/headers/program.md) 
   - [Find Statement](./blocks/find_statement_list.md)
   - [Given Statement](./blocks/given_list.md)
@@ -16,6 +17,7 @@
   - [Boolean domain](./blocks/bool_domain.md)
   - [Integer Domain](./blocks/int_domain.md)
   - [Integer Expression](./blocks/int_expression.md)
+  - [Matrix](./blocks/matrix.md)
 
 - [Expression](./blocks/headers/expression.md)
   - [Constants](./blocks/constants.md)
@@ -32,8 +34,11 @@
     - [Bracket Expression](./blocks/bracket_expr.md)
     - [Quantifier Expression](./blocks/quantifier_expr.md)
     - [Expression List](./blocks/expr_list.md)
+    - [Flatten](./blocks/flatten.md)
     - [From Solution](./blocks/from_solution.md)
     - [toInt Expression](./blocks/toInt_expr.md)
+    - [allDiff](./blocks/allDiff.md)
+    - [Matrix Accessor](./blocks/matrix_accessor.md)
 
 - [Variables](./blocks/headers/variables.md)
   - [variable_list](./blocks/variable_list.md)
