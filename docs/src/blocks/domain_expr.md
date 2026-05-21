@@ -6,6 +6,7 @@ Defines the domain.
 The domains we currently support are:
 - boolean 
 - integer
+- matrix
 
 For example, it can be used like this:
 

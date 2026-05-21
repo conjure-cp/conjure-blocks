@@ -1,11 +1,11 @@
 [//]: # (author: Jamie Melton)
-# Constraint list
+# Such that Statement
 
-Used to define constraints.
+Used to define constraints. Can be extended to a list.
 
 For example, it can be used like this:
 
-![Example of a constraint list block](../images/constraint_list_example.png)
+![Example of a such that statement block](../images/such_that_example.png)
 
 Which would produce the following Essence Output:
 

@@ -1,7 +1,7 @@
 [//]: # (author: Jamie Melton)
-# Letting Statement List
+# Letting Statement
 
-Assigns a variable to some domain.
+Assigns a variable to some domain. Can be extended to a list.
 
 For example, it can be used like this:
 

@@ -3,4 +3,4 @@
 
 This section contains blocks that are used to create domains.
 
-Currently, we support integer and boolean domains.
+Currently, we support integer, boolean and matrix domains.

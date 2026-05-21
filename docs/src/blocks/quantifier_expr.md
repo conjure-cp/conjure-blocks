@@ -4,12 +4,13 @@
 Iterates over the given domains to find an instance whose conditions are met.
 
 Multiple functions are available for this block:
-- `and`
-- `or`
+- `exists`
+- `forAll`
+- `sum`
 - `min`
 - `max`
-- `sum`
-- `allDiff`
+- `and`
+- `or`
 
 For example, it can be used like this:
 
@@ -18,5 +19,5 @@ For example, it can be used like this:
 Which would produce the following Essence Output:
 
 ```essence
-and  ([ x >= y, y <= x ])
+exists  x : int ( -1 .. 13 )  . ( ( x > y ) )
 ```
