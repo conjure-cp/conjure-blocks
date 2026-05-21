@@ -18,6 +18,22 @@ const STATUS = {
     },
 }
 
+export function insertLoading() {
+    if (isJSONSolution()) {
+        document.getElementById("json").remove();
+    }
+    else if (isDefaultSolution()) {
+        Array.from(document.getElementsByClassName('default-outcome')).forEach(el => el.remove());
+    }
+
+    if (!isSolving()) {
+        const solving = document.createElement('pre');
+        solving.setAttribute('id', 'solving');
+        solving.innerText = 'Solving...';
+
+        outputPanel.appendChild(solving);
+    }
+}
 
 /**
  * Creates and inserts HTML objects that display a default solution. 'default' solutions are summaries of the json object.
@@ -26,6 +42,9 @@ const STATUS = {
 export function insertDefaultSolution(json) {
     if (isJSONSolution()) {
         document.getElementById("json").remove();
+    }
+    else if (isSolving()) {
+        document.getElementById("solving").remove();
     }
 
     // get the status
@@ -51,6 +70,9 @@ export function insertJSONSolution(json) {
     // if we are currently displaying the default solution, remove it
     if (isDefaultSolution()) {
         Array.from(document.getElementsByClassName('default-outcome')).forEach(el => el.remove());
+    }
+    else if (isSolving()) {
+        document.getElementById("solving").remove();
     }
 
     const jsonSolution = () => {
@@ -81,6 +103,10 @@ export function isDefaultSolution() {
  */
 export function isJSONSolution() {
     return document.getElementById("json") !== null;
+}
+
+function isSolving() {
+    return document.getElementById("solving") !== null
 }
 
 /**

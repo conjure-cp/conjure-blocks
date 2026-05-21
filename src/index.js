@@ -19,7 +19,13 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
-import {insertDefaultSolution, insertJSONSolution, isDefaultSolution, isJSONSolution} from "./elements/SolutionsPanels";
+import {
+  insertDefaultSolution,
+  insertJSONSolution,
+  insertLoading,
+  isDefaultSolution,
+  isJSONSolution
+} from "./elements/SolutionsPanels";
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
@@ -345,7 +351,8 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    // gets the data from the data input workspace
+  insertLoading();
+  // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
     let code = essenceGenerator.workspaceToCode(ws);
     const client = new ConjureClient("conjure-blocks");

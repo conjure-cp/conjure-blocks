@@ -194,7 +194,7 @@ dialog::backdrop {
     z-index: 3;
 }
 
-#json {
+#json, #solving {
     height: 100%;
 
     margin: 0;
