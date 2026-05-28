@@ -1,7 +1,7 @@
 [//]: # (author: Jamie Melton)
-# Given List 
+# Given Statement
 
-Used to declare a parameter and its domain.
+Used to declare a parameter and its domain. This block can also be extended to a list.
 
 For example, it can be used like this:
 

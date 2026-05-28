@@ -1,7 +1,8 @@
 [//]: # (author: Jamie Melton)
-# Find/Given Statement List
+# Find Statement
 
-Stores a list of decision variables.
+This block is used to declare decision variables. It must be nested in a `find` block. This block can also be extended 
+so that it can store a list of decision variables.
 
 For example, it can be used like this:
 
