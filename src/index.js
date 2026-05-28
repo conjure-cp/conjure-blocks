@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 /**
- * EDITED by N-J-Martin
+ * EDITED by N-J-Martin, JamieASM
  */
 import Split from 'split.js'
 //import vid from './conjure-blocks-example.mp4';
@@ -19,12 +19,21 @@ import {essenceBlocks} from './blocks/automatedBlocks';
 import { autoToolbox } from './blocks/automatedBlocks';
 // temp added bit
 import {initTooltips } from './tooltips';
+import {
+  insertDefaultSolution,
+  insertJSONSolution,
+  insertLoading,
+  isDefaultSolution,
+  isJSONSolution
+} from "./elements/SolutionsPanels";
 
 // Register the blocks and generator with Blockly
 Blockly.common.defineBlocks(essenceBlocks);
 Blockly.common.defineBlocks(jsonBlocks);
 
 // Set up UI elements and inject Blockly
+const solutionType = document.getElementById('checkbox');
+const generatedCode = document.getElementById('generatedCode');
 const codeDiv = document.getElementById('generatedCode').firstChild;
 const outputDiv = document.getElementById('output');
 const blocklyDiv = document.getElementById('blocklyDiv');
@@ -206,11 +215,18 @@ outputButton.addEventListener("click", getSolution);
 let downloadButton = document.getElementById("download");
 downloadButton.addEventListener("click", downloadEssenceCode);
 
-// add output text box 
-let solutionText = document.createElement("Solution");
-solutionText.style.scrollBehavior="auto";
-outputDiv.append(solutionText);
+let jsonSolution = {}
 
+// Add an event listener for the solution type toggle
+solutionType.addEventListener('input', (e) => {
+  if (Object.keys(jsonSolution).length === 0) return;
+
+  if (e.target.checked) {
+    insertJSONSolution(jsonSolution);
+  } else {
+    insertDefaultSolution(jsonSolution);
+  }
+})
 
 
 // This function resets the code and output divs, shows the
@@ -219,10 +235,6 @@ outputDiv.append(solutionText);
 const runCode = () => {
   const code = essenceGenerator.workspaceToCode(ws);
   codeDiv.innerText = code;
-
-  //outputDiv.innerHTML = '';
-
-  //eval(code);
 };
 
 // Load the initial state from storage and run the code/.
@@ -339,8 +351,8 @@ async function get(currentJobid) {
 // Runs essence code in conjure, outputs solution logs
 // from https://conjure-aas.cs.st-andrews.ac.uk/
 async function getSolution() {
-    solutionText.innerHTML = "Solving..."
-    // gets the data from the data input workspace
+  insertLoading();
+  // gets the data from the data input workspace
     let data = jsonGenerator.workspaceToCode(dataWS);
     let code = essenceGenerator.workspaceToCode(ws);
     const client = new ConjureClient("conjure-blocks");
@@ -350,7 +362,24 @@ async function getSolution() {
 
 // outputs the solution in blocks, and outputs the log
 function outputSolution(solution) {
-  solutionText.innerHTML = JSON.stringify(solution, undefined, 2);
+
+  // if the output is a failure, briefly make the code element red
+  if (solution.status.includes("terminated")) {
+    generatedCode.classList.remove('red-flush');
+    void generatedCode.offsetWidth; // force reflow to reset animation
+    generatedCode.classList.add('red-flush');
+  }
+
+  jsonSolution = solution;
+
+  // update everything -- stops us from waiting for te user to update the toggle
+  if (!solutionType.checked) {
+    insertDefaultSolution(solution);
+  }
+  else {
+    insertJSONSolution(solution);
+  }
+
   // clear any blocks from previous runs
   blockOut.clear();
 
