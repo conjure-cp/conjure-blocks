@@ -16,8 +16,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/general-0392ca55.css">
+        <link rel="stylesheet" href="css/chrome-fc474251.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e8be1b63.js";
+            window.path_to_searchindex_js = "searchindex-02f69f4b.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-2b292715.js"></script>
+        <script src="toc-52826b65.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,66 +188,51 @@ the conjure language, please see Conjure’s documentation <a href="https://conj
 <p>This section contains blocks that define the domains of parameters and decision variables.
 These blocks are vital in structuring constraint programs.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="find-statement-assignment"><a class="header" href="#find-statement-assignment">Find Statement Assignment</a></h1>
-<p>This block is used to declare decision variables. It must be nested in a <code>find</code> block.</p>
+<h1 id="find-statement"><a class="header" href="#find-statement">Find Statement</a></h1>
+<p>This block is used to declare decision variables. It must be nested in a <code>find</code> block. This block can also be extended
+so that it can store a list of decision variables.</p>
 <p>For example, it can be used like this:</p>
 <p><img src="images/find_statement_example.png" alt="Example of a find statement"></p>
 <p>Which would produce the following Essence Output:</p>
 <pre><code class="language-essence">find  x : int (  0 .. 10  ) 
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="findgiven-statement-list"><a class="header" href="#findgiven-statement-list">Find/Given Statement List</a></h1>
-<p>Stores a list of decision variables.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/find_statement_example.png" alt="Example of a find statement"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">find  x : int (  0 .. 10  ) 
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="constraint-list"><a class="header" href="#constraint-list">Constraint list</a></h1>
-<p>Used to define constraints.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/constraint_list_example.png" alt="Example of a constraint list block"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">such that a != b
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="letting-statement"><a class="header" href="#letting-statement">Letting Statement</a></h1>
-<p>Used to define a variables’ domain. This must be nested in a ‘letting’ block.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/letting_statement_example.png" alt="Example of a letting statement"></p>
-<p>Which would produce the following Essence output:</p>
-<pre><code class="language-essence">letting x be domain int ( 0 .. 5  )
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="domain-expression"><a class="header" href="#domain-expression">Domain Expression</a></h1>
-<p>Defines the domain.</p>
-<p>The domains we currently support are:</p>
-<ul>
-<li>boolean</li>
-<li>integer</li>
-</ul>
-<p>For example, it can be used like this:</p>
-<p><img src="images/domain_expr_example.png" alt="Example of a domain expression"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">domain int ( 0 .. 5  )
-</code></pre>
-<p>For more information about domains in essence, see <a href="https://conjure.readthedocs.io/en/latest/essence.html#domains">this</a>.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="letting-statement-list"><a class="header" href="#letting-statement-list">Letting Statement List</a></h1>
-<p>Assigns a variable to some domain.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/letting_statement_example.png" alt="Example of a letting statement"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">letting x be domain int ( 0 .. 5  )
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="given-list"><a class="header" href="#given-list">Given List</a></h1>
-<p>Used to declare a parameter and its domain.</p>
+<h1 id="given-statement"><a class="header" href="#given-statement">Given Statement</a></h1>
+<p>Used to declare a parameter and its domain. This block can also be extended to a list.</p>
 <p>For example, it can be used like this:</p>
 <p><img src="images/given_list_example.png" alt="Example of ‘given’"></p>
 <p>Which would produce the following Essence Output:</p>
 <pre><code class="language-essence">given x : int ( 0 .. 5  )  ,
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="letting-statement"><a class="header" href="#letting-statement">Letting Statement</a></h1>
+<p>Assigns a variable to some domain. Can be extended to a list.</p>
+<p>For example, it can be used like this:</p>
+<p><img src="images/letting_statement_example.png" alt="Example of a letting statement"></p>
+<p>Which would produce the following Essence Output:</p>
+<pre><code class="language-essence">letting x be domain int ( 0 .. 5  )
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="objective-statement"><a class="header" href="#objective-statement">Objective Statement</a></h1>
+<p>You can make an objective statement by either using the keyword <a href="#minimising">minimising</a> or the keyword
+<a href="#maximising">maximising</a> followed by an integer expression. A problem can have at most one objective statement.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="minimising"><a class="header" href="#minimising">Minimising</a></h1>
+<p>One of two keywords that can make an objective statement. Tells conjure to find the smallest solution.</p>
+<p>This block is typically followed by an integer expression.</p>
+<p><em>Note that a problem specification can have at most one objective statement.</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="maximising"><a class="header" href="#maximising">Maximising</a></h1>
+<p>One of two keywords that can make an objective statement. Tells conjure to find the largest solution.</p>
+<p>This block is typically followed by an integer expression.</p>
+<p><em>Note that a problem specification can have at most one objective statement.</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="such-that-statement"><a class="header" href="#such-that-statement">Such that Statement</a></h1>
+<p>Used to define constraints. Can be extended to a list.</p>
+<p>For example, it can be used like this:</p>
+<p><img src="images/such_that_example.png" alt="Example of a such that statement block"></p>
+<p>Which would produce the following Essence Output:</p>
+<pre><code class="language-essence">such that a != b
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="dominance-relation"><a class="header" href="#dominance-relation">Dominance Relation</a></h1>
@@ -263,7 +248,22 @@ These blocks are vital in structuring constraint programs.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="domain"><a class="header" href="#domain">Domain</a></h1>
 <p>This section contains blocks that are used to create domains.</p>
-<p>Currently, we support integer and boolean domains.</p>
+<p>Currently, we support integer, boolean and matrix domains.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="domain-expression"><a class="header" href="#domain-expression">Domain Expression</a></h1>
+<p>Defines the domain.</p>
+<p>The domains we currently support are:</p>
+<ul>
+<li>boolean</li>
+<li>integer</li>
+<li>matrix</li>
+</ul>
+<p>For example, it can be used like this:</p>
+<p><img src="images/domain_expr_example.png" alt="Example of a domain expression"></p>
+<p>Which would produce the following Essence Output:</p>
+<pre><code class="language-essence">domain int ( 0 .. 5  )
+</code></pre>
+<p>For more information about domains in essence, see <a href="https://conjure.readthedocs.io/en/latest/essence.html#domains">this</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="boolean-domain"><a class="header" href="#boolean-domain">Boolean domain</a></h1>
 <p>This domain has two values: false and true. The boolean domain is ordered with false preceding true.</p>
@@ -279,138 +279,50 @@ Values in an integer domain should be in the range -2<strong>62+1 to 2</strong>6
 <pre><code class="language-essence">int ( 0 .. 100  )
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="integer-expression"><a class="header" href="#integer-expression">Integer Expression</a></h1>
+<p>Defines a singular value which an integer variable can take.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="matrix"><a class="header" href="#matrix">Matrix</a></h1>
+<p>An example of a domain constructor. The matrix block takes a list of domains for its indices and a domain for the
+entries of the matrix. Matrices can be of arbitrary dimensionality (greater than 0).</p>
+<p>In Conjure Blocks, a matrix can be indexed only by integer or Boolean.</p>
+<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#matrix-domains">here</a> for further information surrounding
+matrix domains.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="expression"><a class="header" href="#expression">Expression</a></h1>
 <p>This section contains information about blocks that can be used to create boolean and arithmetic expressions.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="bracket-expression"><a class="header" href="#bracket-expression">Bracket Expression</a></h1>
-<p>Used to group a collection of subexpressions.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="not-expression"><a class="header" href="#not-expression">Not Expression</a></h1>
-<p>This is a logical operation applied to a boolean expressions. Using this block inverts the truth value.
-(i.e. a true statement becomes false, and vice versa).</p>
-<p>For example, if we wanted to create the statement:</p>
-<pre><code>not (x and y)
-</code></pre>
-<p>We could use the following blocks:</p>
-<p><img src="images/not_expr_example.png" alt="Example of a not expression"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">! ( x /\ y  )
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="absolute-value"><a class="header" href="#absolute-value">Absolute Value</a></h1>
-<p>When x is an integer, |x| denotes the absolute value of x. The relationship</p>
-<p><code>(2*toInt(x &gt;= 0) - 1)*x = |x|</code></p>
-<p>holds for all integers x such that |x| &lt;= 2**62-2. Integers outside this range may be flagged as an error by Savile Row and/or Minion.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="exponent"><a class="header" href="#exponent">Exponent</a></h1>
-<p>Defines the exponent of an integer.</p>
-<p>For example, <code>2^5</code> is defined in Conjure Blocks as follows:</p>
-<p><img src="images/exponent_example.png" alt="Example of an exponent expression"></p>
-<p>Where the top value is the base, and the bottom is the exponent.</p>
-<p>This would produce the following Essence Output:</p>
-<pre><code class="language-essence">2 ** 5 
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="negative-expression"><a class="header" href="#negative-expression">Negative Expression</a></h1>
-<p>Converts an integer to be negative.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="and-expression"><a class="header" href="#and-expression">And Expression</a></h1>
-<p>A logical operator which abides by the following truth table:</p>
-<p>Let x and y be some boolean variables.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>x</th><th>y</th><th>x /\ y</th></tr>
-</thead>
-<tbody>
-<tr><td>true</td><td>false</td><td>false</td></tr>
-<tr><td>false</td><td>true</td><td>false</td></tr>
-<tr><td>true</td><td>true</td><td>true</td></tr>
-<tr><td>false</td><td>false</td><td>false</td></tr>
-</tbody>
-</table>
-</div>
-<p>For example, it can be used like this:</p>
-<p>The statement <code>x and y</code> would be represented in Conjure Blocks as follows:</p>
-<p><img src="images/and_expr_example.png" alt="Example of an and expression"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">x /\ y
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="or-expression"><a class="header" href="#or-expression">Or Expression</a></h1>
-<p>A logical operator which abides by the following truth table:</p>
-<p>Let x and y be some boolean variables.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>x</th><th>y</th><th>x / y</th></tr>
-</thead>
-<tbody>
-<tr><td>true</td><td>false</td><td>true</td></tr>
-<tr><td>false</td><td>true</td><td>true</td></tr>
-<tr><td>true</td><td>true</td><td>true</td></tr>
-<tr><td>false</td><td>false</td><td>false</td></tr>
-</tbody>
-</table>
-</div>
-<p>For example, it can be used like this:</p>
-<p>The statement <code>x or y</code> would be represented in Conjure Blocks as follows:</p>
-<p><img src="images/or_expr_example.png" alt="Example of an and expression"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">x \/ y
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="implication"><a class="header" href="#implication">Implication</a></h1>
-<p>A logical expression. where the following truth table holds.</p>
-<p>Let x and y be some boolean variables.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>x</th><th>y</th><th>x /\ y</th></tr>
-</thead>
-<tbody>
-<tr><td>true</td><td>false</td><td>false</td></tr>
-<tr><td>false</td><td>true</td><td>true</td></tr>
-<tr><td>true</td><td>true</td><td>true</td></tr>
-<tr><td>false</td><td>false</td><td>true</td></tr>
-</tbody>
-</table>
-</div>
-<p>For example, it can be used like this:</p>
-<p>The statement <code>x implies y</code> would be represented in Conjure Blocks as follows:</p>
-<p><img src="images/implication_example.png" alt="Example of an implication expression"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">x /\ y
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="quantifier-expression"><a class="header" href="#quantifier-expression">Quantifier Expression</a></h1>
-<p>Iterates over the given domains to find an instance whose conditions are met.</p>
-<p>Multiple functions are available for this block:</p>
-<ul>
-<li><code>and</code></li>
-<li><code>or</code></li>
-<li><code>min</code></li>
-<li><code>max</code></li>
-<li><code>sum</code></li>
-<li><code>allDiff</code></li>
-</ul>
-<p>For example, it can be used like this:</p>
-<p><img src="images/quantifier_expression_example.png" alt="Example of a quantifier expression"></p>
-<p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">and  ([ x &gt;= y, y &lt;= x ])
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="expression-list"><a class="header" href="#expression-list">Expression List</a></h1>
-<p>Stores a list of expressions.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="from-solution"><a class="header" href="#from-solution">From Solution</a></h1>
-<p>Uses the solution that was previously found for a variable.</p>
+<h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
+<p>Represents constant values. For instance: integers and boolean values.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="true"><a class="header" href="#true">True</a></h1>
 <p>Represents the boolean ‘true’ state.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="false"><a class="header" href="#false">False</a></h1>
 <p>Represents the boolean ‘false’ state.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arithmetic"><a class="header" href="#arithmetic">Arithmetic</a></h1>
+<p>This section defines blocks that are only used for arithmetic expressions.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arithmetic-expression"><a class="header" href="#arithmetic-expression">Arithmetic Expression</a></h1>
+<p>Selects the operator for an arithmetic expression. Can be extended for longer operations.</p>
+<p>There are 7 arithmetic operators available: <code>+</code>, <code>-</code>, <code>*</code> <code>/</code>, <code>%</code>, <code>**</code> and <code>=</code>.</p>
+<p><img src="images/operations_expr_example.png" alt="Example of arithmetic operation"></p>
+<p>and would produce the following Essence Output:</p>
+<pre><code class="language-essence">0 + 2 - 1 ** 5
+</code></pre>
+<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#arithmetic-operators">here</a> for further information surrounding arithmetic operators.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="absolute-value"><a class="header" href="#absolute-value">Absolute Value</a></h1>
+<p>When x is an integer, |x| denotes the absolute value of x. The relationship</p>
+<p><code>(2*toInt(x &gt;= 0) - 1)*x = |x|</code></p>
+<p>holds for all integers x such that |x| &lt;= 2**62-2. Integers outside this range may be flagged as an error by Savile Row and/or Minion.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="negative-expression"><a class="header" href="#negative-expression">Negative Expression</a></h1>
+<p>Converts an integer to be negative.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="boolean"><a class="header" href="#boolean">Boolean</a></h1>
+<p>This section defines blocks that are only used for boolean expressions.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="comparison"><a class="header" href="#comparison">Comparison</a></h1>
 <p>Used to compare two expressions. Returns a binary result.</p>
@@ -422,76 +334,66 @@ Values in an integer domain should be in the range -2<strong>62+1 to 2</strong>6
 </code></pre>
 <p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#logical-operators">here</a> for information about the comparison operators conjure uses.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="comparison-operators"><a class="header" href="#comparison-operators">Comparison Operators</a></h1>
-<p>Selects the operator for a boolean comparison.</p>
-<p>There are 6 comparison operators: <code>=</code>, <code>!=</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&lt;</code>, and <code>&gt;</code>.</p>
-<p>The equality operators <code>=</code> and <code>!=</code> can be applied to compare two expressions, both taking values in the same domain and are supported for all types.
-The inline binary comparison operators <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, and <code>&lt;=</code> can be used to compare expressions taking values in an ordered domain. The expressions must both be integer, both Boolean.</p>
-<p>For example, it can be used like this:</p>
-<p>The statement <code>x is not equal to y</code> would be represented in Conjure Blocks as follows:</p>
-<p><img src="images/comparison_example.png" alt="Example of comparison"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">x !=  y 
+<h1 id="not-expression"><a class="header" href="#not-expression">Not Expression</a></h1>
+<p>This is a logical operation applied to a Boolean expression. Using this block inverts the truth value.
+(i.e. a true statement becomes false, and vice versa).</p>
+<p>For example, if we wanted to create the statement:</p>
+<pre><code>not (x and y)
 </code></pre>
-<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#logical-operators">here</a> for further information surrounding comparison operators.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="additive-operators"><a class="header" href="#additive-operators">Additive Operators</a></h1>
-<p>Selects the operator for a sum expression.</p>
-<p>There are 2 additive operators: <code>+</code>, and <code>-</code>.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/additive_op_example.png" alt="Example of additive operation"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">5 + 10
-</code></pre>
-<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#arithmetic-operators">here</a> for further information surrounding arithmetic operators.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="sum-expression"><a class="header" href="#sum-expression">Sum Expression</a></h1>
-<p>Used to create <code>+</code> or <code>-</code> arithmetic expression.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/additive_op_example.png" alt="Example of a sum expression"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">5 + 10
-</code></pre>
-<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#arithmetic-operators">here</a> for further information surrounding arithmetic operators.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="product-expressions"><a class="header" href="#product-expressions">Product Expressions</a></h1>
-<p>Used to create <code>*</code>, <code>/</code> or <code>%</code> arithmetic expression.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/multiplicative_op_example.png" alt="Example of comparison"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">4 / 12
-</code></pre>
-<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#arithmetic-operators">here</a> for further information surrounding arithmetic operators.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="multiplicative-operators"><a class="header" href="#multiplicative-operators">Multiplicative Operators</a></h1>
-<p>Selects the operator for a multiplicative expression.</p>
-<p>There are 3 multiplicative operators: <code>*</code>, <code>/</code>, and <code>%</code>.</p>
-<p>For example, it can be used like this:</p>
-<p><img src="images/multiplicative_op_example.png" alt="Example of multiplicative operation"></p>
-<p>and would produce the following Essence Output:</p>
-<pre><code class="language-essence">4 / 12
-</code></pre>
-<p>See <a href="https://conjure.readthedocs.io/en/latest/essence.html#arithmetic-operators">here</a> for further information surrounding arithmetic operators.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="range"><a class="header" href="#range">Range</a></h1>
-<p>This section contains information about blocks that help define integer ranges.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="integer-range"><a class="header" href="#integer-range">Integer Range</a></h1>
-<p>Used to define a group of integers.</p>
-<p>For example, to declare a decision variable <code>x</code> that can take values between 1 and 10, you can do the following:</p>
-<p><img src="images/find_statement_example.png" alt="Example of an integer range"></p>
+<p>We could use the following blocks:</p>
+<p><img src="images/not_expr_example.png" alt="Example of a not expression"></p>
 <p>Which would produce the following Essence Output:</p>
-<pre><code class="language-essence">find  x : int (  0 .. 10  ) 
+<pre><code class="language-essence">! ( x /\ y  )
 </code></pre>
-<blockquote>
-<p><strong>Note</strong></p>
-<p>Notice in the blocks example above, we define the range to be 0 to 10.</p>
-<p>Say that you want a range <code>A</code> to <code>B</code> where <code>A</code> and <code>B</code> are some integers. Your bounds must extend one step outside of that range.
-So the lower bound would be <code>A - 1</code> and the upper bound would be <code>B</code>.</p>
-</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="range-list"><a class="header" href="#range-list">Range List</a></h1>
-<p>Defines a list of ranges.</p>
+<h1 id="misc"><a class="header" href="#misc">MISC</a></h1>
+<p>This section is for expression blocks that do not fit cleanly into arithmetic or boolean.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="bracket-expression"><a class="header" href="#bracket-expression">Bracket Expression</a></h1>
+<p>Used to group a collection of subexpressions.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="quantifier-expression"><a class="header" href="#quantifier-expression">Quantifier Expression</a></h1>
+<p>Iterates over the given domains to find an instance whose conditions are met.</p>
+<p>Multiple functions are available for this block:</p>
+<ul>
+<li><code>exists</code></li>
+<li><code>forAll</code></li>
+<li><code>sum</code></li>
+<li><code>min</code></li>
+<li><code>max</code></li>
+<li><code>and</code></li>
+<li><code>or</code></li>
+</ul>
+<p>For example, it can be used like this:</p>
+<p><img src="images/quantifier_expression_example.png" alt="Example of a quantifier expression"></p>
+<p>Which would produce the following Essence Output:</p>
+<pre><code class="language-essence">exists  x : int ( -1 .. 13 )  . ( ( x &gt; y ) )
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="expression-list"><a class="header" href="#expression-list">Expression List</a></h1>
+<p>Stores a list of expressions.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="flatten"><a class="header" href="#flatten">Flatten</a></h1>
+<p>A type of matrix operator.</p>
+<p>The flatten block takes a <strong>singular</strong> argument and returns a list containing the entries of a matrix with any number of
+dimensions, listed in the lexicographic order of the tuples of indices specifying each entry.</p>
+<p><em>Currently Conjure Blocks does not support two arguments.</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="from-solution"><a class="header" href="#from-solution">From Solution</a></h1>
+<p>Uses the solution that was previously found for a variable.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="toint-expression"><a class="header" href="#toint-expression">toInt Expression</a></h1>
+<p>Takes a boolean expression x and converts to an integer 0 or 1</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="alldiff"><a class="header" href="#alldiff">allDiff</a></h1>
+<p>A type of matrix operator.</p>
+<p>Used to test if all entries in a list are different. Returns an appropriate boolean value.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="matrix-accessor"><a class="header" href="#matrix-accessor">Matrix Accessor</a></h1>
+<p>This block is used to access elements in a matrix.</p>
+<p>For instance, lets say you want to access the first elements of a matrix, A, you could do the following:</p>
+<p><img src="images/matrix_accessor_example.png" alt="Example of a matrix_accessor block"></p>
+<p>To access more elements in the matrix, you can extend the matrix using the cog.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="variables"><a class="header" href="#variables">Variables</a></h1>
 <p>This section contains information about variable blocks.
@@ -500,13 +402,6 @@ These variables are vital parts of constraint programming.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="variable-list"><a class="header" href="#variable-list">Variable List</a></h1>
 <p>Stores a collection of variables.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="misc"><a class="header" href="#misc">Misc</a></h1>
-<p>Blocks defined in this section can be found by pressing <code>all</code> on the Conjure Blocks UI.
-They do not exist in any specific section.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="toint-expression"><a class="header" href="#toint-expression">toInt Expression</a></h1>
-<p>Takes a boolean expression x and converts to an integer 0 or 1</p>
 
                     </main>
 
@@ -540,11 +435,11 @@ They do not exist in any specific section.</p>
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
 
