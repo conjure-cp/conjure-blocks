@@ -21,15 +21,15 @@
     "html-webpack-plugin": "^5.6.7",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0",
-    "webpack": "^5.107.2",
-    "webpack-cli": "^7.0.3",
-    "webpack-dev-server": "^5.2.4"
+    "webpack": "^5.108.3",
+    "webpack-cli": "^7.1.0",
+    "webpack-dev-server": "^5.2.5"
   },
   "dependencies": {
-    "@blockly/plugin-typed-variable-modal": "^9.0.9",
-    "blockly": "^12.5.1",
+    "@blockly/plugin-typed-variable-modal": "^13.1.0",
+    "blockly": "^13.1.0",
     "fs": "^0.0.1-security",
-    "marked": "^18.0.4",
+    "marked": "^18.0.5",
     "split.js": "^1.6.5"
   }
 }
